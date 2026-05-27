@@ -16,6 +16,14 @@ import {
   Store,
   Truck
 } from "lucide-react";
+import {
+  FREE_PLAN_BADGES,
+  FREE_PLAN_LIMIT_ITEMS,
+  FREE_PLAN_SUMMARY,
+  PAID_FULL_SUMMARY,
+  PLAN_PRICE_LABEL,
+  PLAN_SHARED_FEATURES
+} from "@/shared/constants/plan-policy";
 
 const SIGN_IN_ROUTE: Route = "/sign-in";
 const SIGN_UP_ROUTE: Route = "/sign-up";
@@ -81,7 +89,7 @@ type InventoryRow = {
   status: StockStatus;
 };
 
-const heroBadges = ["외부 채널 자동 연동 없음", "주문접수는 예약 수량", "배송대기부터 실제 재고 차감"];
+const heroBadges = FREE_PLAN_BADGES;
 
 const demoOrders: DemoOrder[] = [
   { code: "ORD-1024", product: "리넨 셔츠 / 스카이 S", status: "주문접수", stockEffect: "예약 2" },
@@ -223,10 +231,10 @@ const targetUsers: TargetUser[] = [
   }
 ];
 
-const feedbackNotes = [
-  "실제 공개 전까지 도입 수치나 고객 후기는 만들지 않습니다.",
-  "초기 베타는 상품 등록, 주문접수, 배송대기 전환, 부족 재고 확인을 우선 검증합니다.",
-  "자동 채널 연동, 결제, 정산, 수익 분석은 현재 랜딩에서 약속하지 않습니다."
+const planNotes = [
+  "무료 플랜은 기능을 막지 않고 상품, SKU, 월 주문/배송 처리 규모만 제한합니다.",
+  `${PLAN_PRICE_LABEL} 유료 풀버전은 상품, SKU, 월 주문/배송 처리 한도 해제를 기준으로 준비합니다.`,
+  `${PLAN_SHARED_FEATURES[0]}과 ${PLAN_SHARED_FEATURES[1]}을 무료/유료에서 동일하게 제공합니다.`
 ];
 
 const faqItems: FaqItem[] = [
@@ -267,7 +275,7 @@ export default function HomePage() {
       <FeatureSection />
       <WorkflowSection />
       <TargetUsersSection />
-      <BetaFeedbackSection />
+      <PlanSection />
       <FaqSection />
       <FinalCta />
     </main>
@@ -291,8 +299,8 @@ function LandingHeader() {
           <a href="#preview" className="text-slate-600 transition-colors hover:text-slate-950">
             데모 화면
           </a>
-          <a href="#beta" className="text-slate-600 transition-colors hover:text-slate-950">
-            베타 안내
+          <a href="#plan" className="text-slate-600 transition-colors hover:text-slate-950">
+            요금제
           </a>
         </nav>
         <div className="flex items-center gap-2">
@@ -306,7 +314,7 @@ function LandingHeader() {
             href={SIGN_UP_ROUTE}
             className="hidden min-h-10 items-center justify-center gap-2 rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:inline-flex"
           >
-            베타로 시작하기
+            무료로 시작하기
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
@@ -332,7 +340,7 @@ function HeroSection() {
             옵션별 재고, 주문접수 예약 수량, 배송대기 차감을 한 흐름으로 확인하세요.
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            SellerRoom은 여러 판매 채널의 주문을 수동으로 모아 초기 셀러가 매일 확인해야 하는 상품, SKU, 재고, 주문 상태를 정리하는 베타 운영 콘솔입니다.
+            SellerRoom은 여러 판매 채널의 주문을 수동으로 모아 초기 셀러가 매일 확인해야 하는 상품, SKU, 재고, 주문 상태를 정리하는 무료 운영 콘솔입니다.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {heroBadges.map((label) => (
@@ -459,12 +467,12 @@ function TrustPrinciplesSection() {
     <section className="border-b border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-blue-700">베타 단계의 신뢰 방식</p>
+          <p className="text-sm font-bold text-blue-700">무료 플랜의 신뢰 방식</p>
           <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
-            도입 수치보다 먼저, 운영 원칙을 투명하게 보여줍니다.
+            한도와 운영 원칙을 먼저 투명하게 보여줍니다.
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            위노트처럼 검증 수치와 후기를 보여주기 전 단계이기 때문에, 셀러룸은 지금 약속할 수 있는 재고 계산 원칙과 기록 기준을 먼저 공개합니다.
+            셀러룸은 무료로 시작해도 스토어와 배송 상태 흐름을 동일하게 제공하고, 사용량 한도를 명확하게 공개합니다.
           </p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -643,22 +651,30 @@ function TargetUsersSection() {
   );
 }
 
-function BetaFeedbackSection() {
+function PlanSection() {
   return (
-    <section className="bg-slate-50" id="beta">
+    <section className="bg-slate-50" id="plan">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
         <div>
           <SectionHeading
-            eyebrow="베타 피드백"
-            title="아직 없는 후기는 만들지 않고, 검증할 화면을 먼저 공개합니다."
-            description="기획자, 디자이너, 개발자가 합의한 기준은 단순합니다. 지금 가능한 기능은 선명하게 보여주고, 아직 하지 않는 기능은 랜딩에서 과장하지 않습니다."
+            eyebrow="무료/유료 플랜"
+            title="무료로 운영을 시작하고, 규모가 커지면 풀버전으로 전환합니다."
+            description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY}`}
           />
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {feedbackNotes.map((note) => (
-            <article key={note} className="rounded-md border border-slate-200 bg-white p-5">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {FREE_PLAN_LIMIT_ITEMS.map((item) => (
+            <article key={item.label} className="rounded-md border border-slate-200 bg-white p-5">
               <ShieldCheck className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <p className="mt-4 text-sm leading-6 text-slate-700">{note}</p>
+              <p className="mt-4 text-sm font-bold text-slate-950">{item.label}</p>
+              <p className="mt-2 text-3xl font-bold text-blue-600">{item.value}</p>
+              <p className="mt-3 text-sm leading-6 text-slate-700">{item.description}</p>
+            </article>
+          ))}
+          {planNotes.map((note) => (
+            <article key={note} className="rounded-md border border-blue-100 bg-blue-50 p-5">
+              <ShieldCheck className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <p className="mt-4 text-sm leading-6 text-blue-950">{note}</p>
             </article>
           ))}
         </div>
@@ -673,7 +689,7 @@ function FaqSection() {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="자주 묻는 질문"
-          title="베타 단계에서 먼저 확인해야 할 내용을 정리했습니다."
+          title="지금 제공하는 범위와 다음 확장 범위를 정리했습니다."
           description="셀러룸이 지금 제공하는 범위와 아직 약속하지 않는 범위를 분명하게 나눕니다."
           centered
         />
