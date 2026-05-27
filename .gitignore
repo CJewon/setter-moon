@@ -15,9 +15,10 @@ playwright-report/
 
 # Environment
 .env
+.env.*
 .env.local
 .env.*.local
-!.env.example
+.env.example
 
 # Codex local harness settings
 .codex/
