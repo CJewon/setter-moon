@@ -1,0 +1,2 @@
+-- Local-only sample data belongs here after Supabase auth users are available.
+-- Keep production seed data out of this file.
