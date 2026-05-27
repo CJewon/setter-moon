@@ -35,7 +35,7 @@ async function getPostAuthRedirectPath(supabase: SupabaseClient<Database>) {
 
 export async function signInAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   if (!hasSupabasePublicEnv()) {
-    return invalidState("Supabase 환경 변수를 먼저 설정해야 합니다.");
+    return invalidState("지금은 로그인을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = signInSchema.safeParse({
@@ -44,7 +44,7 @@ export async function signInAction(_prevState: ActionState, formData: FormData):
   });
 
   if (!parsed.success) {
-    return invalidState("입력 정보를 확인해 주세요.", parsed.error.flatten().fieldErrors);
+    return invalidState("입력한 정보를 다시 확인해 주세요.", parsed.error.flatten().fieldErrors);
   }
 
   const supabase = await createClient();
@@ -61,7 +61,7 @@ export async function signInAction(_prevState: ActionState, formData: FormData):
 
 export async function signUpAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
   if (!hasSupabasePublicEnv()) {
-    return invalidState("Supabase 환경 변수를 먼저 설정해야 합니다.");
+    return invalidState("지금은 계정 만들기를 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = signUpSchema.safeParse({
@@ -72,7 +72,7 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
   });
 
   if (!parsed.success) {
-    return invalidState("입력 정보를 확인해 주세요.", parsed.error.flatten().fieldErrors);
+    return invalidState("입력한 정보를 다시 확인해 주세요.", parsed.error.flatten().fieldErrors);
   }
 
   const supabase = await createClient();

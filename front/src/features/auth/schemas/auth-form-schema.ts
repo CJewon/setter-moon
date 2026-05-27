@@ -14,7 +14,7 @@ const passwordSchema = z
 
 export const signUpSchema = z
   .object({
-    name: z.string().trim().min(1, "이름 또는 표시명을 입력하세요.").max(40, "이름 또는 표시명은 40자 이하로 입력하세요."),
+    name: z.string().trim().min(1, "이름을 입력하세요.").max(40, "이름은 40자 이하로 입력하세요."),
     email: z.string().trim().email("올바른 이메일을 입력하세요."),
     password: passwordSchema,
     passwordConfirm: z.string().min(1, "비밀번호 확인을 입력하세요.")

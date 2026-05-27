@@ -62,15 +62,15 @@ export function SignInForm() {
         ) : null}
       </label>
       <button
-        className="inline-flex min-h-10 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         disabled={pending}
       >
-        {pending ? "로그인 중..." : "로그인"}
+        {pending ? "로그인 중" : "로그인"}
       </button>
       <p className="text-center text-sm text-slate-600">
-        계정이 없나요?{" "}
+        처음 오셨나요?{" "}
         <Link href="/sign-up" className="font-medium text-blue-700">
-          가입하기
+          계정 만들기
         </Link>
       </p>
     </form>

@@ -29,7 +29,7 @@ export function SignUpForm() {
         </p>
       ) : null}
       <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="name">
-        <span>이름 또는 표시명</span>
+        <span>이름</span>
         <input
           id="name"
           name="name"
@@ -82,7 +82,7 @@ export function SignUpForm() {
           </span>
         ) : (
           <span id="password-hint" className="text-xs text-slate-500">
-            영문과 숫자를 포함해 8자 이상 입력하세요.
+            영문과 숫자 포함 8자 이상
           </span>
         )}
       </label>
@@ -102,10 +102,10 @@ export function SignUpForm() {
         ) : null}
       </label>
       <button
-        className="inline-flex min-h-10 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         disabled={pending}
       >
-        {pending ? "계정 생성 중..." : "계정 만들기"}
+        {pending ? "계정 만드는 중" : "계정 만들기"}
       </button>
       <p className="text-center text-sm text-slate-600">
         이미 계정이 있나요?{" "}
