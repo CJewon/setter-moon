@@ -13,6 +13,9 @@ test-results/
 playwright-report/
 .tmp/
 
+# Supabase local metadata/cache
+backend/supabase/.temp/
+
 # Environment
 .env
 .env.*
