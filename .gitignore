@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Next.js
+.next/
+out/
+*.tsbuildinfo
+
+# Testing
+coverage/
+test-results/
+playwright-report/
+.tmp/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Markdown documents
+*.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

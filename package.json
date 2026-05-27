@@ -1,0 +1,20 @@
+{
+  "name": "setter-moon",
+  "private": true,
+  "workspaces": [
+    "front"
+  ],
+  "scripts": {
+    "dev": "npm --workspace front run dev",
+    "build": "npm --workspace front run build",
+    "start": "npm --workspace front run start",
+    "lint": "npm --workspace front run lint",
+    "lint:fix": "npm --workspace front run lint:fix",
+    "typecheck": "npm --workspace front run typecheck",
+    "test": "npm --workspace front run test",
+    "test:e2e": "npm --workspace front run test:e2e"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

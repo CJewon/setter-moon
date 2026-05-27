@@ -1,0 +1,12 @@
+import { PageHeader } from "@/shared/components/page-header";
+
+export default function StockMovementsPage() {
+  return (
+    <>
+      <PageHeader title="재고 이력" description="입고, 판매 차감, 취소 복구, 수동 조정 이력을 확인합니다." />
+      <div className="rounded-md border border-slate-200 bg-white p-5 text-sm text-slate-600">
+        재고 변경 이력 테이블을 연결할 예정입니다.
+      </div>
+    </>
+  );
+}
