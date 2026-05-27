@@ -18,6 +18,10 @@ function invalidState(message: string, fieldErrors?: ActionState["fieldErrors"])
   };
 }
 
+function isExistingUserError(error: { code?: string; message?: string }) {
+  return error.code === "user_already_exists" || error.message?.toLowerCase().includes("user already registered");
+}
+
 async function getPostAuthRedirectPath(supabase: SupabaseClient<Database>) {
   const {
     data: { user },
@@ -87,6 +91,12 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
   });
 
   if (error) {
+    if (isExistingUserError(error)) {
+      return invalidState("이미 가입된 이메일입니다. 로그인해 주세요.", {
+        email: ["이미 가입된 이메일입니다."]
+      });
+    }
+
     return invalidState("계정을 만들 수 없습니다. 입력 정보를 확인한 뒤 다시 시도해 주세요.");
   }
 
