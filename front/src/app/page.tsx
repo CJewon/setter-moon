@@ -90,23 +90,31 @@ const feedbackNotes = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-950">
+    <main className="min-h-screen bg-[#FFFDF6] text-zinc-950">
       <LandingHeader />
       <HeroSection />
 
-      <section id="preview" className="border-y border-slate-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {demoMetrics.map((metric) => (
-            <MetricPreview key={metric.label} metric={metric} />
-          ))}
+      <section id="preview" className="border-y border-[#EFE7D2] bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-bold text-[#4F6F52]">데모 데이터 기준</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-normal text-zinc-950 sm:text-4xl">
+              오늘 처리할 주문과 재고를 먼저 봅니다
+            </h2>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {demoMetrics.map((metric) => (
+              <MetricPreview key={metric.label} metric={metric} />
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" id="features">
         <SectionHeading
           eyebrow="문제와 해결"
-          title="작게 시작해도 운영 기준은 선명해야 합니다."
-          description="SellerRoom은 판매 채널을 대신 만들지 않습니다. 이미 들어온 상품, 옵션, 재고, 주문 정보를 셀러가 덜 헷갈리게 정리하는 내부 콘솔입니다."
+          title="혹시 이런 경험 있으시죠?"
+          description="이미 들어온 상품, 옵션, 재고, 주문 정보를 셀러가 덜 헷갈리게 정리하는 내부 콘솔입니다."
         />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {painPoints.map((point) => (
@@ -155,7 +163,7 @@ export default function HomePage() {
         <InventoryPreview />
       </section>
 
-      <section className="border-y border-slate-200 bg-white">
+      <section className="border-y border-[#EFE7D2] bg-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
           <div>
             <SectionHeading
@@ -176,8 +184,8 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" id="start">
-        <div className="rounded-md border border-slate-200 bg-zinc-950 px-6 py-10 text-white sm:px-10">
-          <p className="text-sm font-semibold text-[#C7D7C2]">시작하기</p>
+        <div className="rounded-md border border-[#25472D] bg-[#355E3B] px-6 py-10 text-white sm:px-10">
+          <p className="text-sm font-semibold text-[#DDE8D7]">시작하기</p>
           <h2 className="mt-3 max-w-3xl text-3xl font-bold tracking-normal sm:text-4xl">
             오늘 들어온 주문부터 SellerRoom에 정리해보세요.
           </h2>
@@ -187,7 +195,7 @@ export default function HomePage() {
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Link
               href={SIGN_UP_ROUTE}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-zinc-950 transition-colors hover:bg-zinc-200"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[#25472D] transition-colors hover:bg-[#F7F2E6]"
             >
               첫 주문 정리 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -232,7 +240,7 @@ function LandingHeader() {
           </Link>
           <Link
             href={SIGN_UP_ROUTE}
-            className="hidden min-h-10 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 sm:inline-flex"
+            className="hidden min-h-10 items-center justify-center gap-2 rounded-md bg-[#355E3B] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#294A2E] sm:inline-flex"
           >
             시작하기
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -245,24 +253,35 @@ function LandingHeader() {
 
 function HeroSection() {
   return (
-    <section className="border-b border-zinc-200 bg-[#F6F7F4]">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[0.86fr_1.14fr] lg:px-8 lg:py-20">
-        <div className="relative z-10 flex max-w-3xl flex-col justify-center">
-          <p className="text-sm font-bold text-[#4F6F52]">1인 셀러 운영 콘솔</p>
-          <h1 className="mt-4 text-5xl font-bold tracking-normal text-slate-950 sm:text-6xl">
-            SellerRoom
+    <section className="border-b border-[#EFE7D2] bg-[#FFF8EA]">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="inline-flex min-h-9 items-center justify-center rounded-md border border-[#E5D9BF] bg-white px-3 text-sm font-bold text-[#4F6F52]">
+            초기 셀러를 위한 상품·재고·주문 운영 콘솔
+          </p>
+          <h1 className="mt-6 text-4xl font-bold tracking-normal text-zinc-950 sm:text-6xl">
+            주문·재고 정리,
+            <br className="hidden sm:block" />
+            엑셀보다 덜 헷갈리게
           </h1>
-          <p className="mt-5 max-w-3xl text-2xl font-bold leading-9 text-slate-900 sm:text-3xl">
-            주문은 들어오는데, 재고가 헷갈릴 때.
+          <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold leading-8 text-zinc-800 sm:text-2xl">
+            옵션별 재고, 주문접수 수량, 배송대기 상태를 한 화면에서 확인하세요.
           </p>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-700">
-            상품과 SKU 재고를 나누고, 주문접수 예약 수량과 배송대기 차감 수량을 한 화면에서 확인합니다.
-            스마트스토어, 쿠팡, 인스타그램, 카카오톡 주문을 수동으로 모아 초기 운영 흐름을 정리합니다.
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-zinc-600">
+            SellerRoom은 스마트스토어, 쿠팡, 인스타그램, 카카오톡 주문을 수동으로 모아 초기 셀러의 운영 흐름을 정리하는 내부 콘솔입니다.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {["외부 채널 연동 없음", "주문접수는 예약 수량", "배송대기부터 재고 차감"].map((label) => (
+              <span key={label} className="inline-flex min-h-8 items-center gap-2 rounded-md border border-[#E5D9BF] bg-white px-3 text-xs font-bold text-zinc-700">
+                <CheckCircle2 className="h-4 w-4 text-[#4F6F52]" aria-hidden="true" />
+                {label}
+              </span>
+            ))}
+          </div>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href={SIGN_UP_ROUTE}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[#355E3B] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#294A2E]"
             >
               스토어 설정하고 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -283,8 +302,8 @@ function HeroSection() {
 
 function HeroConsolePreview() {
   return (
-    <div className="pointer-events-none relative mx-auto w-full max-w-4xl">
-      <div className="h-[420px] overflow-hidden rounded-md border border-zinc-300 bg-white shadow-xl sm:h-[460px] lg:h-[500px]">
+    <div className="pointer-events-none relative mx-auto mt-12 w-full max-w-6xl">
+      <div className="h-[420px] overflow-hidden rounded-md border border-[#E5D9BF] bg-white shadow-xl sm:h-[500px] lg:h-[520px]">
         <div className="flex min-h-12 items-center justify-between border-b border-slate-200 px-4">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-red-400" />
@@ -356,7 +375,7 @@ function HeroConsolePreview() {
 
 function PreviewNav({ active = false, icon: Icon, label }: { active?: boolean; icon: LucideIcon; label: string }) {
   return (
-    <div className={active ? "flex items-center gap-2 rounded-md bg-zinc-950 px-3 py-2 text-white" : "flex items-center gap-2 rounded-md px-3 py-2"}>
+    <div className={active ? "flex items-center gap-2 rounded-md bg-[#355E3B] px-3 py-2 text-white" : "flex items-center gap-2 rounded-md px-3 py-2"}>
       <Icon className="h-4 w-4" aria-hidden="true" />
       <span>{label}</span>
     </div>
@@ -380,7 +399,7 @@ function PreviewStat({ label, value, tone }: { label: string; value: string; ton
 
 function MetricPreview({ metric }: { metric: Metric }) {
   return (
-    <article className="rounded-md border border-slate-200 bg-slate-50 p-5">
+    <article className="rounded-md border border-[#EFE7D2] bg-[#FFFDF6] p-5">
       <p className="text-sm font-semibold text-slate-500">{metric.label}</p>
       <p className="mt-2 text-3xl font-bold text-slate-950">{metric.value}</p>
       <p className="mt-2 text-xs font-semibold text-slate-500">{metric.detail}</p>
