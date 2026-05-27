@@ -257,7 +257,7 @@ const inventoryRows: InventoryRow[] = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#FFFDF6] text-zinc-950">
+    <main className="min-h-screen bg-white text-slate-950">
       <LandingHeader />
       <HeroSection />
       <TrustPrinciplesSection />
@@ -276,35 +276,35 @@ export default function HomePage() {
 
 function LandingHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-[#E7E1D3] bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-lg font-bold text-zinc-950">
+        <Link href="/" className="text-lg font-bold text-slate-950">
           SellerRoom
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
-          <a href="#problem" className="text-zinc-600 transition-colors hover:text-zinc-950">
+          <a href="#problem" className="text-slate-600 transition-colors hover:text-slate-950">
             문제
           </a>
-          <a href="#flow" className="text-zinc-600 transition-colors hover:text-zinc-950">
+          <a href="#flow" className="text-slate-600 transition-colors hover:text-slate-950">
             작동 방식
           </a>
-          <a href="#preview" className="text-zinc-600 transition-colors hover:text-zinc-950">
+          <a href="#preview" className="text-slate-600 transition-colors hover:text-slate-950">
             데모 화면
           </a>
-          <a href="#beta" className="text-zinc-600 transition-colors hover:text-zinc-950">
+          <a href="#beta" className="text-slate-600 transition-colors hover:text-slate-950">
             베타 안내
           </a>
         </nav>
         <div className="flex items-center gap-2">
           <Link
             href={SIGN_IN_ROUTE}
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-[#E7E1D3] bg-white px-4 text-sm font-semibold text-zinc-700 transition-colors hover:bg-[#F7F2E6]"
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
           >
             로그인
           </Link>
           <Link
             href={SIGN_UP_ROUTE}
-            className="hidden min-h-10 items-center justify-center gap-2 rounded-md bg-[#355E3B] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#294A2E] sm:inline-flex"
+            className="hidden min-h-10 items-center justify-center gap-2 rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-blue-700 sm:inline-flex"
           >
             베타로 시작하기
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -317,30 +317,30 @@ function LandingHeader() {
 
 function HeroSection() {
   return (
-    <section className="border-b border-[#EFE7D2] bg-[#FFF8EA]">
+    <section className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="inline-flex min-h-9 items-center justify-center rounded-md border border-[#E5D9BF] bg-white px-3 text-sm font-bold text-[#4F6F52]">
+          <p className="inline-flex min-h-9 items-center justify-center rounded-md border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700">
             초기 셀러를 위한 상품·재고·주문 운영 콘솔
           </p>
-          <h1 className="mt-6 text-4xl font-bold tracking-normal text-zinc-950 sm:text-6xl">
+          <h1 className="mt-6 text-4xl font-bold tracking-normal text-slate-950 sm:text-6xl">
             주문과 재고를{" "}
             <br className="hidden sm:block" />
             한 화면에서 덜 헷갈리게
           </h1>
-          <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold leading-8 text-zinc-800 sm:text-2xl">
+          <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold leading-8 text-slate-800 sm:text-2xl">
             옵션별 재고, 주문접수 예약 수량, 배송대기 차감을 한 흐름으로 확인하세요.
           </p>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-zinc-600">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600">
             SellerRoom은 여러 판매 채널의 주문을 수동으로 모아 초기 셀러가 매일 확인해야 하는 상품, SKU, 재고, 주문 상태를 정리하는 베타 운영 콘솔입니다.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {heroBadges.map((label) => (
               <span
                 key={label}
-                className="inline-flex min-h-8 items-center gap-2 rounded-md border border-[#E5D9BF] bg-white px-3 text-xs font-bold text-zinc-700"
+                className="inline-flex min-h-8 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700"
               >
-                <CheckCircle2 className="h-4 w-4 text-[#4F6F52]" aria-hidden="true" />
+                <CheckCircle2 className="h-4 w-4 text-blue-600" aria-hidden="true" />
                 {label}
               </span>
             ))}
@@ -348,14 +348,14 @@ function HeroSection() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href={SIGN_UP_ROUTE}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-[#355E3B] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#294A2E]"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
               스토어 만들고 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
               href="#preview"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#E5D9BF] bg-white px-5 text-sm font-semibold text-zinc-800 transition-colors hover:bg-[#F7F2E6]"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
             >
               데모 콘솔 보기
             </a>
@@ -370,12 +370,12 @@ function HeroSection() {
 function HeroConsolePreview() {
   return (
     <div className="pointer-events-none relative mx-auto mt-12 w-full max-w-6xl">
-      <div className="overflow-hidden rounded-md border border-[#E5D9BF] bg-white shadow-[0_24px_60px_rgba(51,65,85,0.16)]">
+      <div className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
         <div className="flex min-h-12 items-center justify-between border-b border-slate-200 px-4">
           <div className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full bg-red-400" />
-            <span className="h-3 w-3 rounded-full bg-amber-400" />
-            <span className="h-3 w-3 rounded-full bg-emerald-500" />
+            <span className="h-3 w-3 rounded-full bg-slate-300" />
+            <span className="h-3 w-3 rounded-full bg-slate-400" />
+            <span className="h-3 w-3 rounded-full bg-blue-500" />
           </div>
           <span className="text-xs font-semibold text-slate-500">샘플 데이터 콘솔</span>
         </div>
@@ -392,14 +392,14 @@ function HeroConsolePreview() {
           <div className="min-w-0">
             <div className="grid gap-3 sm:grid-cols-3">
               <PreviewStat label="오늘 주문" value="12건" tone="neutral" />
-              <PreviewStat label="재고 부족" value="3 SKU" tone="amber" />
-              <PreviewStat label="배송대기" value="5건" tone="emerald" />
+              <PreviewStat label="재고 부족" value="3 SKU" tone="blue" />
+              <PreviewStat label="배송대기" value="5건" tone="dark" />
             </div>
             <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_220px]">
               <div className="rounded-md border border-slate-200 bg-white">
                 <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
                   <p className="text-sm font-bold text-slate-900">최근 주문</p>
-                  <span className="rounded-md bg-[#F4F8F1] px-2 py-1 text-xs font-bold text-[#355E3B]">데모</span>
+                  <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">데모</span>
                 </div>
                 <div className="hidden md:block">
                   {demoOrders.map((order) => (
@@ -419,7 +419,7 @@ function HeroConsolePreview() {
                     <div key={order.code} className="rounded-md border border-slate-100 bg-slate-50 p-3">
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-xs font-bold text-slate-800">{order.code}</span>
-                        <span className="text-xs font-semibold text-[#355E3B]">{order.status}</span>
+                        <span className="text-xs font-semibold text-blue-700">{order.status}</span>
                       </div>
                       <p className="mt-2 truncate text-sm font-semibold text-slate-700">{order.product}</p>
                       <p className="mt-1 text-xs text-slate-500">{order.stockEffect}</p>
@@ -434,14 +434,14 @@ function HeroConsolePreview() {
                     {lowStockPreview.map((item) => (
                       <div key={item.sku} className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
                         <span className="text-xs font-bold text-slate-800">{item.sku}</span>
-                        <span className="text-xs font-semibold text-amber-700">{item.available}</span>
+                        <span className="text-xs font-semibold text-blue-700">{item.available}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="rounded-md border border-[#DCE8D3] bg-[#F4F8F1] p-4">
-                  <p className="text-sm font-bold text-[#294A2E]">상태 변경 영향</p>
-                  <p className="mt-3 text-xs leading-5 text-[#4F6F52]">
+                <div className="rounded-md border border-blue-100 bg-blue-50 p-4">
+                  <p className="text-sm font-bold text-blue-900">상태 변경 영향</p>
+                  <p className="mt-3 text-xs leading-5 text-blue-700">
                     주문접수에서 배송대기로 바뀌면 예약 수량은 줄고 실제 재고가 차감됩니다.
                   </p>
                 </div>
@@ -456,23 +456,23 @@ function HeroConsolePreview() {
 
 function TrustPrinciplesSection() {
   return (
-    <section className="border-b border-[#EFE7D2] bg-white">
+    <section className="border-b border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-[#4F6F52]">베타 단계의 신뢰 방식</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-normal text-zinc-950 sm:text-4xl">
+          <p className="text-sm font-bold text-blue-700">베타 단계의 신뢰 방식</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
             도입 수치보다 먼저, 운영 원칙을 투명하게 보여줍니다.
           </h2>
-          <p className="mt-4 text-base leading-7 text-zinc-600">
+          <p className="mt-4 text-base leading-7 text-slate-600">
             위노트처럼 검증 수치와 후기를 보여주기 전 단계이기 때문에, 셀러룸은 지금 약속할 수 있는 재고 계산 원칙과 기록 기준을 먼저 공개합니다.
           </p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {trustPrinciples.map((principle) => (
-            <article key={principle.title} className="rounded-md border border-[#E7E1D3] bg-[#FFFDF6] p-5">
-              <p className="text-3xl font-bold text-[#355E3B]">{principle.value}</p>
-              <h3 className="mt-4 text-base font-bold text-zinc-950">{principle.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600">{principle.description}</p>
+            <article key={principle.title} className="rounded-md border border-slate-200 bg-white p-5">
+              <p className="text-3xl font-bold text-blue-600">{principle.value}</p>
+              <h3 className="mt-4 text-base font-bold text-slate-950">{principle.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{principle.description}</p>
             </article>
           ))}
         </div>
@@ -483,14 +483,14 @@ function TrustPrinciplesSection() {
 
 function MetricsSection() {
   return (
-    <section id="preview" className="border-b border-[#EFE7D2] bg-[#FFFDF6]">
+    <section id="preview" className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-[#4F6F52]">샘플 데이터 기준</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-normal text-zinc-950 sm:text-4xl">
+          <p className="text-sm font-bold text-blue-700">샘플 데이터 기준</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
             오늘 처리할 주문과 재고를 먼저 봅니다.
           </h2>
-          <p className="mt-4 text-base leading-7 text-zinc-600">
+          <p className="mt-4 text-base leading-7 text-slate-600">
             숫자는 실제 이용자 데이터가 아니라 화면 이해를 돕기 위한 데모 값입니다.
           </p>
         </div>
@@ -509,8 +509,8 @@ function BeforeAfterSection() {
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-[#4F6F52]">운영 방식 비교</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-normal text-zinc-950 sm:text-4xl">
+          <p className="text-sm font-bold text-blue-700">운영 방식 비교</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
             엑셀과 메모장 사이에서 흩어지는 일을 한곳에 모읍니다.
           </h2>
         </div>
@@ -526,12 +526,12 @@ function BeforeAfterSection() {
               ))}
             </ul>
           </div>
-          <div className="rounded-md border border-[#DCE8D3] bg-[#F4F8F1] p-5">
-            <p className="text-sm font-bold text-[#355E3B]">SellerRoom</p>
+          <div className="rounded-md border border-blue-100 bg-blue-50 p-5">
+            <p className="text-sm font-bold text-blue-700">SellerRoom</p>
             <ul className="mt-5 space-y-3">
               {comparisonRows.map((row) => (
-                <li key={row.sellerRoom} className="flex gap-3 text-sm leading-6 text-[#294A2E]">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#4F6F52]" aria-hidden="true" />
+                <li key={row.sellerRoom} className="flex gap-3 text-sm leading-6 text-blue-950">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
                   {row.sellerRoom}
                 </li>
               ))}
@@ -545,7 +545,7 @@ function BeforeAfterSection() {
 
 function ProblemSection() {
   return (
-    <section className="border-y border-[#EFE7D2] bg-[#FFF8EA]" id="problem">
+    <section className="border-y border-slate-200 bg-slate-50" id="problem">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="혹시 이런 경험 있으시죠?"
@@ -555,10 +555,10 @@ function ProblemSection() {
         />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {problemPrompts.map((point) => (
-            <article key={point.question} className="rounded-md border border-[#E5D9BF] bg-white p-5">
-              <CheckCircle2 className="h-5 w-5 text-[#4F6F52]" aria-hidden="true" />
-              <h3 className="mt-4 text-base font-bold leading-6 text-zinc-950">{point.question}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600">{point.answer}</p>
+            <article key={point.question} className="rounded-md border border-slate-200 bg-white p-5">
+              <CheckCircle2 className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <h3 className="mt-4 text-base font-bold leading-6 text-slate-950">{point.question}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{point.answer}</p>
             </article>
           ))}
         </div>
@@ -589,7 +589,7 @@ function FeatureSection() {
 
 function WorkflowSection() {
   return (
-    <section className="bg-[#FFFDF6]" id="flow">
+    <section className="bg-slate-50" id="flow">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
         <div>
           <SectionHeading
@@ -599,13 +599,13 @@ function WorkflowSection() {
           />
           <ol className="mt-8 space-y-3">
             {workflowSteps.map((step, index) => (
-              <li key={step.title} className="flex min-h-16 gap-3 rounded-md border border-[#E7E1D3] bg-white px-4 py-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#EEF3EA] text-xs font-bold text-[#355E3B]">
+              <li key={step.title} className="flex min-h-16 gap-3 rounded-md border border-slate-200 bg-white px-4 py-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700">
                   {index + 1}
                 </span>
                 <span>
-                  <span className="block text-sm font-bold text-zinc-900">{step.title}</span>
-                  <span className="mt-1 block text-sm leading-6 text-zinc-600">{step.description}</span>
+                  <span className="block text-sm font-bold text-slate-900">{step.title}</span>
+                  <span className="mt-1 block text-sm leading-6 text-slate-600">{step.description}</span>
                 </span>
               </li>
             ))}
@@ -619,7 +619,7 @@ function WorkflowSection() {
 
 function TargetUsersSection() {
   return (
-    <section className="border-y border-[#EFE7D2] bg-white">
+    <section className="border-y border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="추천 대상"
@@ -630,11 +630,11 @@ function TargetUsersSection() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {targetUsers.map((target) => (
             <article key={target.title} className="rounded-md border border-slate-200 bg-slate-50 p-5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-[#4F6F52]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-blue-600">
                 <target.icon className="h-5 w-5" aria-hidden="true" />
               </div>
-              <h3 className="mt-5 text-base font-bold text-zinc-950">{target.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600">{target.description}</p>
+              <h3 className="mt-5 text-base font-bold text-slate-950">{target.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{target.description}</p>
             </article>
           ))}
         </div>
@@ -645,7 +645,7 @@ function TargetUsersSection() {
 
 function BetaFeedbackSection() {
   return (
-    <section className="bg-[#F4F8F1]" id="beta">
+    <section className="bg-slate-50" id="beta">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
         <div>
           <SectionHeading
@@ -656,9 +656,9 @@ function BetaFeedbackSection() {
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {feedbackNotes.map((note) => (
-            <article key={note} className="rounded-md border border-[#DCE8D3] bg-white p-5">
-              <ShieldCheck className="h-5 w-5 text-[#4F6F52]" aria-hidden="true" />
-              <p className="mt-4 text-sm leading-6 text-zinc-700">{note}</p>
+            <article key={note} className="rounded-md border border-slate-200 bg-white p-5">
+              <ShieldCheck className="h-5 w-5 text-blue-600" aria-hidden="true" />
+              <p className="mt-4 text-sm leading-6 text-slate-700">{note}</p>
             </article>
           ))}
         </div>
@@ -677,11 +677,11 @@ function FaqSection() {
           description="셀러룸이 지금 제공하는 범위와 아직 약속하지 않는 범위를 분명하게 나눕니다."
           centered
         />
-        <div className="mt-8 divide-y divide-[#E7E1D3] rounded-md border border-[#E7E1D3] bg-[#FFFDF6]">
+        <div className="mt-8 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
           {faqItems.map((item) => (
             <article key={item.question} className="p-5">
-              <h3 className="text-base font-bold text-zinc-950">{item.question}</h3>
-              <p className="mt-3 text-sm leading-6 text-zinc-600">{item.answer}</p>
+              <h3 className="text-base font-bold text-slate-950">{item.question}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{item.answer}</p>
             </article>
           ))}
         </div>
@@ -692,26 +692,26 @@ function FaqSection() {
 
 function FinalCta() {
   return (
-    <section className="bg-[#355E3B]" id="start">
+    <section className="bg-blue-600" id="start">
       <div className="mx-auto max-w-7xl px-4 py-14 text-white sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold text-[#DDE8D7]">시작하기</p>
+        <p className="text-sm font-semibold text-blue-100">시작하기</p>
         <h2 className="mt-3 max-w-3xl text-3xl font-bold tracking-normal sm:text-4xl">
           오늘 들어온 주문부터 SellerRoom으로 정리해보세요.
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-[#DDE8D7]">
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-blue-100">
           상품, 옵션별 재고, 주문 상태를 한곳에 모으고 다음 운영 기준을 더 빠르게 확인할 수 있습니다.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Link
             href={SIGN_UP_ROUTE}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-[#25472D] transition-colors hover:bg-[#F7F2E6]"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50"
           >
             첫 주문 정리 시작하기
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             href={SIGN_IN_ROUTE}
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-[#DDE8D7] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#294A2E]"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-blue-200 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
           >
             로그인
           </Link>
@@ -723,18 +723,18 @@ function FinalCta() {
 
 function PreviewNav({ active = false, icon: Icon, label }: { active?: boolean; icon: LucideIcon; label: string }) {
   return (
-    <div className={active ? "flex items-center gap-2 rounded-md bg-[#355E3B] px-3 py-2 text-white" : "flex items-center gap-2 rounded-md px-3 py-2"}>
+    <div className={active ? "flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-white" : "flex items-center gap-2 rounded-md px-3 py-2"}>
       <Icon className="h-4 w-4" aria-hidden="true" />
       <span>{label}</span>
     </div>
   );
 }
 
-function PreviewStat({ label, value, tone }: { label: string; value: string; tone: "neutral" | "amber" | "emerald" }) {
+function PreviewStat({ label, value, tone }: { label: string; value: string; tone: "neutral" | "blue" | "dark" }) {
   const toneClass = {
-    neutral: "bg-zinc-100 text-zinc-800",
-    amber: "bg-amber-50 text-amber-700",
-    emerald: "bg-emerald-50 text-emerald-700"
+    neutral: "bg-slate-100 text-slate-800",
+    blue: "bg-blue-50 text-blue-700",
+    dark: "bg-slate-950 text-white"
   }[tone];
 
   return (
@@ -747,10 +747,10 @@ function PreviewStat({ label, value, tone }: { label: string; value: string; ton
 
 function MetricPreview({ metric }: { metric: Metric }) {
   return (
-    <article className="rounded-md border border-[#EFE7D2] bg-white p-5">
-      <p className="text-sm font-semibold text-zinc-500">{metric.label}</p>
-      <p className="mt-2 text-3xl font-bold text-zinc-950">{metric.value}</p>
-      <p className="mt-2 text-xs font-semibold text-zinc-500">{metric.detail}</p>
+    <article className="rounded-md border border-slate-200 bg-white p-5">
+      <p className="text-sm font-semibold text-slate-500">{metric.label}</p>
+      <p className="mt-2 text-3xl font-bold text-slate-950">{metric.value}</p>
+      <p className="mt-2 text-xs font-semibold text-slate-500">{metric.detail}</p>
     </article>
   );
 }
@@ -768,9 +768,9 @@ function SectionHeading({
 }) {
   return (
     <div className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
-      <p className="text-sm font-bold text-[#4F6F52]">{eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-bold tracking-normal text-zinc-950 sm:text-4xl">{title}</h2>
-      <p className="mt-4 text-base leading-7 text-zinc-600">{description}</p>
+      <p className="text-sm font-bold text-blue-700">{eyebrow}</p>
+      <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">{title}</h2>
+      <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
     </div>
   );
 }
@@ -780,11 +780,11 @@ function FeatureCard({ feature }: { feature: Feature }) {
 
   return (
     <article className="rounded-md border border-slate-200 bg-slate-50 p-5">
-      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-[#4F6F52]">
+      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-blue-600">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
-      <h3 className="mt-5 text-base font-bold text-zinc-950">{feature.title}</h3>
-      <p className="mt-3 text-sm leading-6 text-zinc-600">{feature.description}</p>
+      <h3 className="mt-5 text-base font-bold text-slate-950">{feature.title}</h3>
+      <p className="mt-3 text-sm leading-6 text-slate-600">{feature.description}</p>
     </article>
   );
 }
@@ -794,15 +794,15 @@ function InventoryPreview() {
     <div className="rounded-md border border-slate-200 bg-white p-4">
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <p className="text-sm font-bold text-zinc-950">SKU 재고 상태</p>
-          <p className="mt-1 text-xs text-zinc-500">샘플 화면 기준</p>
+          <p className="text-sm font-bold text-slate-950">SKU 재고 상태</p>
+          <p className="mt-1 text-xs text-slate-500">샘플 화면 기준</p>
         </div>
-        <AlertTriangle className="h-5 w-5 text-amber-600" aria-hidden="true" />
+        <AlertTriangle className="h-5 w-5 text-blue-600" aria-hidden="true" />
       </div>
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-200 text-xs font-bold text-zinc-500">
+            <tr className="border-b border-slate-200 text-xs font-bold text-slate-500">
               <th className="px-3 py-3">SKU</th>
               <th className="px-3 py-3">현재 재고</th>
               <th className="px-3 py-3">주문접수</th>
@@ -813,10 +813,10 @@ function InventoryPreview() {
           <tbody>
             {inventoryRows.map((row) => (
               <tr key={row.sku} className="border-b border-slate-100 last:border-b-0">
-                <td className="px-3 py-3 font-bold text-zinc-800">{row.sku}</td>
-                <td className="px-3 py-3 text-zinc-600">{row.stock}</td>
-                <td className="px-3 py-3 text-zinc-600">{row.reserved}</td>
-                <td className="px-3 py-3 text-zinc-900">{row.available}</td>
+                <td className="px-3 py-3 font-bold text-slate-800">{row.sku}</td>
+                <td className="px-3 py-3 text-slate-600">{row.stock}</td>
+                <td className="px-3 py-3 text-slate-600">{row.reserved}</td>
+                <td className="px-3 py-3 text-slate-900">{row.available}</td>
                 <td className="px-3 py-3">
                   <StatusPill status={row.status} />
                 </td>
@@ -825,11 +825,11 @@ function InventoryPreview() {
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex items-start gap-3 rounded-md bg-amber-50 p-4 text-sm leading-6 text-amber-900">
+      <div className="mt-4 flex items-start gap-3 rounded-md bg-blue-50 p-4 text-sm leading-6 text-blue-950">
         <Truck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
         <p>주문접수는 예약 수량으로 표시하고, 배송대기 전환부터 실제 재고 차감 흐름을 확인합니다.</p>
       </div>
-      <div className="mt-4 flex items-start gap-3 rounded-md bg-[#F4F8F1] p-4 text-sm leading-6 text-[#294A2E]">
+      <div className="mt-4 flex items-start gap-3 rounded-md bg-slate-50 p-4 text-sm leading-6 text-slate-700">
         <History className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
         <p>재고 변경과 주문 상태 변경은 이력으로 남겨 운영자가 나중에 다시 확인할 수 있게 설계합니다.</p>
       </div>
@@ -839,9 +839,9 @@ function InventoryPreview() {
 
 function StatusPill({ status }: { status: StockStatus }) {
   const className = {
-    정상: "bg-emerald-50 text-emerald-700",
-    주의: "bg-amber-50 text-amber-700",
-    부족: "bg-red-50 text-red-700"
+    정상: "bg-slate-100 text-slate-700",
+    주의: "bg-blue-50 text-blue-700",
+    부족: "bg-slate-950 text-white"
   }[status];
 
   return <span className={`inline-flex rounded-md px-2 py-1 text-xs font-bold ${className}`}>{status}</span>;
