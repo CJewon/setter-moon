@@ -19,6 +19,9 @@ playwright-report/
 .env.*.local
 !.env.example
 
+# Codex local harness settings
+.codex/
+
 # Logs
 *.log
 npm-debug.log*
