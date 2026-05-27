@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-import { getCurrentStore, type Store } from "@/server/stores/service";
+import { getCurrentStore, isStoreSchemaMissingError, type Store } from "@/server/stores/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 
@@ -46,13 +46,25 @@ export async function getAppAccess(): Promise<AppAccess> {
     };
   }
 
-  const store = await getCurrentStore(supabase, user.id);
+  try {
+    const store = await getCurrentStore(supabase, user.id);
 
-  return {
-    isSupabaseConfigured: true,
-    user,
-    store
-  };
+    return {
+      isSupabaseConfigured: true,
+      user,
+      store
+    };
+  } catch (error) {
+    if (isStoreSchemaMissingError(error)) {
+      return {
+        isSupabaseConfigured: true,
+        user,
+        store: null
+      };
+    }
+
+    throw error;
+  }
 }
 
 export async function requireDashboardAccess() {

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { signInSchema, signUpSchema } from "@/features/auth/schemas/auth-form-schema";
-import { getCurrentStore } from "@/server/stores/service";
+import { getCurrentStore, isStoreSchemaMissingError } from "@/server/stores/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 import type { ActionState } from "@/shared/types/action-state";
@@ -32,9 +32,17 @@ async function getPostAuthRedirectPath(supabase: SupabaseClient<Database>) {
     return "/sign-in";
   }
 
-  const store = await getCurrentStore(supabase, user.id);
+  try {
+    const store = await getCurrentStore(supabase, user.id);
 
-  return store ? "/dashboard" : "/onboarding/store";
+    return store ? "/dashboard" : "/onboarding/store";
+  } catch (error) {
+    if (isStoreSchemaMissingError(error)) {
+      return "/onboarding/store";
+    }
+
+    throw error;
+  }
 }
 
 export async function signInAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
