@@ -4,7 +4,7 @@ import { getCurrentStore, type Store } from "@/server/stores/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 
-type AppAccess =
+export type AppAccess =
   | {
       isSupabaseConfigured: false;
       user: null;
@@ -15,6 +15,14 @@ type AppAccess =
       user: User | null;
       store: Store | null;
     };
+
+export function getAppAccessNextPath(access: AppAccess) {
+  if (!access.isSupabaseConfigured || !access.user) {
+    return "/sign-in";
+  }
+
+  return access.store ? "/dashboard" : "/onboarding/store";
+}
 
 export async function getAppAccess(): Promise<AppAccess> {
   if (!hasSupabasePublicEnv()) {
@@ -90,5 +98,5 @@ export async function redirectAuthenticatedUser() {
     return;
   }
 
-  redirect(access.store ? "/dashboard" : "/onboarding/store");
+  redirect(getAppAccessNextPath(access));
 }

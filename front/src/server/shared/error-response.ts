@@ -20,12 +20,19 @@ export function errorResponse(code: ApiErrorCode, message: string, status = 400)
   );
 }
 
-export function successResponse<T>(data: T, status = 200) {
+type SuccessResponseOptions = {
+  headers?: HeadersInit;
+};
+
+export function successResponse<T>(data: T, status = 200, options: SuccessResponseOptions = {}) {
   return NextResponse.json(
     {
       ok: true,
       data
     },
-    { status }
+    {
+      status,
+      headers: options.headers
+    }
   );
 }

@@ -21,4 +21,35 @@ describe("auth form schemas", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects sign-up passwords without a letter and number", () => {
+    expect(
+      signUpSchema.safeParse({
+        name: "셀러",
+        email: "seller@example.com",
+        password: "password",
+        passwordConfirm: "password"
+      }).success
+    ).toBe(false);
+
+    expect(
+      signUpSchema.safeParse({
+        name: "셀러",
+        email: "seller@example.com",
+        password: "12345678",
+        passwordConfirm: "12345678"
+      }).success
+    ).toBe(false);
+  });
+
+  it("accepts minimal sign-up profile data", () => {
+    expect(
+      signUpSchema.safeParse({
+        name: "셀러",
+        email: "seller@example.com",
+        password: "password123",
+        passwordConfirm: "password123"
+      }).success
+    ).toBe(true);
+  });
 });
