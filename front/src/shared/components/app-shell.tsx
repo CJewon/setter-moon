@@ -1,7 +1,11 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { BarChart3, Boxes, ClipboardList, LogOut, Package, Settings } from "lucide-react";
-import { signOutAction } from "@/features/auth/actions/auth-actions";
+import type { DashboardSummary } from "@/server/dashboard/summary";
+import { getUserDisplayName } from "@/server/profiles/service";
+import type { AppAccess } from "@/server/auth/session";
+import { formatNumber } from "@/shared/lib/format";
+import { UserMenu } from "@/shared/components/user-menu";
 
 type NavItem = {
   href: Route;
@@ -17,7 +21,22 @@ const navItems: NavItem[] = [
   { href: "/settings", label: "설정", icon: Settings }
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+const summaryItems = [
+  { label: "오늘 주문", key: "todayOrders", href: "/orders" },
+  { label: "주문접수", key: "receivedOrders", href: "/orders?status=received" },
+  { label: "배송대기", key: "readyToShipOrders", href: "/orders?status=ready_to_ship" },
+  { label: "배송중", key: "shippingOrders", href: "/orders?status=shipping" }
+] as const;
+
+type AppShellProps = {
+  access: Extract<AppAccess, { isSupabaseConfigured: true }>;
+  summary: DashboardSummary;
+  children: React.ReactNode;
+};
+
+export function AppShell({ access, summary, children }: AppShellProps) {
+  const displayName = access.user ? getUserDisplayName(access.user, access.profile) ?? "사용자" : "사용자";
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white px-4 py-5 lg:block">
@@ -41,7 +60,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <form action={signOutAction} className="absolute bottom-5 left-4 right-4">
+        <form action="/api/auth/sign-out" method="post" className="absolute bottom-5 left-4 right-4">
           <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
             <LogOut className="h-4 w-4" aria-hidden="true" />
             로그아웃
@@ -49,18 +68,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </form>
       </aside>
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur lg:hidden">
-          <div className="flex items-center justify-between">
-            <Link href="/dashboard" className="font-bold">
-              SellerRoom
-            </Link>
-            <nav className="flex gap-2 text-xs text-slate-600">
+        <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:px-2 lg:flex-row lg:items-center lg:justify-between lg:px-4">
+            <div className="flex items-center justify-between gap-3 lg:min-w-48">
+              <Link href="/dashboard" className="font-bold lg:hidden">
+                SellerRoom
+              </Link>
+              <div className="hidden lg:block">
+                <p className="text-sm font-bold text-slate-950">오늘 운영 현황</p>
+                <p className="mt-0.5 text-xs text-slate-500">주문과 배송 흐름 요약</p>
+              </div>
+              <div className="lg:hidden">
+                <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+              </div>
+            </div>
+            <nav className="flex gap-2 overflow-x-auto pb-1 text-xs text-slate-600 lg:hidden">
               {navItems.slice(0, 4).map((item) => (
-                <Link key={item.href} href={item.href} className="rounded px-2 py-1 hover:bg-slate-100">
+                <Link key={item.href} href={item.href} className="shrink-0 rounded px-2 py-1 hover:bg-slate-100">
                   {item.label}
                 </Link>
               ))}
             </nav>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-1 lg:justify-end">
+              {summaryItems.map((item) => (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  className="min-w-28 rounded-md border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50"
+                >
+                  <p className="text-xs font-medium text-slate-500">{item.label}</p>
+                  <p className="mt-1 text-base font-bold text-slate-950">{formatNumber(summary[item.key])}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="hidden lg:block">
+              <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+            </div>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</main>

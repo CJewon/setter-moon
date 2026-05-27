@@ -126,5 +126,5 @@ export async function signOutAction() {
   }
 
   revalidatePath("/", "layout");
-  redirect("/sign-in");
+  redirect("/");
 }

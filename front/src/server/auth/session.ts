@@ -24,6 +24,11 @@ export type AppAccess =
       store: Store | null;
     };
 
+export type DashboardAccess = Extract<AppAccess, { isSupabaseConfigured: true }> & {
+  user: User;
+  store: Store;
+};
+
 export function getAppAccessNextPath(access: AppAccess) {
   if (!access.isSupabaseConfigured || !access.user) {
     return "/sign-in";
@@ -80,7 +85,7 @@ export async function getAppAccess(): Promise<AppAccess> {
   }
 }
 
-export async function requireDashboardAccess() {
+export async function requireDashboardAccess(): Promise<DashboardAccess> {
   const access = await getAppAccess();
 
   if (!access.isSupabaseConfigured) {
@@ -95,7 +100,7 @@ export async function requireDashboardAccess() {
     redirect("/onboarding/store");
   }
 
-  return access;
+  return access as DashboardAccess;
 }
 
 export function getAppAccessPlanId(access: AppAccess) {

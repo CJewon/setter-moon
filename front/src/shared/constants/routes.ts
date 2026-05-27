@@ -5,5 +5,6 @@ export const routes = {
   inventory: "/inventory",
   orders: "/orders",
   newOrder: "/orders/new",
-  settings: "/settings"
+  settings: "/settings",
+  myPage: "/my-page"
 } as const;
