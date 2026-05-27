@@ -39,7 +39,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white px-4 py-5 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 bg-white px-4 py-5 lg:block">
         <Link href="/dashboard" className="block rounded-md px-3 py-2">
           <span className="text-lg font-bold">SellerRoom</span>
           <span className="mt-1 block text-xs text-slate-500">상품, 재고, 주문 관리</span>
@@ -68,16 +68,12 @@ export function AppShell({ access, summary, children }: AppShellProps) {
         </form>
       </aside>
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:px-2 lg:flex-row lg:items-center lg:justify-between lg:px-4">
-            <div className="flex items-center justify-between gap-3 lg:min-w-48">
+        <header className="sticky top-0 z-10 bg-white/95 px-4 py-3 backdrop-blur">
+          <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center justify-between gap-3">
               <Link href="/dashboard" className="font-bold lg:hidden">
                 SellerRoom
               </Link>
-              <div className="hidden lg:block">
-                <p className="text-sm font-bold text-slate-950">오늘 운영 현황</p>
-                <p className="mt-0.5 text-xs text-slate-500">주문과 배송 흐름 요약</p>
-              </div>
               <div className="lg:hidden">
                 <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
               </div>
@@ -89,7 +85,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                 </Link>
               ))}
             </nav>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-1 lg:justify-end">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-1">
               {summaryItems.map((item) => (
                 <Link
                   key={item.key}
@@ -101,7 +97,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                 </Link>
               ))}
             </div>
-            <div className="hidden lg:block">
+            <div className="hidden lg:ml-auto lg:block">
               <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
             </div>
           </div>
