@@ -1,4 +1,5 @@
-// Replace this placeholder with generated Supabase types after running:
+// Generated Supabase database types should be written here.
+// Command:
 // supabase gen types typescript --linked > backend/types/database.ts
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 

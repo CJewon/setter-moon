@@ -9,7 +9,7 @@ type StoreSupabaseClient = SupabaseClient<Database>;
 export async function getCurrentStore(supabase: StoreSupabaseClient, userId: string) {
   const { data, error } = await supabase
     .from("stores")
-    .select("id, owner_id, name, business_type, memo, created_at, updated_at")
+    .select("id, owner_id, name, business_type, plan_id, memo, created_at, updated_at")
     .eq("owner_id", userId)
     .maybeSingle();
 
@@ -35,7 +35,7 @@ export async function createStoreForUser(supabase: StoreSupabaseClient, userId: 
       business_type: values.businessType || null,
       memo: values.memo?.trim() || null
     })
-    .select("id, owner_id, name, business_type, memo, created_at, updated_at")
+    .select("id, owner_id, name, business_type, plan_id, memo, created_at, updated_at")
     .single();
 
   if (error?.code === "23505") {
