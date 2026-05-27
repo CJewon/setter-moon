@@ -34,10 +34,6 @@ async function getPostAuthRedirectPath(supabase: SupabaseClient<Database>) {
 }
 
 export async function signInAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
-  if (!hasSupabasePublicEnv()) {
-    return invalidState("지금은 로그인을 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");
-  }
-
   const parsed = signInSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password")
@@ -45,6 +41,10 @@ export async function signInAction(_prevState: ActionState, formData: FormData):
 
   if (!parsed.success) {
     return invalidState("입력한 정보를 다시 확인해 주세요.", parsed.error.flatten().fieldErrors);
+  }
+
+  if (!hasSupabasePublicEnv()) {
+    return invalidState("로그인 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const supabase = await createClient();
@@ -60,10 +60,6 @@ export async function signInAction(_prevState: ActionState, formData: FormData):
 }
 
 export async function signUpAction(_prevState: ActionState, formData: FormData): Promise<ActionState> {
-  if (!hasSupabasePublicEnv()) {
-    return invalidState("지금은 계정 만들기를 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.");
-  }
-
   const parsed = signUpSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -73,6 +69,10 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
 
   if (!parsed.success) {
     return invalidState("입력한 정보를 다시 확인해 주세요.", parsed.error.flatten().fieldErrors);
+  }
+
+  if (!hasSupabasePublicEnv()) {
+    return invalidState("계정 만들기 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const supabase = await createClient();
