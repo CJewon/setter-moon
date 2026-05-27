@@ -13,8 +13,26 @@ export class StoreSchemaMissingError extends Error {
   }
 }
 
+export class StoreMutationError extends Error {
+  code?: string;
+  details?: string;
+  hint?: string;
+
+  constructor(error: { code?: string; message?: string; details?: string; hint?: string }) {
+    super(error.message ?? "Store mutation failed.");
+    this.name = "StoreMutationError";
+    this.code = error.code;
+    this.details = error.details;
+    this.hint = error.hint;
+  }
+}
+
 export function isStoreSchemaMissingError(error: unknown) {
   return error instanceof StoreSchemaMissingError;
+}
+
+export function isStoreMutationError(error: unknown) {
+  return error instanceof StoreMutationError;
 }
 
 function isMissingStoreTableError(error: { code?: string; message?: string }) {
@@ -77,7 +95,7 @@ export async function createStoreForUser(supabase: StoreSupabaseClient, userId: 
   }
 
   if (error) {
-    throw new Error(error.message);
+    throw new StoreMutationError(error);
   }
 
   return data;
