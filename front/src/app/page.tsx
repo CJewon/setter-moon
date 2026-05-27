@@ -11,18 +11,17 @@ import {
   History,
   Layers3,
   Package,
-  ShieldCheck,
   ShoppingBag,
   Store,
   Truck
 } from "lucide-react";
 import {
   FREE_PLAN_BADGES,
-  FREE_PLAN_LIMIT_ITEMS,
   FREE_PLAN_SUMMARY,
   PAID_FULL_SUMMARY,
   PLAN_PRICE_LABEL,
-  PLAN_SHARED_FEATURES
+  PRICING_COMPARISON_ROWS,
+  PRICING_PLANS
 } from "@/shared/constants/plan-policy";
 
 const SIGN_IN_ROUTE: Route = "/sign-in";
@@ -71,6 +70,9 @@ type FaqItem = {
   question: string;
   answer: string;
 };
+
+type PricingPlan = (typeof PRICING_PLANS)[number];
+type PricingComparisonRow = (typeof PRICING_COMPARISON_ROWS)[number];
 
 type StockStatus = "정상" | "주의" | "부족";
 
@@ -229,12 +231,6 @@ const targetUsers: TargetUser[] = [
     description: "스마트스토어, 쿠팡, 인스타그램, 카카오톡 주문을 한 번에 보고 싶은 셀러에게 맞습니다.",
     icon: ShoppingBag
   }
-];
-
-const planNotes = [
-  "무료 플랜은 기능을 막지 않고 상품, SKU, 월 주문/배송 처리 규모만 제한합니다.",
-  `${PLAN_PRICE_LABEL} 유료 풀버전은 상품, SKU, 월 주문/배송 처리 한도 해제를 기준으로 준비합니다.`,
-  `${PLAN_SHARED_FEATURES[0]}과 ${PLAN_SHARED_FEATURES[1]}을 무료/유료에서 동일하게 제공합니다.`
 ];
 
 const faqItems: FaqItem[] = [
@@ -653,33 +649,92 @@ function TargetUsersSection() {
 
 function PlanSection() {
   return (
-    <section className="bg-slate-50" id="plan">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
-        <div>
-          <SectionHeading
-            eyebrow="무료/유료 플랜"
-            title="무료로 운영을 시작하고, 규모가 커지면 풀버전으로 전환합니다."
-            description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY}`}
-          />
+    <section className="border-y border-slate-200 bg-slate-50" id="plan">
+      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="요금제"
+          title={`무료로 운영을 시작하고, ${PLAN_PRICE_LABEL} 풀버전으로 한도를 해제합니다.`}
+          description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY} 스토어 기능과 배송 상태 관리는 두 플랜 모두 동일하게 제공합니다.`}
+          centered
+        />
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {PRICING_PLANS.map((plan) => (
+            <PricingCard key={plan.name} plan={plan} />
+          ))}
         </div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {FREE_PLAN_LIMIT_ITEMS.map((item) => (
-            <article key={item.label} className="rounded-md border border-slate-200 bg-white p-5">
-              <ShieldCheck className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <p className="mt-4 text-sm font-bold text-slate-950">{item.label}</p>
-              <p className="mt-2 text-3xl font-bold text-blue-600">{item.value}</p>
-              <p className="mt-3 text-sm leading-6 text-slate-700">{item.description}</p>
-            </article>
-          ))}
-          {planNotes.map((note) => (
-            <article key={note} className="rounded-md border border-blue-100 bg-blue-50 p-5">
-              <ShieldCheck className="h-5 w-5 text-blue-600" aria-hidden="true" />
-              <p className="mt-4 text-sm leading-6 text-blue-950">{note}</p>
-            </article>
-          ))}
+
+        <PricingComparisonTable rows={PRICING_COMPARISON_ROWS} />
+
+        <div className="mt-5 rounded-md border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
+          월 새 주문 한도는 새 주문 등록 기준입니다. 이미 생성된 주문의 배송대기, 배송중, 배송완료, 취소, 보류 처리는 한도 도달 후에도 계속 진행할 수 있습니다.
         </div>
       </div>
     </section>
+  );
+}
+
+function PricingCard({ plan }: { plan: PricingPlan }) {
+  const isPaid = plan.tone === "paid";
+  const articleClassName = isPaid
+    ? "relative rounded-md border border-blue-200 bg-blue-50 p-6 shadow-[0_18px_40px_rgba(37,99,235,0.10)]"
+    : "relative rounded-md border border-slate-200 bg-white p-6";
+  const badgeClassName = isPaid
+    ? "inline-flex rounded-md bg-blue-600 px-2.5 py-1 text-xs font-bold text-white"
+    : "inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700";
+  const ctaClassName = isPaid
+    ? "mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+    : "mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50";
+
+  return (
+    <article className={articleClassName}>
+      <span className={badgeClassName}>{plan.badge}</span>
+      <h3 className="mt-5 text-2xl font-bold text-slate-950">{plan.name}</h3>
+      <p className="mt-2 min-h-12 text-sm leading-6 text-slate-600">{plan.description}</p>
+      <div className="mt-5 border-y border-slate-200 py-5">
+        <p className="text-4xl font-bold text-slate-950">{plan.price}</p>
+        <p className="mt-2 text-xs font-semibold text-slate-500">{plan.priceCaption}</p>
+      </div>
+      <ul className="mt-5 space-y-3">
+        {plan.features.map((feature) => (
+          <li key={feature} className="flex gap-3 text-sm leading-6 text-slate-700">
+            <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+      <Link href={SIGN_UP_ROUTE} className={ctaClassName}>
+        {plan.ctaLabel}
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
+    </article>
+  );
+}
+
+function PricingComparisonTable({ rows }: { rows: readonly PricingComparisonRow[] }) {
+  return (
+    <div className="mt-6 overflow-x-auto rounded-md border border-slate-200 bg-white">
+      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+        <thead>
+          <tr className="border-b border-slate-200 bg-slate-100 text-xs font-bold text-slate-600">
+            <th className="px-4 py-3">비교 항목</th>
+            <th className="px-4 py-3">무료</th>
+            <th className="px-4 py-3">풀버전</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.label} className="border-b border-slate-100 last:border-b-0">
+              <th scope="row" className="px-4 py-3 font-bold text-slate-900">
+                {row.label}
+              </th>
+              <td className="px-4 py-3 text-slate-600">{row.free}</td>
+              <td className="px-4 py-3 font-semibold text-blue-700">{row.paid}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

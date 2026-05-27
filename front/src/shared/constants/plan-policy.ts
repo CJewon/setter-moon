@@ -1,4 +1,4 @@
-export const PLAN_PRICE_LABEL = "월 9,900원 후보";
+export const PLAN_PRICE_LABEL = "월 9,900원";
 
 export const FREE_PLAN_LIMIT_ITEMS = [
   {
@@ -18,10 +18,96 @@ export const FREE_PLAN_LIMIT_ITEMS = [
   }
 ] as const;
 
-export const PLAN_SHARED_FEATURES = ["스토어 기능 동일", "배송 상태 관리 동일", "계정 공유는 추후 기획"] as const;
+const [PRODUCT_LIMIT, SKU_LIMIT, MONTHLY_ORDER_LIMIT] = FREE_PLAN_LIMIT_ITEMS;
+
+export const SHARED_PLAN_FEATURE_ITEMS = [
+  {
+    label: "스토어 기능",
+    value: "제공"
+  },
+  {
+    label: "배송 상태 관리",
+    value: "제공"
+  },
+  {
+    label: "계정 공유",
+    value: "추후 기획"
+  }
+] as const;
 
 export const FREE_PLAN_BADGES = FREE_PLAN_LIMIT_ITEMS.map((item) => `${item.label} ${item.value}`);
 
 export const FREE_PLAN_SUMMARY = `${FREE_PLAN_LIMIT_ITEMS[0].label} ${FREE_PLAN_LIMIT_ITEMS[0].value}, ${FREE_PLAN_LIMIT_ITEMS[1].label} ${FREE_PLAN_LIMIT_ITEMS[1].value}, ${FREE_PLAN_LIMIT_ITEMS[2].label} ${FREE_PLAN_LIMIT_ITEMS[2].value}까지 제공합니다.`;
 
-export const PAID_FULL_SUMMARY = `유료 풀버전은 ${PLAN_PRICE_LABEL} 기준으로 한도 해제를 준비합니다.`;
+export const PAID_FULL_SUMMARY = `유료 풀버전은 ${PLAN_PRICE_LABEL} 기준으로 한도 해제를 제공합니다.`;
+
+export const PRICING_PLANS = [
+  {
+    name: "무료",
+    badge: "기본 운영",
+    description: "작게 시작하는 셀러를 위한 기본 운영 플랜",
+    price: "0원",
+    priceCaption: "카드 등록 없이 시작",
+    ctaLabel: "무료로 시작하기",
+    tone: "free",
+    features: [
+      `${PRODUCT_LIMIT.label} ${PRODUCT_LIMIT.value}까지 등록`,
+      `${SKU_LIMIT.label} ${SKU_LIMIT.value}까지 관리`,
+      `${MONTHLY_ORDER_LIMIT.label} ${MONTHLY_ORDER_LIMIT.value}까지 등록`,
+      "상품·재고·주문·배송 상태 관리 제공"
+    ]
+  },
+  {
+    name: "풀버전",
+    badge: "한도 없이 운영",
+    description: "상품과 주문이 늘어난 셀러를 위한 전체 기능",
+    price: PLAN_PRICE_LABEL,
+    priceCaption: "결제 연동 준비 중",
+    ctaLabel: "무료로 시작 후 전환하기",
+    tone: "paid",
+    features: [
+      "상품 등록 한도 해제",
+      "SKU/옵션 조합 한도 해제",
+      "월 새 주문 등록 한도 해제",
+      "무료 플랜의 모든 운영 기능 포함"
+    ]
+  }
+] as const;
+
+export const PRICING_COMPARISON_ROWS = [
+  {
+    label: `${PRODUCT_LIMIT.label} 수`,
+    free: PRODUCT_LIMIT.value,
+    paid: "한도 해제"
+  },
+  {
+    label: SKU_LIMIT.label,
+    free: SKU_LIMIT.value,
+    paid: "한도 해제"
+  },
+  {
+    label: "월 새 주문 등록",
+    free: MONTHLY_ORDER_LIMIT.value,
+    paid: "한도 해제"
+  },
+  {
+    label: SHARED_PLAN_FEATURE_ITEMS[0].label,
+    free: SHARED_PLAN_FEATURE_ITEMS[0].value,
+    paid: SHARED_PLAN_FEATURE_ITEMS[0].value
+  },
+  {
+    label: SHARED_PLAN_FEATURE_ITEMS[1].label,
+    free: SHARED_PLAN_FEATURE_ITEMS[1].value,
+    paid: SHARED_PLAN_FEATURE_ITEMS[1].value
+  },
+  {
+    label: SHARED_PLAN_FEATURE_ITEMS[2].label,
+    free: SHARED_PLAN_FEATURE_ITEMS[2].value,
+    paid: SHARED_PLAN_FEATURE_ITEMS[2].value
+  },
+  {
+    label: "추천 대상",
+    free: "초기 1인 셀러",
+    paid: "상품·주문이 늘어난 셀러"
+  }
+] as const;
