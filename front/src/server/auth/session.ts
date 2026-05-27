@@ -1,5 +1,11 @@
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import {
+  getEffectiveProfilePlanId,
+  getUserProfile,
+  isProfileSchemaMissingError,
+  type UserProfile
+} from "@/server/profiles/service";
 import { getCurrentStore, isStoreSchemaMissingError, type Store } from "@/server/stores/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
@@ -8,11 +14,13 @@ export type AppAccess =
   | {
       isSupabaseConfigured: false;
       user: null;
+      profile: null;
       store: null;
     }
   | {
       isSupabaseConfigured: true;
       user: User | null;
+      profile: UserProfile | null;
       store: Store | null;
     };
 
@@ -29,6 +37,7 @@ export async function getAppAccess(): Promise<AppAccess> {
     return {
       isSupabaseConfigured: false,
       user: null,
+      profile: null,
       store: null
     };
   }
@@ -42,23 +51,27 @@ export async function getAppAccess(): Promise<AppAccess> {
     return {
       isSupabaseConfigured: true,
       user: null,
+      profile: null,
       store: null
     };
   }
 
   try {
+    const profile = await getUserProfile(supabase, user.id);
     const store = await getCurrentStore(supabase, user.id);
 
     return {
       isSupabaseConfigured: true,
       user,
+      profile,
       store
     };
   } catch (error) {
-    if (isStoreSchemaMissingError(error)) {
+    if (isProfileSchemaMissingError(error) || isStoreSchemaMissingError(error)) {
       return {
         isSupabaseConfigured: true,
         user,
+        profile: null,
         store: null
       };
     }
@@ -83,6 +96,14 @@ export async function requireDashboardAccess() {
   }
 
   return access;
+}
+
+export function getAppAccessPlanId(access: AppAccess) {
+  if (!access.isSupabaseConfigured) {
+    return "free";
+  }
+
+  return getEffectiveProfilePlanId(access.profile) ?? access.store?.plan_id ?? "free";
 }
 
 export async function requireOnboardingAccess() {

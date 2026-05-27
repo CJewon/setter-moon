@@ -11,7 +11,7 @@ type UsageCountRow = {
   monthly_order_count: number;
 };
 
-export async function getStoreUsageSummary(supabase: UsageSupabaseClient, store: Store) {
+export async function getStoreUsageSummary(supabase: UsageSupabaseClient, store: Store, planId = store.plan_id) {
   const referenceDate = new Date();
 
   const { data, error } = await supabase
@@ -27,7 +27,7 @@ export async function getStoreUsageSummary(supabase: UsageSupabaseClient, store:
 
   const counts = normalizeUsageCountRow(data);
 
-  return createUsageSummary(store.plan_id, {
+  return createUsageSummary(planId, {
     products: counts.product_count,
     skus: counts.sku_count,
     monthlyOrders: counts.monthly_order_count

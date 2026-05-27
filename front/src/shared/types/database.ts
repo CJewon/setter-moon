@@ -5,6 +5,39 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          email: string | null;
+          display_name: string | null;
+          plan_id: "free" | "paid_full";
+          plan_status: "active" | "past_due" | "cancelled";
+          plan_current_period_end: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          email?: string | null;
+          display_name?: string | null;
+          plan_id?: "free" | "paid_full";
+          plan_status?: "active" | "past_due" | "cancelled";
+          plan_current_period_end?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          email?: string | null;
+          display_name?: string | null;
+          plan_id?: "free" | "paid_full";
+          plan_status?: "active" | "past_due" | "cancelled";
+          plan_current_period_end?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       stores: {
         Row: {
           id: string;
@@ -197,6 +230,7 @@ export type Database = {
       stock_movement_type: "inbound" | "sale_deduction" | "cancel_restore" | "manual_adjust";
       hold_reservation_policy: "keep" | "release";
       store_plan: "free" | "paid_full";
+      profile_plan_status: "active" | "past_due" | "cancelled";
     };
     CompositeTypes: Record<string, never>;
   };

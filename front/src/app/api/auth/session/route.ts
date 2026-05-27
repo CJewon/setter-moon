@@ -1,5 +1,5 @@
-import type { User } from "@supabase/supabase-js";
-import { getAppAccess, getAppAccessNextPath } from "@/server/auth/session";
+import { getAppAccess, getAppAccessNextPath, getAppAccessPlanId } from "@/server/auth/session";
+import { getUserDisplayName } from "@/server/profiles/service";
 import { successResponse } from "@/server/shared/error-response";
 
 type SafeUserProfile = {
@@ -8,21 +8,44 @@ type SafeUserProfile = {
   name: string | null;
 };
 
-function getStringMetadata(user: User, key: string) {
-  const value = user.user_metadata?.[key];
+type SafePlanProfile = {
+  id: "free" | "paid_full";
+  status: "active" | "past_due" | "cancelled" | null;
+  currentPeriodEnd: string | null;
+  isPaid: boolean;
+};
 
-  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
-}
-
-function toSafeUserProfile(user: User | null): SafeUserProfile | null {
-  if (!user) {
+function toSafeUserProfile(access: Awaited<ReturnType<typeof getAppAccess>>): SafeUserProfile | null {
+  if (!access.isSupabaseConfigured || !access.user) {
     return null;
   }
 
+  const user = access.user;
+
   return {
     id: user.id,
-    email: user.email ?? null,
-    name: getStringMetadata(user, "name")
+    email: user.email ?? access.profile?.email ?? null,
+    name: getUserDisplayName(user, access.profile)
+  };
+}
+
+function toSafePlanProfile(access: Awaited<ReturnType<typeof getAppAccess>>): SafePlanProfile {
+  const planId = getAppAccessPlanId(access);
+
+  if (!access.isSupabaseConfigured) {
+    return {
+      id: planId,
+      status: null,
+      currentPeriodEnd: null,
+      isPaid: false
+    };
+  }
+
+  return {
+    id: planId,
+    status: access.profile?.plan_status ?? null,
+    currentPeriodEnd: access.profile?.plan_current_period_end ?? null,
+    isPaid: planId === "paid_full"
   };
 }
 
@@ -35,7 +58,8 @@ export async function GET() {
       isAuthenticated: Boolean(access.user),
       hasStore: Boolean(access.store),
       nextPath: getAppAccessNextPath(access),
-      user: toSafeUserProfile(access.user)
+      user: toSafeUserProfile(access),
+      plan: toSafePlanProfile(access)
     },
     200,
     {
