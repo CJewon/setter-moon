@@ -81,8 +81,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                     <td className="font-semibold text-slate-950">{variant.sku_name}</td>
                     <td>{formatNumber(variant.price)}원</td>
                     <td>{formatNumber(variant.current_stock)}개</td>
-                    <td>{formatNumber(0)}개</td>
-                    <td>{formatNumber(variant.current_stock)}개</td>
+                    <td>{formatNumber(variant.reservedQuantity)}개</td>
+                    <td>{formatNumber(variant.availableStock)}개</td>
                     <td>{formatNumber(variant.safety_stock)}개</td>
                   </tr>
                 ))}

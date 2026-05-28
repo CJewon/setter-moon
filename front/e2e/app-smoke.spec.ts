@@ -11,7 +11,6 @@ const protectedScreens = [
   { path: "/inventory/movements", heading: "재고 이력", visibleText: "재고 변경 이력 테이블" },
   { path: "/orders", heading: "주문", visibleText: "주문 등록" },
   { path: "/orders/new", heading: "주문 등록", visibleText: "고객명" },
-  { path: "/orders/e2e-order", heading: "주문 상세", visibleText: "상태 변경" },
   { path: "/categories", heading: "카테고리", visibleText: "카테고리 목록" },
   { path: "/settings", heading: "설정", visibleText: "스토어 설정 폼" },
   { path: "/my-page", heading: "마이페이지", visibleText: "현재 접속 계정" }
