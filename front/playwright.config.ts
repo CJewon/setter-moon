@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const e2ePort = process.env.E2E_PORT ?? "3100";
-const baseURL = process.env.E2E_BASE_URL ?? `http://127.0.0.1:${e2ePort}`;
+const e2ePort = process.env.E2E_PORT ?? "3001";
+const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${e2ePort}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -14,12 +14,16 @@ export default defineConfig({
   },
   projects: [
     {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] }
+      name: "chrome",
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
+        headless: false
+      }
     }
   ],
   webServer: {
-    command: `npm run start -- --hostname 127.0.0.1 --port ${e2ePort}`,
+    command: `npm run start -- --hostname localhost --port ${e2ePort}`,
     url: baseURL,
     reuseExistingServer: !process.env.CI
   }
