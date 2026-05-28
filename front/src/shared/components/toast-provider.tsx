@@ -34,7 +34,8 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 let toastId = 0;
-const DEFAULT_TOAST_DURATION_MS = 2000;
+const DEFAULT_TOAST_DURATION_MS = 3000;
+const TOAST_EXIT_DURATION_MS = 220;
 
 const toneStyle: Record<
   ToastTone,
@@ -66,19 +67,33 @@ const toneStyle: Record<
 };
 
 function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: number) => void }) {
+  const [isLeaving, setIsLeaving] = useState(false);
   const style = toneStyle[toast.tone];
   const Icon = style.icon;
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => onDismiss(toast.id), toast.durationMs ?? DEFAULT_TOAST_DURATION_MS);
+  const startDismiss = useCallback(() => {
+    setIsLeaving((current) => {
+      if (current) {
+        return current;
+      }
 
+      window.setTimeout(() => onDismiss(toast.id), TOAST_EXIT_DURATION_MS);
+      return true;
+    });
+  }, [onDismiss, toast.id]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(startDismiss, toast.durationMs ?? DEFAULT_TOAST_DURATION_MS);
     return () => window.clearTimeout(timer);
-  }, [onDismiss, toast.durationMs, toast.id]);
+  }, [startDismiss, toast.durationMs]);
 
   return (
     <div
       role={toast.tone === "error" ? "alert" : "status"}
-      className="grid w-full grid-cols-[4px_auto_1fr_auto] overflow-hidden rounded-lg border border-slate-200 bg-white/95 text-sm text-slate-950 shadow-xl shadow-slate-900/15 backdrop-blur"
+      className={cn(
+        "toast-enter grid w-full grid-cols-[4px_auto_1fr_auto] overflow-hidden rounded-lg border border-slate-200 bg-white/95 text-sm text-slate-950 shadow-xl shadow-slate-900/15 backdrop-blur",
+        isLeaving && "toast-exit"
+      )}
     >
       <div className={cn("h-full w-1", style.accentClassName)} />
       <div
@@ -96,7 +111,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: num
       <button
         type="button"
         className="mr-2 mt-2 inline-flex size-7 items-center justify-center rounded text-slate-400 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
-        onClick={() => onDismiss(toast.id)}
+        onClick={startDismiss}
         aria-label="알림 닫기"
       >
         <X aria-hidden size={16} />
