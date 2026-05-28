@@ -9,8 +9,8 @@ import { normalizePaginationParams } from "@/server/shared/pagination";
 import { formatNumber } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
-const lowStockPageSizeOptions = [20, 50, 100];
-const defaultLowStockPageSize = 20;
+const lowStockPageSizeOptions = [10, 20, 50, 100];
+const defaultLowStockPageSize = 10;
 
 type LowStockPageProps = {
   searchParams: Promise<{
@@ -36,8 +36,8 @@ export default async function LowStockPage({ searchParams }: LowStockPageProps) 
         title="재고 부족"
         description="안전재고 이하로 떨어진 옵션 조합을 확인합니다."
       />
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-        <table className="app-table">
+      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+        <table className="app-table responsive-card-table">
           <thead>
             <tr>
               <th>상품명</th>
@@ -58,16 +58,16 @@ export default async function LowStockPage({ searchParams }: LowStockPageProps) 
             ) : (
               lowStockPage.items.map((item) => (
                 <tr key={item.variantId}>
-                  <td className="font-semibold text-slate-950">
+                  <td className="font-semibold text-slate-950" data-label="상품명">
                     <Link href={routes.productDetail(item.productId)} className="hover:text-blue-700">
                       {item.productName}
                     </Link>
                   </td>
-                  <td>{item.variantName}</td>
-                  <td>{formatNumber(item.availableStock)}개</td>
-                  <td>{formatNumber(item.safetyStock)}개</td>
-                  <td>{formatNumber(item.reservedQuantity)}개</td>
-                  <td>
+                  <td data-label="옵션 조합">{item.variantName}</td>
+                  <td data-label="가용 재고">{formatNumber(item.availableStock)}개</td>
+                  <td data-label="안전 재고">{formatNumber(item.safetyStock)}개</td>
+                  <td data-label="예약 수량">{formatNumber(item.reservedQuantity)}개</td>
+                  <td data-label="상태">
                     <StatusBadge tone={item.status === "out" ? "danger" : "warning"}>{item.status === "out" ? "품절" : "부족"}</StatusBadge>
                   </td>
                 </tr>

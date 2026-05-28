@@ -41,9 +41,9 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         title="주문 상세"
         description={`주문번호: ${order.order_no}`}
       />
-      <section className="grid gap-4 xl:grid-cols-[1fr_360px]">
-        <div className="grid gap-4">
-          <div className="rounded-md border border-slate-200 bg-white p-5">
+      <section className="grid gap-3 xl:grid-cols-[1fr_340px]">
+        <div className="grid gap-3">
+          <div className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 className="text-base font-semibold text-slate-950">주문 정보</h2>
@@ -68,10 +68,10 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             {order.memo ? <p className="mt-4 rounded-md bg-slate-50 p-3 text-sm text-slate-600">{order.memo}</p> : null}
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-white p-5">
+          <div className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
             <h2 className="text-base font-semibold text-slate-950">주문 상품</h2>
-            <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
-              <table className="app-table">
+            <div className="mt-4 overflow-x-auto rounded-md border border-slate-200 sm:mt-5">
+              <table className="app-table responsive-card-table">
                 <thead>
                   <tr>
                     <th>상품</th>
@@ -84,11 +84,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 <tbody>
                   {order.items.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.product_name_snapshot}</td>
-                      <td>{item.variant_name_snapshot}</td>
-                      <td>{formatNumber(item.quantity)}개</td>
-                      <td>{formatWon(item.unit_price)}</td>
-                      <td>{formatWon(item.total_price)}</td>
+                      <td data-label="상품">{item.product_name_snapshot}</td>
+                      <td data-label="옵션 조합">{item.variant_name_snapshot}</td>
+                      <td data-label="수량">{formatNumber(item.quantity)}개</td>
+                      <td data-label="판매가">{formatWon(item.unit_price)}</td>
+                      <td data-label="금액">{formatWon(item.total_price)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -96,7 +96,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             </div>
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-white p-5">
+          <div className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
             <h2 className="text-base font-semibold text-slate-950">상태 변경 이력</h2>
             <div className="mt-4 grid gap-3">
               {order.statusLogs.length === 0 ? (
@@ -116,7 +116,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </div>
         </div>
 
-        <aside className="h-fit rounded-md border border-slate-200 bg-white p-5">
+        <aside className="h-fit rounded-md border border-slate-200 bg-white p-4 sm:p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-950">상태 변경</h2>
             <OrderStatusBadge status={order.status} />

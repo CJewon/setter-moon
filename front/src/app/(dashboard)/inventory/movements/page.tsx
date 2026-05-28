@@ -8,8 +8,8 @@ import { normalizePaginationParams } from "@/server/shared/pagination";
 import { formatNumber } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
-const movementPageSizeOptions = [20, 50, 100];
-const defaultMovementPageSize = 20;
+const movementPageSizeOptions = [10, 20, 50, 100];
+const defaultMovementPageSize = 10;
 
 const movementTypeLabel = {
   cancel_restore: "취소 복구",
@@ -42,8 +42,8 @@ export default async function StockMovementsPage({ searchParams }: StockMovement
         title="재고 이력"
         description="입고, 판매 차감, 취소 복구, 수동 조정 이력을 확인합니다."
       />
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-        <table className="app-table">
+      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+        <table className="app-table responsive-card-table">
           <thead>
             <tr>
               <th>일시</th>
@@ -65,19 +65,19 @@ export default async function StockMovementsPage({ searchParams }: StockMovement
             ) : (
               movementPage.items.map((movement) => (
                 <tr key={movement.id}>
-                  <td>{new Date(movement.createdAt).toLocaleString("ko-KR")}</td>
-                  <td className="font-semibold text-slate-950">
+                  <td data-label="일시">{new Date(movement.createdAt).toLocaleString("ko-KR")}</td>
+                  <td className="font-semibold text-slate-950" data-label="상품명">
                     <Link href={routes.productDetail(movement.productId)} className="hover:text-blue-700">
                       {movement.productName}
                     </Link>
                   </td>
-                  <td>{movement.variantName}</td>
-                  <td>{movementTypeLabel[movement.type]}</td>
-                  <td>{formatNumber(movement.quantity)}개</td>
-                  <td>
+                  <td data-label="옵션 조합">{movement.variantName}</td>
+                  <td data-label="유형">{movementTypeLabel[movement.type]}</td>
+                  <td data-label="수량">{formatNumber(movement.quantity)}개</td>
+                  <td data-label="변경 전/후">
                     {formatNumber(movement.beforeStock)}개 → {formatNumber(movement.afterStock)}개
                   </td>
-                  <td>{movement.memo ?? "-"}</td>
+                  <td data-label="메모">{movement.memo ?? "-"}</td>
                 </tr>
               ))
             )}

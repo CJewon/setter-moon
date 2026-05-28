@@ -40,7 +40,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 bg-white px-4 py-5 lg:block">
+      <aside className="fixed inset-y-0 left-0 hidden w-60 bg-white px-3 py-5 xl:w-64 xl:px-4 lg:block">
         <Link href="/dashboard" className="block rounded-md px-3 py-2">
           <span className="text-lg font-bold">SellerRoom</span>
           <span className="mt-1 block text-xs text-slate-500">상품, 재고, 주문 관리</span>
@@ -65,9 +65,9 @@ export function AppShell({ access, summary, children }: AppShellProps) {
           <SignOutButton />
         </div>
       </aside>
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-10 bg-white/95 px-4 py-3 backdrop-blur">
-          <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="lg:pl-60 xl:pl-64">
+        <header className="sticky top-0 z-10 bg-white/95 px-3 py-2.5 backdrop-blur sm:px-4 lg:px-5 xl:px-6 2xl:px-8">
+          <div className="flex w-full flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center justify-between gap-3">
               <Link href="/dashboard" className="font-bold lg:hidden">
                 SellerRoom
@@ -83,12 +83,12 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                 </Link>
               ))}
             </nav>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-1">
+            <div className="flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-4 sm:overflow-visible sm:pb-0 lg:flex lg:flex-1">
               {summaryItems.map((item) => (
                 <Link
                   key={item.key}
                   href={item.href}
-                  className="min-w-28 rounded-md border border-slate-200 bg-white px-3 py-2 hover:bg-slate-50"
+                  className="min-w-[116px] rounded-md border border-slate-200 bg-white px-2.5 py-2 hover:bg-slate-50 sm:min-w-0 lg:min-w-[108px] xl:min-w-[120px]"
                 >
                   <p className="text-xs font-medium text-slate-500">{item.label}</p>
                   <p className="mt-1 text-base font-bold text-slate-950">{formatNumber(summary[item.key])}</p>
@@ -100,7 +100,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">{children}</main>
+        <main className="mx-auto w-full max-w-[1760px] px-3 py-4 sm:px-4 md:px-5 lg:px-5 xl:px-6 2xl:px-8">{children}</main>
       </div>
     </div>
   );

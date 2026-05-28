@@ -54,7 +54,7 @@ export function FilterDropdown({ ariaLabel, defaultValue = "", getOptionHref, op
       <button
         type="button"
         className={cn(
-          "flex min-h-11 w-full items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-3 text-left text-sm font-medium text-slate-800 shadow-sm transition",
+          "flex min-h-10 w-full items-center justify-between gap-3 rounded-md border border-slate-200 bg-white px-3 text-left text-sm font-medium text-slate-800 shadow-sm transition",
           "hover:border-blue-300 hover:bg-blue-50/30",
           "focus:outline-none focus:ring-2 focus:ring-blue-200",
           isOpen && "border-blue-400 ring-2 ring-blue-100"
@@ -78,7 +78,7 @@ export function FilterDropdown({ ariaLabel, defaultValue = "", getOptionHref, op
           id={dropdownId}
           role="listbox"
           aria-label={ariaLabel}
-          className="absolute left-0 right-0 top-[calc(100%+8px)] z-30 max-h-64 overflow-auto rounded-lg border border-slate-200 bg-white p-1 shadow-xl shadow-slate-900/15"
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-30 max-h-64 overflow-auto rounded-md border border-slate-200 bg-white p-1 shadow-xl shadow-slate-900/15"
         >
           {options.map((option) => {
             const selected = option.value === currentValue;

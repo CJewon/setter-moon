@@ -75,22 +75,95 @@ select:not([multiple]):disabled {
 .app-table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 .app-table th,
 .app-table td {
   border-bottom: 1px solid var(--border);
-  padding: 12px 14px;
+  padding: 10px 12px;
   text-align: left;
   vertical-align: middle;
+  line-height: 1.35;
 }
 
 .app-table th {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.app-table td {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .app-table {
+    min-width: 720px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-table th,
+  .app-table td {
+    padding: 9px 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-table.responsive-card-table {
+    display: block;
+    min-width: 0;
+  }
+
+  .app-table.responsive-card-table thead {
+    display: none;
+  }
+
+  .app-table.responsive-card-table tbody {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .app-table.responsive-card-table tr {
+    display: grid;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 12px;
+  }
+
+  .app-table.responsive-card-table td {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 8px;
+    border-bottom: 0;
+    padding: 0;
+    font-size: 13px;
+    word-break: keep-all;
+  }
+
+  .app-table.responsive-card-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .app-table.responsive-card-table td[colspan] {
+    display: block;
+    padding: 16px 8px;
+    text-align: center;
+  }
+
+  .app-table.responsive-card-table td[colspan]::before {
+    display: none;
+  }
 }
 
 @keyframes toast-slide-in {

@@ -12,8 +12,8 @@ import { normalizePaginationParams } from "@/server/shared/pagination";
 import { formatNumber } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
-const productPageSizeOptions = [20, 50];
-const defaultProductPageSize = 20;
+const productPageSizeOptions = [10, 20, 50];
+const defaultProductPageSize = 10;
 const productStatuses = ["active", "sold_out", "hidden"] as const;
 
 type ProductsPageProps = {
@@ -71,8 +71,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         />
       ) : (
         <>
-          <section className="overflow-hidden rounded-md border border-slate-200 bg-white">
-            <table className="app-table">
+          <section className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+            <table className="app-table responsive-card-table">
               <thead>
                 <tr>
                   <th>상품명</th>
@@ -85,19 +85,19 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               <tbody>
                 {productPage.items.map((product) => (
                   <tr key={product.id}>
-                    <td>
+                    <td data-label="상품명">
                       <Link href={`/products/${product.id}`} className="font-semibold text-slate-950 hover:text-blue-700">
                         {product.name}
                       </Link>
                     </td>
-                    <td>
+                    <td data-label="판매 상태">
                       <StatusBadge tone={product.status === "active" ? "success" : product.status === "sold_out" ? "warning" : "neutral"}>
                         {productStatusLabel[product.status]}
                       </StatusBadge>
                     </td>
-                    <td>{formatNumber(product.variantCount)}개</td>
-                    <td>{formatNumber(product.totalCurrentStock)}개</td>
-                    <td>{formatNumber(product.base_price)}원</td>
+                    <td data-label="옵션 조합">{formatNumber(product.variantCount)}개</td>
+                    <td data-label="현재 재고">{formatNumber(product.totalCurrentStock)}개</td>
+                    <td data-label="기본 판매가">{formatNumber(product.base_price)}원</td>
                   </tr>
                 ))}
               </tbody>

@@ -10,8 +10,8 @@ import { requireDashboardAccess } from "@/server/auth/session";
 import { formatNumber } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
-const inventoryPageSizeOptions = [20, 50, 100];
-const defaultInventoryPageSize = 20;
+const inventoryPageSizeOptions = [10, 20, 50, 100];
+const defaultInventoryPageSize = 10;
 const inventoryStatuses = ["normal", "low", "out"] as const;
 const inventoryStatusLabel: Record<InventoryStatus, string> = {
   low: "부족",
@@ -55,23 +55,23 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
   return (
     <>
       <PageHeader title="재고" description="전체 옵션 조합의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:mb-4 sm:flex-wrap sm:overflow-visible sm:pb-0">
         <Link
           href={routes.inventoryLowStock}
-          className="inline-flex min-h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
           재고 부족 보기
         </Link>
         <Link
           href={routes.inventoryMovements}
-          className="inline-flex min-h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+          className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
           재고 이력 보기
         </Link>
       </div>
       <InventoryFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-        <table className="app-table">
+      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+        <table className="app-table responsive-card-table">
           <thead>
             <tr>
               <th>상품명</th>
@@ -92,16 +92,16 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
             ) : (
               inventoryPage.items.map((item) => (
                 <tr key={item.variantId}>
-                  <td className="font-semibold text-slate-950">
+                  <td className="font-semibold text-slate-950" data-label="상품명">
                     <Link href={routes.productDetail(item.productId)} className="hover:text-blue-700">
                       {item.productName}
                     </Link>
                   </td>
-                  <td>{item.variantName}</td>
-                  <td>{formatNumber(item.currentStock)}개</td>
-                  <td>{formatNumber(item.reservedQuantity)}개</td>
-                  <td>{formatNumber(item.availableStock)}개</td>
-                  <td>
+                  <td data-label="옵션 조합">{item.variantName}</td>
+                  <td data-label="현재 재고">{formatNumber(item.currentStock)}개</td>
+                  <td data-label="예약 수량">{formatNumber(item.reservedQuantity)}개</td>
+                  <td data-label="가용 재고">{formatNumber(item.availableStock)}개</td>
+                  <td data-label="상태">
                     <StatusBadge tone={getInventoryStatusTone(item.status)}>{inventoryStatusLabel[item.status]}</StatusBadge>
                   </td>
                 </tr>

@@ -37,7 +37,7 @@ export function ProductListFilters({ keyword, pageSize, selectedStatus = "" }: P
   }
 
   return (
-    <div className="mb-4 grid gap-3 rounded-lg border border-slate-200 bg-white/80 p-3 shadow-sm md:grid-cols-[1fr_190px]">
+    <div className="mb-3 grid gap-2.5 rounded-md border border-slate-200 bg-white/80 p-2.5 shadow-sm sm:mb-4 sm:p-3 md:grid-cols-[1fr_190px]">
       <form action={routes.products} className="grid gap-2 sm:grid-cols-[1fr_auto]">
         <input type="hidden" name="page" value="1" />
         <input type="hidden" name="pageSize" value={pageSize} />
@@ -47,14 +47,14 @@ export function ProductListFilters({ keyword, pageSize, selectedStatus = "" }: P
           <Search aria-hidden size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             name="keyword"
-            className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 pl-10 text-sm outline-none transition placeholder:text-slate-400 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            className="min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 pl-10 text-sm outline-none transition placeholder:text-slate-400 hover:border-blue-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             defaultValue={keyword}
             placeholder="상품명 검색"
           />
         </label>
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
           검색
         </button>

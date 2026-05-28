@@ -49,15 +49,15 @@ export function PaginationControls({
 
   return (
     <nav
-      className="mt-4 flex justify-center text-sm text-slate-600"
+      className="mt-3 flex justify-center text-sm text-slate-600 sm:mt-4"
       aria-label="목록 페이지 이동"
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
         <Link
           href={getHref(Math.max(page - 1, 1))}
           aria-disabled={page <= 1}
           className={cn(
-            "inline-flex min-h-9 items-center gap-1 rounded-md border px-3 font-semibold transition",
+            "inline-flex min-h-8 items-center gap-1 rounded-md border px-2.5 text-xs font-semibold transition sm:min-h-9 sm:px-3 sm:text-sm",
             page <= 1
               ? "pointer-events-none border-slate-200 bg-slate-50 text-slate-400"
               : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50"
@@ -83,7 +83,7 @@ export function PaginationControls({
           </Link>
         ))}
 
-        <span className="inline-flex min-h-9 items-center px-1 font-semibold text-slate-500 sm:hidden">
+        <span className="inline-flex min-h-8 items-center px-1 text-xs font-semibold text-slate-500 sm:hidden">
           {page} / {totalPages}
         </span>
 
@@ -91,7 +91,7 @@ export function PaginationControls({
           href={getHref(Math.min(page + 1, totalPages))}
           aria-disabled={page >= totalPages}
           className={cn(
-            "inline-flex min-h-9 items-center gap-1 rounded-md border px-3 font-semibold transition",
+            "inline-flex min-h-8 items-center gap-1 rounded-md border px-2.5 text-xs font-semibold transition sm:min-h-9 sm:px-3 sm:text-sm",
             page >= totalPages
               ? "pointer-events-none border-slate-200 bg-slate-50 text-slate-400"
               : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50"

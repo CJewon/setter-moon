@@ -22,8 +22,8 @@ const orderTabs: Array<{ label: string; status?: OrderStatus }> = [
   { label: orderStatusLabel.hold, status: "hold" }
 ];
 
-const orderPageSizeOptions = [20, 50, 100];
-const defaultOrderPageSize = 20;
+const orderPageSizeOptions = [10, 20, 50, 100];
+const defaultOrderPageSize = 10;
 
 type OrdersPageProps = {
   searchParams: Promise<{
@@ -62,7 +62,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         description="수동 등록한 주문과 배송 상태를 관리합니다."
         action={{ href: routes.newOrder, label: "주문 등록" }}
       />
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:mb-4 sm:flex-wrap sm:overflow-visible sm:pb-0">
         {orderTabs.map((tab) => {
           const active = tab.status === selectedStatus || (!tab.status && !selectedStatus);
 
@@ -72,8 +72,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
               href={getOrderTabHref(tab.status)}
               className={
                 active
-                  ? "min-h-9 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white"
-                  : "min-h-9 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  ? "min-h-9 shrink-0 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white"
+                  : "min-h-9 shrink-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               }
             >
               {tab.label}
@@ -81,8 +81,8 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           );
         })}
       </div>
-      <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-        <table className="app-table">
+      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+        <table className="app-table responsive-card-table">
           <thead>
             <tr>
               <th>주문번호</th>
@@ -103,16 +103,16 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
             ) : (
               orderPage.items.map((order) => (
                 <tr key={order.id}>
-                  <td>
+                  <td data-label="주문번호">
                     <Link href={`/orders/${order.id}`} className="font-semibold text-slate-950 hover:text-blue-700">
                       {order.order_no}
                     </Link>
                   </td>
-                  <td>{order.customer_name}</td>
-                  <td>{order.itemSummary}</td>
-                  <td>{formatNumber(order.totalQuantity)}개</td>
-                  <td>{formatWon(order.total_amount)}</td>
-                  <td>
+                  <td data-label="고객명">{order.customer_name}</td>
+                  <td data-label="상품/옵션">{order.itemSummary}</td>
+                  <td data-label="수량">{formatNumber(order.totalQuantity)}개</td>
+                  <td data-label="주문금액">{formatWon(order.total_amount)}</td>
+                  <td data-label="상태">
                     <OrderStatusBadge status={order.status} />
                   </td>
                 </tr>
