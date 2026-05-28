@@ -1,26 +1,9 @@
-import { expect, test, type Page } from "@playwright/test";
-import { getSharedTestAccount } from "../test-utils/test-account";
-
-const sharedTestAccount = getSharedTestAccount();
-
-async function signIn(page: Page) {
-  await page.goto("/sign-in");
-  await page.getByLabel("이메일").fill(sharedTestAccount.email);
-  await page.getByLabel("비밀번호").fill(sharedTestAccount.password);
-  await page.getByRole("button", { name: "로그인" }).click();
-  await page.waitForURL(/\/(dashboard|onboarding\/store)/);
-
-  if (page.url().includes("/onboarding/store")) {
-    await page.getByLabel("스토어명").fill("셀러룸 E2E 스토어");
-    await page.getByLabel("주요 판매 채널").selectOption("스마트스토어");
-    await page.getByRole("button", { name: "스토어 만들기" }).click();
-    await page.waitForURL(/\/dashboard/);
-  }
-}
+import { expect, test } from "@playwright/test";
+import { signInAndEnsureStore } from "./helpers/auth";
 
 test.describe("마이페이지", () => {
   test("정보를 저장하고 새로고침 후 유지한다", async ({ page }) => {
-    await signIn(page);
+    await signInAndEnsureStore(page);
     await page.goto("/my-page");
 
     await expect(page.getByRole("heading", { name: "마이페이지" })).toBeVisible();
@@ -48,7 +31,7 @@ test.describe("마이페이지", () => {
     await saveButton.click();
 
     await expect(page.getByText("마이페이지 정보를 저장했습니다.")).toBeVisible();
-    await expect(page.getByText("저장 완료")).toBeVisible();
+    await expect(page.locator("#my-page-form").getByText("저장 완료")).toBeVisible();
     await expect(saveButton).toBeDisabled();
 
     await page.reload();
