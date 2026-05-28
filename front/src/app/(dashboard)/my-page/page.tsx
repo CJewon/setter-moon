@@ -1,6 +1,4 @@
-import { AlertCircle, CheckCircle2, CreditCard, ShieldCheck } from "lucide-react";
 import { MyPageForm } from "@/features/my-page/components/my-page-form";
-import { SignOutConfirmForm } from "@/features/my-page/components/sign-out-confirm-form";
 import { getAppAccessPlanId, requireDashboardAccess } from "@/server/auth/session";
 import { getUserDisplayName } from "@/server/profiles/service";
 import { getStoreUsageSummary } from "@/server/usage/service";
@@ -139,7 +137,7 @@ export default async function MyPage() {
           </div>
           <div className="rounded-md bg-slate-50 p-3">
             <p className="font-semibold text-slate-950">플랜 변경</p>
-            <p className="mt-1">MVP에서는 직접 변경하지 않습니다.</p>
+            <p className="mt-1">현재 화면에서는 변경할 수 없습니다.</p>
           </div>
         </div>
       </section>
@@ -151,46 +149,6 @@ export default async function MyPage() {
         businessType={access.store.business_type}
         memo={access.store.memo}
       />
-
-      <section className="mt-5 grid gap-4 lg:grid-cols-[1fr_1.4fr]">
-        <div className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 h-5 w-5 text-slate-500" aria-hidden="true" />
-            <div>
-              <h2 className="text-base font-semibold text-slate-950">계정 액션</h2>
-              <p className="mt-1 text-sm text-slate-500">로그아웃하면 랜딩페이지로 이동합니다.</p>
-            </div>
-          </div>
-          <div className="mt-4">
-            <SignOutConfirmForm />
-          </div>
-        </div>
-
-        <div className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="mt-0.5 h-5 w-5 text-slate-500" aria-hidden="true" />
-            <div>
-              <h2 className="text-base font-semibold text-slate-950">MVP에서 제공하지 않는 기능</h2>
-              <p className="mt-1 text-sm text-slate-500">아래 기능은 현재 화면에서 직접 실행할 수 없습니다.</p>
-            </div>
-          </div>
-          <ul className="mt-4 grid gap-2 text-sm text-slate-700 sm:grid-cols-2">
-            {["이메일 변경", "비밀번호 변경", "결제수단 관리", "유료 플랜 구매/해지", "회원 탈퇴", "스토어 삭제"].map((item) => (
-              <li key={item} className="flex items-center gap-2 rounded-md bg-slate-50 px-3 py-2">
-                <CreditCard className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="mt-5 rounded-md border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-800">
-        <div className="flex items-start gap-2">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <p>마이페이지에서 저장한 이름과 스토어 정보는 대시보드 상단 사용자 메뉴에도 반영됩니다.</p>
-        </div>
-      </section>
     </>
   );
 }

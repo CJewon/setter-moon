@@ -69,7 +69,6 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
             <p className="min-h-10 break-all rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-600">
               {email}
             </p>
-            <p className="text-xs text-slate-500">이메일 변경과 비밀번호 변경은 MVP에서 제공하지 않습니다.</p>
           </div>
         </div>
       </section>
