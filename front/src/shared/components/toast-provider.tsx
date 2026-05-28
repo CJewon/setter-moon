@@ -34,21 +34,33 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 let toastId = 0;
+const DEFAULT_TOAST_DURATION_MS = 2000;
 
-const toneStyle: Record<ToastTone, { icon: typeof CheckCircle2; className: string; title: string }> = {
+const toneStyle: Record<
+  ToastTone,
+  {
+    icon: typeof CheckCircle2;
+    accentClassName: string;
+    iconClassName: string;
+    title: string;
+  }
+> = {
   success: {
     icon: CheckCircle2,
-    className: "border-emerald-200 bg-emerald-50 text-emerald-950",
+    accentClassName: "bg-emerald-500",
+    iconClassName: "bg-emerald-50 text-emerald-600 ring-emerald-100",
     title: "완료"
   },
   error: {
     icon: AlertCircle,
-    className: "border-red-200 bg-red-50 text-red-950",
+    accentClassName: "bg-red-500",
+    iconClassName: "bg-red-50 text-red-600 ring-red-100",
     title: "확인 필요"
   },
   info: {
     icon: Info,
-    className: "border-blue-200 bg-blue-50 text-blue-950",
+    accentClassName: "bg-blue-500",
+    iconClassName: "bg-blue-50 text-blue-600 ring-blue-100",
     title: "알림"
   }
 };
@@ -58,7 +70,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: num
   const Icon = style.icon;
 
   useEffect(() => {
-    const timer = window.setTimeout(() => onDismiss(toast.id), toast.durationMs ?? 4000);
+    const timer = window.setTimeout(() => onDismiss(toast.id), toast.durationMs ?? DEFAULT_TOAST_DURATION_MS);
 
     return () => window.clearTimeout(timer);
   }, [onDismiss, toast.durationMs, toast.id]);
@@ -66,19 +78,24 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: num
   return (
     <div
       role={toast.tone === "error" ? "alert" : "status"}
-      className={cn(
-        "grid w-full grid-cols-[auto_1fr_auto] gap-3 rounded-md border p-4 text-sm shadow-lg shadow-slate-900/10",
-        style.className
-      )}
+      className="grid w-full grid-cols-[4px_auto_1fr_auto] overflow-hidden rounded-lg border border-slate-200 bg-white/95 text-sm text-slate-950 shadow-xl shadow-slate-900/15 backdrop-blur"
     >
-      <Icon aria-hidden className="mt-0.5 size-5 shrink-0" />
-      <div className="min-w-0">
-        <p className="font-semibold">{toast.title ?? style.title}</p>
-        <p className="mt-1 break-words leading-5 text-slate-700">{toast.message}</p>
+      <div className={cn("h-full w-1", style.accentClassName)} />
+      <div
+        className={cn(
+          "ml-3 mt-3 inline-flex size-9 shrink-0 items-center justify-center rounded-full ring-1",
+          style.iconClassName
+        )}
+      >
+        <Icon aria-hidden size={18} />
+      </div>
+      <div className="min-w-0 px-3 py-3">
+        <p className="font-bold tracking-normal">{toast.title ?? style.title}</p>
+        <p className="mt-1 break-words leading-5 text-slate-600">{toast.message}</p>
       </div>
       <button
         type="button"
-        className="inline-flex size-7 items-center justify-center rounded text-slate-500 transition hover:bg-white/70 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
+        className="mr-2 mt-2 inline-flex size-7 items-center justify-center rounded text-slate-400 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-200"
         onClick={() => onDismiss(toast.id)}
         aria-label="알림 닫기"
       >
@@ -117,7 +134,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
       <div
-        className="pointer-events-none fixed right-4 top-4 z-50 grid w-[min(360px,calc(100vw-32px))] gap-3"
+        className="pointer-events-none fixed bottom-4 right-4 z-50 grid w-[min(380px,calc(100vw-32px))] gap-3"
         aria-live="polite"
         aria-atomic="true"
       >
