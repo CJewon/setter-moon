@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/shared/components/page-header";
 import { StatusBadge } from "@/shared/components/status-badge";
+import { routes } from "@/shared/constants/routes";
 import { productStatusLabel } from "@/shared/constants/status-labels";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { getProductDetailForStore, isProductNotFoundError } from "@/server/products/service";
@@ -31,7 +32,18 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <>
-      <PageHeader title={product.name} description="상품 기본 정보와 옵션별 재고를 확인합니다." />
+      <PageHeader
+        action={{
+          href: routes.productEdit(product.id),
+          label: "상품 수정"
+        }}
+        backLink={{
+          href: routes.products,
+          label: "상품 목록으로"
+        }}
+        title={product.name}
+        description="상품 기본 정보와 옵션별 재고를 확인합니다."
+      />
       <section className="mb-5 grid gap-4 lg:grid-cols-4">
         <div className="rounded-md border border-slate-200 bg-white p-4">
           <p className="text-sm font-semibold text-slate-500">판매 상태</p>

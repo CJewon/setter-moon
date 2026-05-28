@@ -4,6 +4,7 @@ import { OrderStatusBadge } from "@/features/orders/components/order-status-badg
 import { getOrderDetailForStore, isOrderNotFoundError } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { PageHeader } from "@/shared/components/page-header";
+import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
 import { formatNumber, formatWon } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
@@ -32,7 +33,14 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   return (
     <>
-      <PageHeader title="주문 상세" description={`주문번호: ${order.order_no}`} />
+      <PageHeader
+        backLink={{
+          href: routes.orders,
+          label: "주문 목록으로"
+        }}
+        title="주문 상세"
+        description={`주문번호: ${order.order_no}`}
+      />
       <section className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="grid gap-4">
           <div className="rounded-md border border-slate-200 bg-white p-5">

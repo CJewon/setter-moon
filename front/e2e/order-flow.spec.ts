@@ -29,6 +29,22 @@ async function selectFirstAvailableVariant(page: Page) {
 }
 
 test.describe.serial("주문 등록과 상태 변경", () => {
+  test("작성 중인 주문 등록을 취소하면 목록으로 돌아간다", async ({ page }) => {
+    await signInAndEnsureStore(page);
+    await page.goto("/orders/new");
+
+    test.skip(await page.getByText("주문할 상품이 없습니다").isVisible(), "주문 E2E에 사용할 상품이 없습니다.");
+
+    const customerName = `취소 주문 ${Date.now().toString().slice(-6)}`;
+
+    await page.getByLabel("고객명").fill(customerName);
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("link", { name: "취소" }).click();
+
+    await expect(page).toHaveURL(/\/orders$/);
+    await expect(page.getByText(customerName)).toHaveCount(0);
+  });
+
   test("주문접수 등록 후 배송대기로 변경한다", async ({ page }) => {
     await signInAndEnsureStore(page);
     await page.goto("/orders/new");
@@ -48,7 +64,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
       (response) => response.url().includes("/api/orders") && response.request().method() === "POST"
     );
 
-    await page.getByRole("button", { name: "주문 등록" }).click();
+    await page.getByRole("button", { name: "주문접수로 등록" }).click();
 
     const createResponse = await createResponsePromise;
     const createPayload = (await createResponse.json()) as {
@@ -65,6 +81,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByText(createPayload.message)).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/orders/${createPayload.data?.orderId}`));
     await expect(page.getByRole("heading", { name: "주문 상세" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "주문 목록으로" })).toBeVisible();
     await expect(page.getByText("주문접수").first()).toBeVisible();
 
     page.once("dialog", (dialog) => dialog.accept());
@@ -84,5 +101,9 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     expect(statusPayload.code).toBe(200);
     await expect(page.getByText(statusPayload.message)).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
+
+    await page.getByRole("link", { name: "주문 목록으로" }).click();
+    await expect(page).toHaveURL(/\/orders$/);
+    await expect(page.getByText(`주문 테스트 ${suffix}`)).toBeVisible();
   });
 });

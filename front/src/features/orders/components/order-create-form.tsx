@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent, type MouseEvent } from "react";
 import type { OrderProductChoice, OrderVariantChoice } from "@/server/orders/types";
 import { useCreateOrderMutation } from "@/features/orders/hooks/use-order-mutations";
 import { orderFormSchema } from "@/features/orders/schemas/order-form-schema";
@@ -55,6 +56,16 @@ export function OrderCreateForm({ products }: OrderCreateFormProps) {
   const selectedProductVariants = product?.variants ?? [];
   const quantityExceedsAvailableStock = Boolean(selectedVariant && quantityValue > selectedVariant.availableStock);
   const itemError = state.fieldErrors?.items?.[0];
+  const isDirty = Boolean(
+    customerName.trim() ||
+      customerPhone.trim() ||
+      memo.trim() ||
+      orderedAt ||
+      productId ||
+      variantId ||
+      quantity !== "1" ||
+      unitPrice
+  );
 
   function handleProductChange(nextProductId: string) {
     setProductId(nextProductId);
@@ -114,11 +125,23 @@ export function OrderCreateForm({ products }: OrderCreateFormProps) {
     });
   }
 
+  function handleCancelClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (isDirty && !window.confirm("작성 중인 내용이 사라집니다. 이 화면을 나갈까요?")) {
+      event.preventDefault();
+    }
+  }
+
   if (products.length === 0) {
     return (
       <section className="rounded-md border border-slate-200 bg-white p-5">
         <h2 className="text-base font-semibold text-slate-950">주문할 상품이 없습니다</h2>
         <p className="mt-2 text-sm leading-6 text-slate-600">주문 등록 전에 상품과 옵션별 재고를 먼저 등록해 주세요.</p>
+        <Link
+          href="/products/new"
+          className="mt-4 inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700"
+        >
+          상품 등록하기
+        </Link>
       </section>
     );
   }
@@ -272,13 +295,22 @@ export function OrderCreateForm({ products }: OrderCreateFormProps) {
 
         <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-slate-600">등록하면 주문접수 상태로 저장됩니다. 실제 재고는 배송대기로 바꿀 때 차감됩니다.</p>
-          <button
-            className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-            disabled={createOrderMutation.isPending}
-            type="submit"
-          >
-            {createOrderMutation.isPending ? "등록 중" : "주문 등록"}
-          </button>
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link
+              href="/orders"
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              onClick={handleCancelClick}
+            >
+              취소
+            </Link>
+            <button
+              className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              disabled={createOrderMutation.isPending}
+              type="submit"
+            >
+              {createOrderMutation.isPending ? "등록 중" : "주문접수로 등록"}
+            </button>
+          </div>
         </div>
       </div>
 

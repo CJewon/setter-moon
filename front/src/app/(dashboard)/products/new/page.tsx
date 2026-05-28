@@ -2,6 +2,7 @@ import { ProductCreateForm } from "@/features/products/components/product-create
 import { getAppAccessPlanId, requireDashboardAccess } from "@/server/auth/session";
 import { getStoreUsageSummary } from "@/server/usage/service";
 import { PageHeader } from "@/shared/components/page-header";
+import { routes } from "@/shared/constants/routes";
 import { createClient } from "@/shared/lib/supabase/server";
 
 export default async function NewProductPage() {
@@ -11,7 +12,14 @@ export default async function NewProductPage() {
 
   return (
     <>
-      <PageHeader title="상품 등록" description="상품 정보와 옵션 조합을 만들고 옵션별 재고를 입력합니다." />
+      <PageHeader
+        backLink={{
+          href: routes.products,
+          label: "상품 목록으로"
+        }}
+        title="상품 등록"
+        description="상품 정보와 옵션 조합을 만들고 옵션별 재고를 입력합니다."
+      />
       <ProductCreateForm usageSummary={usageSummary} />
     </>
   );

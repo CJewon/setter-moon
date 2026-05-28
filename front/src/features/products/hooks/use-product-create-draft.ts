@@ -62,6 +62,14 @@ export function useProductCreateDraft(usageSummary: UsageSummary) {
       ? null
       : optionCombinationMetric.limit - optionCombinationMetric.count;
   const optionCombinationLimitExceeded = optionCombinationLimit !== null && activeVariantCount > optionCombinationLimit;
+  const isDirty =
+    basic.name.trim().length > 0 ||
+    basic.basePrice !== "0" ||
+    basic.baseCost !== "0" ||
+    basic.memo.trim().length > 0 ||
+    basic.status !== "active" ||
+    optionMode !== "none" ||
+    Object.keys(variantDrafts).length > 0;
   const { handleSubmit, pending } = useProductCreateSubmit({
     basic,
     optionCombinationLimitExceeded,
@@ -147,6 +155,7 @@ export function useProductCreateDraft(usageSummary: UsageSummary) {
     addOptionValue,
     basic,
     handleSubmit,
+    isDirty,
     optionCombinationLimit,
     optionCombinationLimitExceeded,
     optionCombinationMetric,

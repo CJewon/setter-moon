@@ -59,6 +59,8 @@ export function ProductCreateForm({ usageSummary }: ProductCreateFormProps) {
           variantsError={variantsError}
         />
         <ProductSubmitBar
+          cancelHref="/products"
+          confirmOnCancel={draft.isDirty}
           optionCombinationLimitExceeded={draft.optionCombinationLimitExceeded}
           pending={draft.pending}
           productLimitReached={draft.productLimitReached}

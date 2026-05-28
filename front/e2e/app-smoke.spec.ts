@@ -42,6 +42,14 @@ test.describe("현재 구현 화면 E2E", () => {
       await expect(page.getByRole("heading", { name: screen.heading, exact: true })).toBeVisible();
       await expect(page.getByText(screen.visibleText).first()).toBeVisible();
     }
+
+    await page.goto("/products/new");
+    await page.getByRole("link", { name: "상품 목록으로" }).click();
+    await expect(page).toHaveURL(/\/products$/);
+
+    await page.goto("/orders/new");
+    await page.getByRole("link", { name: "주문 목록으로" }).click();
+    await expect(page).toHaveURL(/\/orders$/);
   });
 
   test("사용자 메뉴에서 마이페이지 이동과 로그아웃이 동작한다", async ({ page }) => {

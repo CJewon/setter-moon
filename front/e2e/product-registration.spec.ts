@@ -2,11 +2,29 @@ import { expect, test } from "@playwright/test";
 import { signInAndEnsureStore } from "./helpers/auth";
 
 test.describe.serial("상품 등록 화면", () => {
+  test("작성 중인 상품 등록을 취소하면 목록으로 돌아간다", async ({ page }) => {
+    await signInAndEnsureStore(page);
+    await page.goto("/products/new");
+
+    const productName = `취소 상품 ${Date.now().toString().slice(-6)}`;
+
+    await page.getByLabel("상품명").fill(productName);
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("link", { name: "취소" }).click();
+
+    await expect(page).toHaveURL(/\/products$/);
+    await expect(page.getByText(productName)).toHaveCount(0);
+  });
+
   test("필수값 누락과 옵션 조합 미리보기를 확인한다", async ({ page }) => {
     await signInAndEnsureStore(page);
     await page.goto("/products/new");
 
-    await page.getByRole("button", { name: "상품 등록하기" }).click();
+    const submitButton = page.getByRole("button", { name: "상품 등록" });
+
+    test.skip(await submitButton.isDisabled(), "테스트 계정이 무료 플랜 상품 또는 옵션 조합 한도에 도달했습니다.");
+
+    await submitButton.click();
     await expect(page.getByRole("main").getByText("상품 정보를 다시 확인해 주세요.")).toBeVisible();
     await expect(page.getByText("상품명을 입력하세요.")).toBeVisible();
 
@@ -40,7 +58,7 @@ test.describe.serial("상품 등록 화면", () => {
     await page.getByLabel("현재 재고").nth(1).fill("3");
     await page.getByLabel("안전 재고").nth(1).fill("1");
 
-    const submitButton = page.getByRole("button", { name: "상품 등록하기" });
+    const submitButton = page.getByRole("button", { name: "상품 등록" });
 
     test.skip(await submitButton.isDisabled(), "테스트 계정이 무료 플랜 상품 또는 옵션 조합 한도에 도달했습니다.");
 
@@ -68,6 +86,8 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(page.getByText("상품을 등록했습니다.")).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/products/${createPayload.data?.productId}`));
     await expect(page.getByRole("heading", { name: productName })).toBeVisible();
+    await expect(page.getByRole("link", { name: "상품 목록으로" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "상품 수정" })).toBeVisible();
 
     await expect(page.getByRole("columnheader", { name: "옵션 조합" })).toBeVisible();
     await expect(page.getByText("2개").first()).toBeVisible();
@@ -76,7 +96,8 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(page.getByRole("row", { name: /블랙.*29,000원.*7개.*0개.*7개.*2개/ })).toBeVisible();
     await expect(page.getByRole("row", { name: /아이보리.*29,000원.*3개.*0개.*3개.*1개/ })).toBeVisible();
 
-    await page.goto("/products");
+    await page.getByRole("link", { name: "상품 목록으로" }).click();
+    await expect(page).toHaveURL(/\/products$/);
 
     const productRow = page.getByRole("row").filter({ hasText: productName });
 

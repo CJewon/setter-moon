@@ -2,6 +2,7 @@ import { OrderCreateForm } from "@/features/orders/components/order-create-form"
 import { getOrderProductChoicesForStore } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { PageHeader } from "@/shared/components/page-header";
+import { routes } from "@/shared/constants/routes";
 import { createClient } from "@/shared/lib/supabase/server";
 
 export default async function NewOrderPage() {
@@ -11,7 +12,14 @@ export default async function NewOrderPage() {
 
   return (
     <>
-      <PageHeader title="주문 등록" description="고객 정보와 상품 옵션을 선택해 주문을 수동 등록합니다." />
+      <PageHeader
+        backLink={{
+          href: routes.orders,
+          label: "주문 목록으로"
+        }}
+        title="주문 등록"
+        description="고객 정보와 상품 옵션을 선택해 주문을 수동 등록합니다."
+      />
       <OrderCreateForm products={products} />
     </>
   );
