@@ -5,23 +5,30 @@ import { OrderStatusBadge } from "@/features/orders/components/order-status-badg
 import { listOrdersForStore } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { PageHeader } from "@/shared/components/page-header";
+import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
+import { normalizePaginationParams } from "@/server/shared/pagination";
 import { formatNumber, formatWon } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
-const orderTabs: Array<{ href: string; label: string; status?: OrderStatus }> = [
-  { href: "/orders", label: "전체" },
-  { href: "/orders?status=received", label: orderStatusLabel.received, status: "received" },
-  { href: "/orders?status=ready_to_ship", label: orderStatusLabel.ready_to_ship, status: "ready_to_ship" },
-  { href: "/orders?status=shipping", label: orderStatusLabel.shipping, status: "shipping" },
-  { href: "/orders?status=delivered", label: orderStatusLabel.delivered, status: "delivered" },
-  { href: "/orders?status=cancelled", label: orderStatusLabel.cancelled, status: "cancelled" },
-  { href: "/orders?status=hold", label: orderStatusLabel.hold, status: "hold" }
+const orderTabs: Array<{ label: string; status?: OrderStatus }> = [
+  { label: "전체" },
+  { label: orderStatusLabel.received, status: "received" },
+  { label: orderStatusLabel.ready_to_ship, status: "ready_to_ship" },
+  { label: orderStatusLabel.shipping, status: "shipping" },
+  { label: orderStatusLabel.delivered, status: "delivered" },
+  { label: orderStatusLabel.cancelled, status: "cancelled" },
+  { label: orderStatusLabel.hold, status: "hold" }
 ];
+
+const orderPageSizeOptions = [20, 50, 100];
+const defaultOrderPageSize = 20;
 
 type OrdersPageProps = {
   searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
     status?: OrderStatus;
   }>;
 };
@@ -29,9 +36,24 @@ type OrdersPageProps = {
 export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const access = await requireDashboardAccess();
   const supabase = await createClient();
-  const { status } = await searchParams;
+  const resolvedSearchParams = await searchParams;
+  const { status } = resolvedSearchParams;
   const selectedStatus = orderTabs.some((tab) => tab.status === status) ? status : undefined;
-  const orders = await listOrdersForStore(supabase, access.store.id, selectedStatus);
+  const pagination = normalizePaginationParams(resolvedSearchParams, orderPageSizeOptions, defaultOrderPageSize);
+  const orderPage = await listOrdersForStore(supabase, access.store.id, selectedStatus, pagination);
+
+  function getOrderTabHref(nextStatus?: OrderStatus) {
+    const params = new URLSearchParams();
+
+    if (nextStatus) {
+      params.set("status", nextStatus);
+    }
+
+    params.set("page", "1");
+    params.set("pageSize", String(pagination.pageSize));
+
+    return `/orders?${params.toString()}` as Route;
+  }
 
   return (
     <>
@@ -47,7 +69,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           return (
             <Link
               key={tab.label}
-              href={tab.href as Route}
+              href={getOrderTabHref(tab.status)}
               className={
                 active
                   ? "min-h-9 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white"
@@ -72,14 +94,14 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
             </tr>
           </thead>
           <tbody>
-            {orders.length === 0 ? (
+            {orderPage.items.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-sm text-slate-500">
                   아직 등록한 주문이 없습니다.
                 </td>
               </tr>
             ) : (
-              orders.map((order) => (
+              orderPage.items.map((order) => (
                 <tr key={order.id}>
                   <td>
                     <Link href={`/orders/${order.id}`} className="font-semibold text-slate-950 hover:text-blue-700">
@@ -99,6 +121,19 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           </tbody>
         </table>
       </div>
+      <PaginationControls
+        basePath={routes.orders}
+        page={orderPage.page}
+        pageSize={orderPage.pageSize}
+        pageSizeOptions={orderPageSizeOptions}
+        searchParams={{
+          page: resolvedSearchParams.page,
+          pageSize: resolvedSearchParams.pageSize,
+          status: selectedStatus
+        }}
+        totalCount={orderPage.totalCount}
+        totalPages={orderPage.totalPages}
+      />
     </>
   );
 }

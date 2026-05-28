@@ -104,6 +104,9 @@ test.describe("현재 구현 화면 E2E", () => {
     await expect(page.getByRole("option", { name: "판매중" })).toBeVisible();
     await page.getByRole("option", { name: "판매중" }).click();
     await expect(page.getByRole("button", { name: "판매상태 필터" })).toContainText("판매중");
+    await page.goto("/products?page=1&pageSize=20");
+    await expect(page.getByRole("navigation", { name: "목록 페이지 이동" })).toBeVisible();
+    await expect(page.getByText("페이지당").first()).toBeVisible();
 
     await page.goto("/inventory");
     await page.getByRole("button", { name: "재고상태 필터" }).click();
@@ -114,6 +117,10 @@ test.describe("현재 구현 화면 E2E", () => {
     await page.goto("/orders/new");
     await page.getByRole("link", { name: "주문 목록으로" }).click();
     await expect(page).toHaveURL(/\/orders$/);
+    await page.goto("/orders?page=1&pageSize=20");
+    await expect(page.getByRole("navigation", { name: "목록 페이지 이동" })).toBeVisible();
+    await page.getByRole("link", { name: "50" }).last().click();
+    await expect(page).toHaveURL(/pageSize=50/);
   });
 
   test("사용자 메뉴에서 마이페이지 이동과 로그아웃이 동작한다", async ({ page }) => {

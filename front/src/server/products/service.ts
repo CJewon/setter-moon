@@ -1,6 +1,8 @@
 import { ProductMutationError, ProductNotFoundError } from "@/server/products/errors";
 import type { ProductDetail, ProductListItem, ProductsSupabaseClient } from "@/server/products/types";
 import { getReservedQuantitiesForStore } from "@/server/orders/service";
+import { getPaginationRange, getTotalPages } from "@/server/shared/pagination";
+import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
 export { createProductForStore } from "@/server/products/create-product";
 export {
@@ -21,19 +23,32 @@ function isSchemaMissingError(error: { code?: string; message?: string }) {
   return error.code === "PGRST205" || error.code === "42P01" || message.includes("could not find the table");
 }
 
-export async function listProductsForStore(supabase: ProductsSupabaseClient, storeId: string): Promise<ProductListItem[]> {
-  const { data: products, error: productError } = await supabase
+export async function listProductsForStore(
+  supabase: ProductsSupabaseClient,
+  storeId: string,
+  pagination: PaginationParams
+): Promise<PaginatedResult<ProductListItem>> {
+  const { from, to } = getPaginationRange(pagination);
+  const { count, data: products, error: productError } = await supabase
     .from("products")
-    .select("id, name, base_price, status, has_options, created_at")
+    .select("id, name, base_price, status, has_options, created_at", { count: "exact" })
     .eq("store_id", storeId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (productError) {
     throw new ProductMutationError(productError);
   }
 
+  const totalCount = count ?? 0;
+
   if (!products?.length) {
-    return [];
+    return {
+      ...pagination,
+      items: [],
+      totalCount,
+      totalPages: getTotalPages(totalCount, pagination.pageSize)
+    };
   }
 
   const productIds = products.map((product) => product.id);
@@ -46,15 +61,20 @@ export async function listProductsForStore(supabase: ProductsSupabaseClient, sto
     throw new ProductMutationError(variantError);
   }
 
-  return products.map((product) => {
-    const productVariants = variants?.filter((variant) => variant.product_id === product.id && variant.is_active) ?? [];
+  return {
+    ...pagination,
+    items: products.map((product) => {
+      const productVariants = variants?.filter((variant) => variant.product_id === product.id && variant.is_active) ?? [];
 
-    return {
-      ...product,
-      variantCount: productVariants.length,
-      totalCurrentStock: productVariants.reduce((total, variant) => total + variant.current_stock, 0)
-    };
-  });
+      return {
+        ...product,
+        variantCount: productVariants.length,
+        totalCurrentStock: productVariants.reduce((total, variant) => total + variant.current_stock, 0)
+      };
+    }),
+    totalCount,
+    totalPages: getTotalPages(totalCount, pagination.pageSize)
+  };
 }
 
 export async function getProductDetailForStore(

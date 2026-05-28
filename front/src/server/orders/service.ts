@@ -8,6 +8,7 @@ import {
   OrderValidationError
 } from "@/server/orders/errors";
 import { getAvailableStock, getStockDeductionPlan, getStockRestorePlan } from "@/server/orders/stock";
+import { getPaginationRange, getTotalPages } from "@/server/shared/pagination";
 import type {
   HoldReservationPolicy,
   OrderDetail,
@@ -21,6 +22,7 @@ import type {
 import type { Store } from "@/server/stores/service";
 import { getStoreUsageCounts } from "@/server/usage/service";
 import { PLAN_IDS, type PlanId } from "@/server/usage/usage-policy";
+import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
 export {
   InsufficientStockError,
@@ -320,26 +322,36 @@ export async function createOrderForStore(
 export async function listOrdersForStore(
   supabase: OrdersSupabaseClient,
   storeId: string,
-  status?: OrderStatus
-): Promise<OrderListItem[]> {
+  status: OrderStatus | undefined,
+  pagination: PaginationParams
+): Promise<PaginatedResult<OrderListItem>> {
+  const { from, to } = getPaginationRange(pagination);
   let query = supabase
     .from("orders")
-    .select("id, order_no, customer_name, status, total_amount, ordered_at, created_at")
+    .select("id, order_no, customer_name, status, total_amount, ordered_at, created_at", { count: "exact" })
     .eq("store_id", storeId)
-    .order("ordered_at", { ascending: false });
+    .order("ordered_at", { ascending: false })
+    .range(from, to);
 
   if (status) {
     query = query.eq("status", status);
   }
 
-  const { data: orders, error } = await query;
+  const { count, data: orders, error } = await query;
 
   if (error) {
     throw new OrderMutationError(error);
   }
 
   if (!orders?.length) {
-    return [];
+    const totalCount = count ?? 0;
+
+    return {
+      ...pagination,
+      items: [],
+      totalCount,
+      totalPages: getTotalPages(totalCount, pagination.pageSize)
+    };
   }
 
   const orderIds = orders.map((order) => order.id);
@@ -352,20 +364,27 @@ export async function listOrdersForStore(
     throw new OrderMutationError(itemsError);
   }
 
-  return orders.map((order) => {
-    const orderItems = items?.filter((item) => item.order_id === order.id) ?? [];
-    const firstItem = orderItems[0];
-    const extraCount = Math.max(orderItems.length - 1, 0);
-    const itemSummary = firstItem
-      ? `${firstItem.product_name_snapshot} · ${firstItem.variant_name_snapshot}${extraCount ? ` 외 ${extraCount}건` : ""}`
-      : "주문 상품 없음";
+  const totalCount = count ?? 0;
 
-    return {
-      ...order,
-      itemSummary,
-      totalQuantity: orderItems.reduce((total, item) => total + item.quantity, 0)
-    };
-  });
+  return {
+    ...pagination,
+    items: orders.map((order) => {
+      const orderItems = items?.filter((item) => item.order_id === order.id) ?? [];
+      const firstItem = orderItems[0];
+      const extraCount = Math.max(orderItems.length - 1, 0);
+      const itemSummary = firstItem
+        ? `${firstItem.product_name_snapshot} · ${firstItem.variant_name_snapshot}${extraCount ? ` 외 ${extraCount}건` : ""}`
+        : "주문 상품 없음";
+
+      return {
+        ...order,
+        itemSummary,
+        totalQuantity: orderItems.reduce((total, item) => total + item.quantity, 0)
+      };
+    }),
+    totalCount,
+    totalPages: getTotalPages(totalCount, pagination.pageSize)
+  };
 }
 
 export async function getOrderDetailForStore(
