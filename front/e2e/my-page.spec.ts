@@ -1,9 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
+import { getSharedTestAccount } from "../test-utils/test-account";
 
-const sharedTestAccount = {
-  email: process.env.E2E_SELLER_EMAIL ?? "test@gmail.com",
-  password: process.env.E2E_SELLER_PASSWORD ?? "Password1!"
-};
+const sharedTestAccount = getSharedTestAccount();
 
 async function signIn(page: Page) {
   await page.goto("/sign-in");
