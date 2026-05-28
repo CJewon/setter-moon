@@ -54,6 +54,49 @@ describe("productCreateSchema", () => {
     expect(parsed.success).toBe(false);
   });
 
+  it("rejects duplicated option group names", () => {
+    const parsed = productCreateSchema.safeParse({
+      ...basePayload,
+      optionMode: "options",
+      optionGroups: [
+        { name: "색상", values: ["블랙"] },
+        { name: "색상", values: ["화이트"] }
+      ],
+      variants: [
+        {
+          ...basePayload.variants[0],
+          clientKey: "black",
+          options: [{ groupName: "색상", value: "블랙" }]
+        }
+      ]
+    });
+
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      expect(parsed.error.flatten().fieldErrors.optionGroups).toContain("이미 추가한 옵션 그룹명입니다.");
+    }
+  });
+
+  it("rejects more than 100 option combinations", () => {
+    const variants = Array.from({ length: 101 }, (_, index) => ({
+      ...basePayload.variants[0],
+      clientKey: `variant-${index}`,
+      options: [{ groupName: "색상", value: `색상-${index}` }]
+    }));
+
+    const parsed = productCreateSchema.safeParse({
+      ...basePayload,
+      optionMode: "options",
+      optionGroups: [{ name: "색상", values: variants.map((variant) => variant.options[0].value) }],
+      variants
+    });
+
+    expect(parsed.success).toBe(false);
+    if (!parsed.success) {
+      expect(parsed.error.flatten().fieldErrors.variants).toContain("한 번에 등록할 옵션 조합은 100개 이하입니다.");
+    }
+  });
+
   it("rejects active variants that do not match every option group", () => {
     const parsed = productCreateSchema.safeParse({
       ...basePayload,
