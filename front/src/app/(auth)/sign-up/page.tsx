@@ -8,7 +8,7 @@ export default async function SignUpPage() {
   return (
     <AuthShell
       title="계정 만들기"
-      description="이메일로 계정을 만들고, 스토어 정보는 다음 단계에서 입력합니다."
+      description="이메일로 계정을 만들고, 가입 후 스토어 정보를 입력합니다."
       size="wide"
     >
       <SignUpForm />

@@ -47,7 +47,7 @@ export function MetricsSection() {
     <section id="preview" className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-blue-700">샘플 데이터 기준</p>
+          <p className="text-sm font-bold text-blue-700">예시 데이터 기준</p>
           <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
             오늘 처리할 주문과 재고를 먼저 봅니다.
           </h2>

@@ -18,7 +18,7 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 export const PATCH = withApiErrorBoundary(async (request: Request) => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse(500, "계정 정보를 저장할 연결이 아직 준비되지 않았습니다.");
+    return errorResponse(500, "정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = await parseJsonBody(request, myPageFormSchema, "입력한 정보를 다시 확인해 주세요.");
@@ -58,7 +58,7 @@ export const PATCH = withApiErrorBoundary(async (request: Request) => {
     console.error("Failed to update my page", error);
 
     if (isProfileSchemaMissingError(error) || isStoreSchemaMissingError(error)) {
-      return errorResponse(500, "Supabase DB 테이블이 아직 준비되지 않았습니다.");
+      return errorResponse(500, "정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
 
     if (

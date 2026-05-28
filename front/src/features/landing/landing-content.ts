@@ -113,7 +113,7 @@ export const trustPrinciples: TrustPrinciple[] = [
 ];
 
 export const demoMetrics: Metric[] = [
-  { label: "오늘 주문", value: "12건", detail: "샘플 스토어 기준" },
+  { label: "오늘 주문", value: "12건", detail: "예시 스토어 기준" },
   { label: "주문접수 예약", value: "7개", detail: "아직 실제 차감 전 수량" },
   { label: "재고 부족 옵션", value: "3개", detail: "가용 재고 5개 이하" },
   { label: "최근 변경", value: "5건", detail: "주문 상태와 재고 이력" }
@@ -232,7 +232,7 @@ export const faqItems: FaqItem[] = [
   },
   {
     question: "지금 보이는 숫자는 실제 이용자 데이터인가요?",
-    answer: "아닙니다. 현재 랜딩의 주문 수와 옵션 조합 수는 화면 이해를 돕기 위한 샘플 데이터입니다."
+    answer: "아닙니다. 현재 랜딩의 주문 수와 옵션 조합 수는 화면 이해를 돕기 위한 예시 데이터입니다."
   },
   {
     question: "백오피스 기능까지 한 번에 제공하나요?",

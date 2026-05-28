@@ -9,7 +9,7 @@ test.describe("마이페이지", () => {
     await expect(page.getByRole("heading", { name: "마이페이지" })).toBeVisible();
     await expect(page.getByText("현재 접속 계정")).toBeVisible();
     await expect(page.getByText("연결된 스토어")).toBeVisible();
-    await expect(page.getByText("현재 플랜")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "현재 플랜" })).toBeVisible();
     await expect(page.getByText(/정상|한도 임박|한도 도달|한도 없음/).first()).toBeVisible();
 
     const saveButton = page.getByRole("button", { name: "변경사항 저장" });

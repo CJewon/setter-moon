@@ -27,7 +27,7 @@ export function ProductVariantStockSection({
           <p className="mt-1 text-sm text-slate-500">등록할 조합만 켜두고 현재 재고와 안전 재고를 입력합니다.</p>
         </div>
         <div className="rounded-md bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
-          등록 예정 {formatNumber(activeVariantCount)}개
+          등록할 옵션 조합 {formatNumber(activeVariantCount)}개
         </div>
       </div>
       {variantsError ? <p className="mt-3 text-xs text-red-700">{variantsError}</p> : null}

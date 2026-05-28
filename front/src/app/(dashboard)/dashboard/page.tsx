@@ -29,7 +29,7 @@ export default function DashboardPage() {
             <StatusBadge tone="info">오늘</StatusBadge>
           </div>
           <div className="mt-6 flex h-64 items-center justify-center rounded-md bg-slate-50 text-sm text-slate-500">
-            차트 데이터 연결 대기
+            아직 표시할 판매 추이가 없습니다.
           </div>
         </div>
         <div className="rounded-md border border-slate-200 bg-white p-5">

@@ -11,7 +11,7 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(page.getByText("상품명을 입력하세요.")).toBeVisible();
 
     await page.getByRole("button", { name: "옵션을 나눠 등록" }).click();
-    await expect(page.getByText("등록 예정 2개")).toBeVisible();
+    await expect(page.getByText("등록할 옵션 조합 2개")).toBeVisible();
     await expect(page.getByText(/블랙/).first()).toBeVisible();
     await expect(page.getByText(/아이보리/).first()).toBeVisible();
   });
@@ -31,7 +31,7 @@ test.describe.serial("상품 등록 화면", () => {
     await page.getByLabel("상품 메모").fill(`상품 등록 E2E 확인 ${suffix}`);
     await page.getByRole("button", { name: "옵션을 나눠 등록" }).click();
 
-    await expect(page.getByText("등록 예정 2개")).toBeVisible();
+    await expect(page.getByText("등록할 옵션 조합 2개")).toBeVisible();
     await expect(page.getByText("블랙").first()).toBeVisible();
     await expect(page.getByText("아이보리").first()).toBeVisible();
 

@@ -65,7 +65,7 @@ function HeroConsolePreview() {
             <span className="h-3 w-3 rounded-full bg-slate-400" />
             <span className="h-3 w-3 rounded-full bg-blue-500" />
           </div>
-          <span className="text-xs font-semibold text-slate-500">샘플 데이터 콘솔</span>
+          <span className="text-xs font-semibold text-slate-500">예시 운영 화면</span>
         </div>
         <div className="grid gap-4 p-4 md:grid-cols-[184px_1fr] md:p-5">
           <aside className="hidden rounded-md border border-slate-200 bg-slate-50 p-4 md:block">

@@ -9,7 +9,7 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 export const POST = withApiErrorBoundary(async (request: Request) => {
   if (!hasSupabasePublicEnv() || !hasSupabaseServerAuthEnv()) {
-    return errorResponse(500, "계정 만들기 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+    return errorResponse(500, "계정을 만들 수 없습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = await parseJsonBody(request, signUpSchema, "입력한 정보를 다시 확인해 주세요.");

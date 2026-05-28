@@ -5,7 +5,7 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 export const GET = withApiErrorBoundary(async () => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse(500, "Supabase 환경 변수를 먼저 설정해야 합니다.");
+    return errorResponse(500, "스토어 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const supabase = await createClient();

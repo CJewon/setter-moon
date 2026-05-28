@@ -10,7 +10,7 @@ export default async function StoreOnboardingPage() {
       <PageHeader title="스토어 설정" description="상품과 주문을 관리할 작업 공간을 만듭니다." />
       {!access.isSupabaseConfigured ? (
         <p className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Supabase 환경 변수가 아직 설정되지 않았습니다. `.env.local` 설정 후 스토어 생성이 가능합니다.
+          서비스 설정을 확인하고 있습니다. 잠시 후 다시 시도해 주세요.
         </p>
       ) : null}
       <StoreOnboardingForm />

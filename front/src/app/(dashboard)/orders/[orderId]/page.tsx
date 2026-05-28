@@ -114,7 +114,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <OrderStatusBadge status={order.status} />
           </div>
           <p className="mt-3 text-sm text-slate-600">
-            배송대기로 변경하면 서버에서 현재 재고를 확인하고 실제 재고를 차감합니다.
+            배송대기로 변경하면 현재 재고를 확인한 뒤 실제 재고를 차감합니다.
           </p>
           <div className="mt-5">
             <OrderStatusActions orderId={order.id} status={order.status} />

@@ -62,7 +62,7 @@ export const PRICING_PLANS = [
     badge: "한도 없이 운영",
     description: "상품과 주문이 늘어난 셀러를 위한 전체 기능",
     price: PLAN_PRICE_LABEL,
-    priceCaption: "결제 연동 준비 중",
+    priceCaption: "무료로 시작 후 전환 가능",
     ctaLabel: "무료로 시작 후 전환하기",
     tone: "paid",
     features: [

@@ -7,7 +7,7 @@ export function InventoryPreview() {
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
           <p className="text-sm font-bold text-slate-950">옵션별 재고 상태</p>
-          <p className="mt-1 text-xs text-slate-500">샘플 화면 기준</p>
+          <p className="mt-1 text-xs text-slate-500">예시 화면 기준</p>
         </div>
         <AlertTriangle className="h-5 w-5 text-blue-600" aria-hidden="true" />
       </div>

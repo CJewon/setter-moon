@@ -59,9 +59,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
       <section className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="rounded-md border border-slate-200 bg-white p-5">
-          <div className="flex items-center justify-between">
+          <div>
             <h2 className="text-base font-semibold">옵션별 재고</h2>
-            <StatusBadge tone="info">서버 데이터 연결</StatusBadge>
+            <p className="mt-1 text-sm text-slate-500">주문접수 수량을 반영한 재고를 확인합니다.</p>
           </div>
           <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
             <table className="app-table">
@@ -92,7 +92,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </div>
         <aside className="rounded-md border border-slate-200 bg-white p-5">
           <h2 className="text-base font-semibold">재고 작업</h2>
-          <p className="mt-3 text-sm text-slate-600">입고와 조정은 다음 단계에서 전용 작업으로 연결합니다.</p>
+          <p className="mt-3 text-sm text-slate-600">현재는 상품별 재고 현황을 확인할 수 있습니다. 재고 변경은 이력으로 함께 관리합니다.</p>
           {product.memo ? (
             <div className="mt-5 rounded-md bg-slate-50 p-4 text-sm text-slate-700">
               <p className="font-semibold text-slate-950">상품 메모</p>

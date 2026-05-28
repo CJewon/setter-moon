@@ -9,7 +9,7 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 export const POST = withApiErrorBoundary(async (request: Request) => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse(500, "Supabase 환경 변수를 먼저 설정해야 합니다.");
+    return errorResponse(500, "주문을 등록하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = await parseJsonBody(request, orderFormSchema, "주문 정보를 다시 확인해 주세요.");
@@ -51,7 +51,7 @@ export const POST = withApiErrorBoundary(async (request: Request) => {
     }
 
     if (isOrderSchemaMissingError(error)) {
-      return errorResponse(500, "Supabase 주문 테이블이 아직 준비되지 않았습니다.");
+      return errorResponse(500, "주문을 등록하지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
 
     if (isOrderMutationError(error) && (error.code === "42501" || error.code === "PGRST301")) {

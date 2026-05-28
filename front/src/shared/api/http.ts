@@ -38,7 +38,7 @@ export async function requestJson<T>(input: RequestInfo | URL, init?: RequestIni
   const payload = (await response.json().catch(() => null)) as ApiResult<T> | null;
 
   if (!payload) {
-    throw new ApiRequestError("서버 응답을 확인하지 못했습니다.", response.status || 500, response.status || 500);
+    throw new ApiRequestError("요청 결과를 확인하지 못했습니다.", response.status || 500, response.status || 500);
   }
 
   if (payload.code !== 200) {

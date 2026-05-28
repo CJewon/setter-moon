@@ -23,7 +23,7 @@ type OrderStatusRouteContext = {
 
 export const PATCH = withApiErrorBoundary(async (request: Request, { params }: OrderStatusRouteContext) => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse(500, "Supabase 환경 변수를 먼저 설정해야 합니다.");
+    return errorResponse(500, "주문 상태를 변경하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = await parseJsonBody(request, orderStatusUpdateSchema, "변경할 주문 상태를 다시 확인해 주세요.");
@@ -80,7 +80,7 @@ export const PATCH = withApiErrorBoundary(async (request: Request, { params }: O
     }
 
     if (isOrderSchemaMissingError(error)) {
-      return errorResponse(500, "Supabase 주문 테이블이 아직 준비되지 않았습니다.");
+      return errorResponse(500, "주문 상태를 변경하지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
 
     if (isOrderMutationError(error) && (error.code === "42501" || error.code === "PGRST301")) {

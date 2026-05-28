@@ -5,14 +5,14 @@ const protectedScreens = [
   { path: "/dashboard", heading: "대시보드", visibleText: "오늘 주문" },
   { path: "/products", heading: "상품", visibleText: "상품 등록" },
   { path: "/products/new", heading: "상품 등록", visibleText: "상품 기본 정보" },
-  { path: "/products/e2e-product/edit", heading: "상품 수정", visibleText: "상품 기본 정보 수정 폼" },
+  { path: "/products/e2e-product/edit", heading: "상품 수정", visibleText: "현재는 상품 상세에서 등록된 정보를 확인할 수 있습니다." },
   { path: "/inventory", heading: "재고", visibleText: "현재 재고" },
-  { path: "/inventory/low-stock", heading: "재고 부족", visibleText: "재고 부족 옵션 조합 목록" },
-  { path: "/inventory/movements", heading: "재고 이력", visibleText: "재고 변경 이력 테이블" },
+  { path: "/inventory/low-stock", heading: "재고 부족", visibleText: "현재 재고 부족 옵션 조합이 없습니다." },
+  { path: "/inventory/movements", heading: "재고 이력", visibleText: "아직 재고 변경 이력이 없습니다." },
   { path: "/orders", heading: "주문", visibleText: "주문 등록" },
   { path: "/orders/new", heading: "주문 등록", visibleText: "고객명" },
-  { path: "/categories", heading: "카테고리", visibleText: "카테고리 목록" },
-  { path: "/settings", heading: "설정", visibleText: "스토어 설정 폼" },
+  { path: "/categories", heading: "카테고리", visibleText: "아직 등록된 카테고리가 없습니다." },
+  { path: "/settings", heading: "설정", visibleText: "스토어 이름과 운영 메모는 마이페이지에서 수정할 수 있습니다." },
   { path: "/my-page", heading: "마이페이지", visibleText: "현재 접속 계정" }
 ];
 

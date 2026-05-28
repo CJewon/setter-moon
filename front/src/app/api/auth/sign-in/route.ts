@@ -8,7 +8,7 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 export const POST = withApiErrorBoundary(async (request: Request) => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse(500, "로그인 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
+    return errorResponse(500, "로그인할 수 없습니다. 잠시 후 다시 시도해 주세요.");
   }
 
   const parsed = await parseJsonBody(request, signInSchema, "입력한 정보를 다시 확인해 주세요.");
