@@ -28,8 +28,8 @@ function getUsageTone(state: UsageLimitState, limit: number | null) {
   return state === "blocked" ? "danger" : state === "warning" ? "warning" : "info";
 }
 
-function getUsageSuffix(key: UsageMetric["key"]) {
-  return key === "monthlyOrders" ? "건 등록" : "개 사용";
+function getUsageUnit(key: UsageMetric["key"]) {
+  return key === "monthlyOrders" ? "건" : "개";
 }
 
 function getLimitLabel(metric: UsageMetric) {
@@ -40,9 +40,34 @@ function getLimitLabel(metric: UsageMetric) {
   return metric.key === "monthlyOrders" ? `월 ${formatNumber(metric.limit)}건` : `${formatNumber(metric.limit)}개`;
 }
 
+function getUsageStateLabel(state: UsageLimitState, limit: number | null) {
+  if (limit === null) {
+    return "한도 없음";
+  }
+
+  return state === "blocked" ? "한도 도달" : state === "warning" ? "한도 임박" : "정상";
+}
+
+function getUsageMessage(state: UsageLimitState, limit: number | null) {
+  if (limit === null) {
+    return "풀버전은 제한 없이 사용할 수 있어요.";
+  }
+
+  if (state === "blocked") {
+    return "무료 한도를 모두 사용했어요.";
+  }
+
+  if (state === "warning") {
+    return "무료 한도에 가까워지고 있어요.";
+  }
+
+  return "아직 여유가 있어요.";
+}
+
 function UsageMeter({ metric }: { metric: UsageMetric }) {
   const percent = metric.percent ?? 18;
   const tone = getUsageTone(metric.state, metric.limit);
+  const unit = getUsageUnit(metric.key);
   const barClassName = {
     success: "bg-emerald-500",
     info: "bg-blue-500",
@@ -57,18 +82,27 @@ function UsageMeter({ metric }: { metric: UsageMetric }) {
           <p className="text-sm font-semibold text-slate-950">{metric.label}</p>
           <p className="mt-1 text-xs text-slate-500">무료 플랜 기준 한도: {getLimitLabel(metric)}</p>
         </div>
-        <StatusBadge tone={tone}>{metric.limit === null ? "한도 없음" : `${percent}%`}</StatusBadge>
+        <StatusBadge tone={tone}>{getUsageStateLabel(metric.state, metric.limit)}</StatusBadge>
       </div>
-      <p className="mt-4 text-xl font-bold text-slate-950">
-        {formatNumber(metric.count)}
-        <span className="ml-1 text-sm font-semibold text-slate-500">{getUsageSuffix(metric.key)}</span>
+      <p className="mt-4 text-xl font-bold text-slate-950" aria-label={`${metric.label} 사용량`}>
+        {metric.limit === null ? (
+          <>
+            {formatNumber(metric.count)}
+            <span className="ml-1 text-sm font-semibold text-slate-500">{unit} 사용</span>
+          </>
+        ) : (
+          <>
+            {formatNumber(metric.count)}
+            <span className="mx-1 text-sm font-semibold text-slate-400">/</span>
+            {formatNumber(metric.limit)}
+            <span className="ml-1 text-sm font-semibold text-slate-500">{unit}</span>
+          </>
+        )}
       </p>
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
         <div className={`h-full rounded-full ${barClassName}`} style={{ width: `${percent}%` }} />
       </div>
-      {metric.state === "blocked" ? (
-        <p className="mt-2 text-xs font-medium text-red-700">무료 한도에 도달했습니다.</p>
-      ) : null}
+      <p className="mt-2 text-xs font-medium text-slate-600">{getUsageMessage(metric.state, metric.limit)}</p>
     </div>
   );
 }
