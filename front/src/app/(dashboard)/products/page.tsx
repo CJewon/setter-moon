@@ -8,7 +8,7 @@ export default function ProductsPage() {
     <>
       <PageHeader
         title="상품"
-        description="등록된 상품을 검색하고 SKU별 재고 상태를 확인합니다."
+        description="등록된 상품을 검색하고 옵션별 재고 상태를 확인합니다."
         action={{ href: routes.newProduct, label: "상품 등록" }}
       />
       <div className="mb-4 grid gap-3 md:grid-cols-[1fr_180px_180px]">

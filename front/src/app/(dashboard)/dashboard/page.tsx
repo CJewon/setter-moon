@@ -5,7 +5,7 @@ import { formatNumber, formatWon } from "@/shared/lib/format";
 const summaryCards = [
   { label: "오늘 주문", value: formatNumber(0), helper: "주문접수 기준" },
   { label: "오늘 판매금액", value: formatWon(0), helper: "취소 주문 제외" },
-  { label: "재고 부족 SKU", value: formatNumber(0), helper: "안전재고 이하" },
+  { label: "재고 부족 옵션", value: formatNumber(0), helper: "안전재고 이하" },
   { label: "배송대기", value: formatNumber(0), helper: "재고 차감 완료" }
 ];
 

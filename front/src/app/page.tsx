@@ -127,14 +127,14 @@ const trustPrinciples: TrustPrinciple[] = [
 const demoMetrics: Metric[] = [
   { label: "오늘 주문", value: "12건", detail: "샘플 스토어 기준" },
   { label: "주문접수 예약", value: "7개", detail: "아직 실제 차감 전 수량" },
-  { label: "재고 부족 SKU", value: "3개", detail: "가용 재고 5개 이하" },
+  { label: "재고 부족 옵션", value: "3개", detail: "가용 재고 5개 이하" },
   { label: "최근 변경", value: "5건", detail: "주문 상태와 재고 이력" }
 ];
 
 const comparisonRows: ComparisonRow[] = [
   {
     legacy: "상품과 주문을 엑셀 탭 여러 개에 나눠 적습니다.",
-    sellerRoom: "상품, 옵션, SKU, 주문을 한 콘솔에서 연결해서 봅니다."
+    sellerRoom: "상품, 옵션 조합, 주문을 한 콘솔에서 연결해서 봅니다."
   },
   {
     legacy: "주문접수부터 재고를 바로 빼서 품절 판단이 흔들립니다.",
@@ -146,14 +146,14 @@ const comparisonRows: ComparisonRow[] = [
   },
   {
     legacy: "부족 재고를 감으로 체크하고 포장 직전에야 발견합니다.",
-    sellerRoom: "가용 재고 기준으로 부족 SKU를 먼저 보여줍니다."
+    sellerRoom: "가용 재고 기준으로 부족 옵션을 먼저 보여줍니다."
   }
 ];
 
 const problemPrompts: ProblemPrompt[] = [
   {
-    question: "옵션이 늘수록 어떤 SKU 재고가 빠졌는지 헷갈리나요?",
-    answer: "상품 안에서 옵션 조합별 SKU를 만들고 현재 재고와 가용 재고를 따로 관리합니다."
+    question: "옵션이 늘수록 어떤 옵션 재고가 빠졌는지 헷갈리나요?",
+    answer: "상품 안에서 옵션 조합을 만들고 현재 재고와 가용 재고를 따로 관리합니다."
   },
   {
     question: "주문접수와 배송대기 사이에서 재고 숫자가 흔들리나요?",
@@ -161,14 +161,14 @@ const problemPrompts: ProblemPrompt[] = [
   },
   {
     question: "여러 채널 주문을 다시 옮겨 적는 시간이 아깝나요?",
-    answer: "초기 MVP는 자동 연동 대신 빠르게 입력하고 확인하는 수동 운영 흐름에 집중합니다."
+    answer: "초기 버전은 자동 연동 대신 빠르게 입력하고 확인하는 수동 운영 흐름에 집중합니다."
   }
 ];
 
 const features: Feature[] = [
   {
-    title: "상품·옵션·SKU",
-    description: "사용자가 직접 옵션 그룹을 만들고 조합별 SKU와 재고를 관리합니다.",
+    title: "상품·옵션 조합",
+    description: "사용자가 직접 옵션 그룹을 만들고 조합별 재고를 관리합니다.",
     icon: Package
   },
   {
@@ -183,7 +183,7 @@ const features: Feature[] = [
   },
   {
     title: "운영 대시보드",
-    description: "오늘 주문, 재고 부족 SKU, 최근 주문과 변경 이력을 첫 화면에서 확인합니다.",
+    description: "오늘 주문, 재고 부족 옵션, 최근 주문과 변경 이력을 첫 화면에서 확인합니다.",
     icon: BarChart3
   }
 ];
@@ -194,12 +194,12 @@ const workflowSteps: WorkflowStep[] = [
     description: "판매 상품과 기본 정보를 등록하고 옵션 관리 기준을 정합니다."
   },
   {
-    title: "옵션과 SKU 생성",
-    description: "색상, 사이즈, 구성처럼 직접 쓰는 옵션 조합으로 SKU를 만듭니다."
+    title: "옵션 조합 만들기",
+    description: "색상, 사이즈, 구성처럼 직접 쓰는 옵션 조합을 만듭니다."
   },
   {
     title: "초기 재고 입력",
-    description: "SKU별 현재 재고를 입력하고 부족 기준을 확인합니다."
+    description: "옵션별 현재 재고를 입력하고 부족 기준을 확인합니다."
   },
   {
     title: "주문 수동 등록",
@@ -236,7 +236,7 @@ const targetUsers: TargetUser[] = [
 const faqItems: FaqItem[] = [
   {
     question: "쇼핑몰 채널과 자동 연동되나요?",
-    answer: "초기 MVP에서는 자동 연동을 제공하지 않습니다. 여러 채널에서 들어온 주문을 빠르게 수동 등록하고 재고 흐름을 확인하는 데 집중합니다."
+    answer: "초기 버전에서는 자동 연동을 제공하지 않습니다. 여러 채널에서 들어온 주문을 빠르게 수동 등록하고 재고 흐름을 확인하는 데 집중합니다."
   },
   {
     question: "재고는 언제 실제로 차감되나요?",
@@ -244,11 +244,11 @@ const faqItems: FaqItem[] = [
   },
   {
     question: "지금 보이는 숫자는 실제 이용자 데이터인가요?",
-    answer: "아닙니다. 현재 랜딩의 주문 수와 SKU 수는 화면 이해를 돕기 위한 샘플 데이터입니다."
+    answer: "아닙니다. 현재 랜딩의 주문 수와 옵션 조합 수는 화면 이해를 돕기 위한 샘플 데이터입니다."
   },
   {
     question: "백오피스 기능까지 한 번에 제공하나요?",
-    answer: "처음에는 상품, 옵션, SKU 재고, 주문 상태, 대시보드에 집중합니다. 이후 검증된 운영 흐름을 바탕으로 확장합니다."
+    answer: "처음에는 상품, 옵션별 재고, 주문 상태, 대시보드에 집중합니다. 이후 검증된 운영 흐름을 바탕으로 확장합니다."
   }
 ];
 
@@ -336,7 +336,7 @@ function HeroSection() {
             옵션별 재고, 주문접수 예약 수량, 배송대기 차감을 한 흐름으로 확인하세요.
           </p>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            SellerRoom은 여러 판매 채널의 주문을 수동으로 모아 초기 셀러가 매일 확인해야 하는 상품, SKU, 재고, 주문 상태를 정리하는 무료 운영 콘솔입니다.
+            SellerRoom은 여러 판매 채널의 주문을 수동으로 모아 초기 셀러가 매일 확인해야 하는 상품, 옵션별 재고, 주문 상태를 정리하는 무료 운영 콘솔입니다.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             {heroBadges.map((label) => (
@@ -396,7 +396,7 @@ function HeroConsolePreview() {
           <div className="min-w-0">
             <div className="grid gap-3 sm:grid-cols-3">
               <PreviewStat label="오늘 주문" value="12건" tone="neutral" />
-              <PreviewStat label="재고 부족" value="3 SKU" tone="blue" />
+              <PreviewStat label="재고 부족" value="3개" tone="blue" />
               <PreviewStat label="배송대기" value="5건" tone="dark" />
             </div>
             <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_220px]">
@@ -433,7 +433,7 @@ function HeroConsolePreview() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-bold text-slate-900">부족 SKU</p>
+                  <p className="text-sm font-bold text-slate-900">부족 옵션</p>
                   <div className="mt-4 space-y-3">
                     {lowStockPreview.map((item) => (
                       <div key={item.sku} className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
@@ -578,7 +578,7 @@ function FeatureSection() {
         <SectionHeading
           eyebrow="핵심 기능"
           title="상품 등록부터 배송 상태까지 한 흐름으로 봅니다."
-          description="초기 MVP 범위에 맞춰 상품, SKU 재고, 주문 상태, 대시보드에 집중합니다."
+          description="초기 버전은 상품, 옵션별 재고, 주문 상태, 대시보드에 집중합니다."
           centered
         />
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -865,7 +865,7 @@ function InventoryPreview() {
     <div className="rounded-md border border-slate-200 bg-white p-4">
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
         <div>
-          <p className="text-sm font-bold text-slate-950">SKU 재고 상태</p>
+          <p className="text-sm font-bold text-slate-950">옵션별 재고 상태</p>
           <p className="mt-1 text-xs text-slate-500">샘플 화면 기준</p>
         </div>
         <AlertTriangle className="h-5 w-5 text-blue-600" aria-hidden="true" />
@@ -874,7 +874,7 @@ function InventoryPreview() {
         <table className="w-full min-w-[560px] border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-slate-200 text-xs font-bold text-slate-500">
-              <th className="px-3 py-3">SKU</th>
+              <th className="px-3 py-3">옵션 조합</th>
               <th className="px-3 py-3">현재 재고</th>
               <th className="px-3 py-3">주문접수</th>
               <th className="px-3 py-3">가용 재고</th>

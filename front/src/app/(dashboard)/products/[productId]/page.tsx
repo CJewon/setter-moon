@@ -16,14 +16,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       <section className="grid gap-4 xl:grid-cols-[1fr_360px]">
         <div className="rounded-md border border-slate-200 bg-white p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold">SKU별 재고</h2>
+            <h2 className="text-base font-semibold">옵션별 재고</h2>
             <StatusBadge tone="neutral">데이터 연결 대기</StatusBadge>
           </div>
           <div className="mt-5 overflow-hidden rounded-md border border-slate-200">
             <table className="app-table">
               <thead>
                 <tr>
-                  <th>SKU</th>
+                  <th>옵션 조합</th>
                   <th>현재 재고</th>
                   <th>예약 수량</th>
                   <th>가용 재고</th>
@@ -32,7 +32,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               <tbody>
                 <tr>
                   <td colSpan={4} className="text-center text-sm text-slate-500">
-                    아직 SKU 데이터가 없습니다.
+                    아직 옵션 조합 데이터가 없습니다.
                   </td>
                 </tr>
               </tbody>

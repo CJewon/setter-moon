@@ -103,7 +103,7 @@ export default async function MyPage() {
           <div className="flex flex-col items-start gap-2 lg:items-end">
             <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 풀버전" : "무료 플랜"}</StatusBadge>
             <p className="text-sm text-slate-500">
-              {isPaidPlan ? "풀버전 사용 중" : "상품 10개, SKU 100개, 월 주문 100건까지"}
+              {isPaidPlan ? "풀버전 사용 중" : "상품 10개, 옵션 조합 100개, 월 주문 100건까지"}
             </p>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { PageHeader } from "@/shared/components/page-header";
 export default function NewOrderPage() {
   return (
     <>
-      <PageHeader title="주문 등록" description="고객 정보와 상품/SKU를 선택해 주문을 수동 등록합니다." />
+      <PageHeader title="주문 등록" description="고객 정보와 상품 옵션을 선택해 주문을 수동 등록합니다." />
       <form className="rounded-md border border-slate-200 bg-white p-5">
         <div className="grid gap-4 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-medium">

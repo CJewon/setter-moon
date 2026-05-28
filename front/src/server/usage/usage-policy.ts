@@ -49,7 +49,7 @@ const PLAN_LIMITS: Record<PlanId, Record<UsageMetricKey, PlanLimit>> = {
 
 const METRIC_LABELS: Record<UsageMetricKey, string> = {
   products: "상품",
-  skus: "SKU/옵션 조합",
+  skus: "옵션 조합",
   monthlyOrders: "월 새 주문"
 };
 

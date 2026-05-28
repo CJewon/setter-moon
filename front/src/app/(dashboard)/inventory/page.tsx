@@ -4,9 +4,9 @@ import { StatusBadge } from "@/shared/components/status-badge";
 export default function InventoryPage() {
   return (
     <>
-      <PageHeader title="재고" description="전체 SKU의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
+      <PageHeader title="재고" description="전체 옵션 조합의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
       <div className="mb-4 grid gap-3 md:grid-cols-[1fr_180px_180px]">
-        <input className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" placeholder="상품명 또는 SKU 검색" />
+        <input className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" placeholder="상품명 또는 옵션 조합 검색" />
         <select className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" defaultValue="">
           <option value="">전체 카테고리</option>
         </select>
@@ -22,7 +22,7 @@ export default function InventoryPage() {
           <thead>
             <tr>
               <th>상품명</th>
-              <th>SKU</th>
+              <th>옵션 조합</th>
               <th>현재 재고</th>
               <th>예약 수량</th>
               <th>가용 재고</th>

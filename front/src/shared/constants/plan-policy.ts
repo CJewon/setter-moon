@@ -7,7 +7,7 @@ export const FREE_PLAN_LIMIT_ITEMS = [
     description: "판매중, 품절, 숨김 상품을 모두 포함합니다."
   },
   {
-    label: "SKU/옵션 조합",
+    label: "옵션 조합",
     value: "100개",
     description: "색상, 사이즈 등 옵션 조합을 충분히 실험할 수 있는 기준입니다."
   },
@@ -67,7 +67,7 @@ export const PRICING_PLANS = [
     tone: "paid",
     features: [
       "상품 등록 한도 해제",
-      "SKU/옵션 조합 한도 해제",
+      "옵션 조합 한도 해제",
       "월 새 주문 등록 한도 해제",
       "무료 플랜의 모든 운영 기능 포함"
     ]
