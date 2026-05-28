@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getActiveVariantOptionMismatch } from "@/features/products/utils/product-option-validation";
 
 const nonNegativeIntegerSchema = z.coerce
   .number()
@@ -91,6 +92,17 @@ export const productCreateSchema = z
           }
           values.add(optionValue);
         });
+      });
+
+    }
+
+    const mismatchMessage = getActiveVariantOptionMismatch(value);
+
+    if (mismatchMessage) {
+      context.addIssue({
+        code: "custom",
+        path: ["variants"],
+        message: mismatchMessage
       });
     }
 

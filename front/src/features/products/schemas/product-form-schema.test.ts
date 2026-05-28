@@ -53,4 +53,41 @@ describe("productCreateSchema", () => {
 
     expect(parsed.success).toBe(false);
   });
+
+  it("rejects active variants that do not match every option group", () => {
+    const parsed = productCreateSchema.safeParse({
+      ...basePayload,
+      optionMode: "options",
+      optionGroups: [
+        { name: "색상", values: ["블랙"] },
+        { name: "사이즈", values: ["M"] }
+      ],
+      variants: [
+        {
+          ...basePayload.variants[0],
+          clientKey: "black",
+          options: [{ groupName: "색상", value: "블랙" }]
+        }
+      ]
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects active variants with unknown option values", () => {
+    const parsed = productCreateSchema.safeParse({
+      ...basePayload,
+      optionMode: "options",
+      optionGroups: [{ name: "색상", values: ["블랙"] }],
+      variants: [
+        {
+          ...basePayload.variants[0],
+          clientKey: "white",
+          options: [{ groupName: "색상", value: "화이트" }]
+        }
+      ]
+    });
+
+    expect(parsed.success).toBe(false);
+  });
 });

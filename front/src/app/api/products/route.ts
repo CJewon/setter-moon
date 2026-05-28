@@ -4,6 +4,7 @@ import {
   createProductForStore,
   isProductMutationError,
   isProductSchemaMissingError,
+  isProductValidationError,
   isProductUsageLimitError
 } from "@/server/products/service";
 import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
@@ -49,7 +50,11 @@ export const POST = withApiErrorBoundary(async (request: Request) => {
     console.error("Failed to create product", error);
 
     if (isProductUsageLimitError(error)) {
-      return errorResponse(409, error.message);
+      return errorResponse(429, error.message);
+    }
+
+    if (isProductValidationError(error)) {
+      return errorResponse(400, error.message);
     }
 
     if (isProductSchemaMissingError(error)) {

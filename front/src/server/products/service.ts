@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ProductCreateValues, ProductVariantValues } from "@/features/products/schemas/product-form-schema";
+import { getActiveVariantOptionMismatch } from "@/features/products/utils/product-option-validation";
 import type { Store } from "@/server/stores/service";
 import { getStoreUsageCounts } from "@/server/usage/service";
 import { PLAN_IDS, type PlanId } from "@/server/usage/usage-policy";
@@ -29,6 +30,13 @@ export class ProductUsageLimitError extends Error {
   }
 }
 
+export class ProductValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ProductValidationError";
+  }
+}
+
 export class ProductMutationError extends Error {
   code?: string;
   details?: string;
@@ -52,6 +60,10 @@ export class ProductNotFoundError extends Error {
 
 export function isProductUsageLimitError(error: unknown) {
   return error instanceof ProductUsageLimitError;
+}
+
+export function isProductValidationError(error: unknown) {
+  return error instanceof ProductValidationError;
 }
 
 export function isProductMutationError(error: unknown) {
@@ -185,6 +197,11 @@ export async function createProductForStore(
 ): Promise<CreateProductResult> {
   const activeVariants = values.variants.filter((variant) => variant.isActive);
   let productId: string | undefined;
+  const mismatchMessage = getActiveVariantOptionMismatch(values);
+
+  if (mismatchMessage) {
+    throw new ProductValidationError(mismatchMessage);
+  }
 
   await assertFreePlanCapacity(supabase, store, planId, activeVariants.length);
 
@@ -305,6 +322,10 @@ export async function createProductForStore(
         };
       });
     });
+
+    if (values.optionMode === "options" && variantOptionInserts.length !== activeVariants.length * values.optionGroups.length) {
+      throw new ProductValidationError("활성 옵션 조합이 옵션 그룹과 맞지 않습니다.");
+    }
 
     if (variantOptionInserts.length > 0) {
       const { error: variantOptionError } = await supabase.from("product_variant_options").insert(variantOptionInserts);
