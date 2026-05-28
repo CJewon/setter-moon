@@ -10,8 +10,13 @@ export type ProductListItem = Pick<ProductRow, "id" | "name" | "base_price" | "s
   totalCurrentStock: number;
 };
 
+export type ProductDetailVariant = ProductVariantRow & {
+  availableStock: number;
+  reservedQuantity: number;
+};
+
 export type ProductDetail = ProductRow & {
-  variants: ProductVariantRow[];
+  variants: ProductDetailVariant[];
 };
 
 export type CreateProductResult = {

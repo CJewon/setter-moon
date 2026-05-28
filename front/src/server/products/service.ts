@@ -1,5 +1,6 @@
 import { ProductMutationError, ProductNotFoundError } from "@/server/products/errors";
 import type { ProductDetail, ProductListItem, ProductsSupabaseClient } from "@/server/products/types";
+import { getReservedQuantitiesForStore } from "@/server/orders/service";
 
 export { createProductForStore } from "@/server/products/create-product";
 export {
@@ -86,9 +87,19 @@ export async function getProductDetailForStore(
     throw new ProductMutationError(variantError);
   }
 
+  const reservedByVariantId = await getReservedQuantitiesForStore(supabase, storeId);
+
   return {
     ...product,
-    variants: variants ?? []
+    variants: (variants ?? []).map((variant) => {
+      const reservedQuantity = reservedByVariantId.get(variant.id) ?? 0;
+
+      return {
+        ...variant,
+        availableStock: Math.max(variant.current_stock - reservedQuantity, 0),
+        reservedQuantity
+      };
+    })
   };
 }
 

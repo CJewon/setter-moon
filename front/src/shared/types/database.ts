@@ -233,6 +233,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string;
+          variant_id: string;
+          product_name_snapshot: string;
+          variant_name_snapshot: string;
+          quantity: number;
+          unit_price: number;
+          total_price: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id: string;
+          variant_id: string;
+          product_name_snapshot: string;
+          variant_name_snapshot: string;
+          quantity: number;
+          unit_price?: number;
+          total_price?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          product_id?: string;
+          variant_id?: string;
+          product_name_snapshot?: string;
+          variant_name_snapshot?: string;
+          quantity?: number;
+          unit_price?: number;
+          total_price?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       stock_movements: {
         Row: {
           id: string;
@@ -317,6 +356,33 @@ export type Database = {
           ordered_at?: string;
           created_at?: never;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      order_status_logs: {
+        Row: {
+          id: string;
+          order_id: string;
+          from_status: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold" | null;
+          to_status: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold";
+          memo: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          from_status?: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold" | null;
+          to_status: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold";
+          memo?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          from_status?: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold" | null;
+          to_status?: "received" | "ready_to_ship" | "shipping" | "delivered" | "cancelled" | "hold";
+          memo?: string | null;
+          created_at?: string;
         };
         Relationships: [];
       };
