@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { useCreateStoreMutation } from "@/features/stores/hooks/use-store-mutations";
 import { salesChannels, storeFormSchema } from "@/features/stores/schemas/store-form-schema";
-import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
+import { getApiErrorState } from "@/shared/api/http";
 import { useToast } from "@/shared/components/toast-provider";
 import type { ActionState } from "@/shared/types/action-state";
 import { initialActionState } from "@/shared/types/action-state";
@@ -12,7 +13,8 @@ export function StoreOnboardingForm() {
   const router = useRouter();
   const { showToast } = useToast();
   const [state, setState] = useState<ActionState>(initialActionState);
-  const [pending, setPending] = useState(false);
+  const createStoreMutation = useCreateStoreMutation();
+  const pending = createStoreMutation.isPending;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,47 +35,31 @@ export function StoreOnboardingForm() {
       return;
     }
 
-    setPending(true);
     setState(initialActionState);
-
-    try {
-      const response = await fetch("/api/stores", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(parsed.data)
-      });
-      const result = (await response.json().catch(() => null)) as { ok?: boolean; message?: string } | null;
-
-      if (!response.ok || !result?.ok) {
-        setState({
-          status: "error",
-          message: result?.message ?? "스토어를 만들지 못했습니다. 잠시 후 다시 시도해 주세요."
+    createStoreMutation.mutate(parsed.data, {
+      onSuccess: ({ message }) => {
+        showToast({
+          tone: "success",
+          title: "스토어 생성 완료",
+          message: message ?? "스토어를 만들었습니다."
         });
-        setPending(false);
-        return;
+        router.replace("/dashboard");
+        router.refresh();
+      },
+      onError: (error) => {
+        const nextState = getApiErrorState(error, "스토어를 만들지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        setState(nextState);
+        showToast({
+          tone: "error",
+          title: "스토어 생성 실패",
+          message: nextState.message
+        });
       }
-
-      showToast({
-        tone: "success",
-        title: "스토어 생성 완료",
-        message: result.message ?? "스토어를 만들었습니다."
-      });
-      router.replace("/dashboard");
-      router.refresh();
-    } catch {
-      setState({
-        status: "error",
-        message: "네트워크 연결을 확인한 뒤 다시 시도해 주세요."
-      });
-      setPending(false);
-    }
+    });
   }
 
   return (
     <form onSubmit={handleSubmit} className="rounded-md border border-slate-200 bg-white p-5">
-      <ActionToastBridge state={state} errorTitle="스토어 생성 실패" />
       <div className="grid gap-4">
         <label className="grid gap-2 text-sm font-medium" htmlFor="store-name">
           스토어명

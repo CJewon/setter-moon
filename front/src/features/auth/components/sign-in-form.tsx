@@ -1,21 +1,64 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { signInAction } from "@/features/auth/actions/auth-actions";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 import { PasswordInput } from "@/features/auth/components/password-input";
-import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
-import { initialActionState } from "@/shared/types/action-state";
+import { useSignInMutation } from "@/features/auth/hooks/use-auth-mutations";
+import { signInSchema } from "@/features/auth/schemas/auth-form-schema";
+import { getApiErrorState } from "@/shared/api/http";
+import { useToast } from "@/shared/components/toast-provider";
+import { initialActionState, type ActionState } from "@/shared/types/action-state";
 import { cn } from "@/shared/utils/cn";
 
 export function SignInForm() {
-  const [state, formAction, pending] = useActionState(signInAction, initialActionState);
+  const router = useRouter();
+  const { showToast } = useToast();
+  const [state, setState] = useState<ActionState>(initialActionState);
+  const signInMutation = useSignInMutation();
+  const pending = signInMutation.isPending;
   const emailError = state.fieldErrors?.email?.[0];
   const passwordError = state.fieldErrors?.password?.[0];
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const parsed = signInSchema.safeParse({
+      email: formData.get("email"),
+      password: formData.get("password")
+    });
+
+    if (!parsed.success) {
+      setState({
+        status: "error",
+        message: "입력한 정보를 다시 확인해 주세요.",
+        fieldErrors: parsed.error.flatten().fieldErrors
+      });
+      return;
+    }
+
+    setState(initialActionState);
+    signInMutation.mutate(parsed.data, {
+      onSuccess: ({ data }) => {
+        router.replace(data.redirectTo as Route);
+        router.refresh();
+      },
+      onError: (error) => {
+        const nextState = getApiErrorState(error, "로그인하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        setState(nextState);
+        showToast({
+          tone: "error",
+          title: "로그인 실패",
+          message: nextState.message
+        });
+      }
+    });
+  }
+
   return (
-    <form action={formAction} className="mt-6 space-y-4" noValidate>
-      <ActionToastBridge state={state} errorTitle="로그인 실패" />
+    <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
       <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="email">
         <span>이메일</span>
         <input

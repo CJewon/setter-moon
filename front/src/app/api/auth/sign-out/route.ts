@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { successResponse } from "@/server/shared/error-response";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 
@@ -10,7 +10,10 @@ export async function POST() {
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+
+  return successResponse({ redirectTo: "/" }, 200, {
+    message: "로그아웃했습니다."
+  });
 }
 
 export const dynamic = "force-dynamic";

@@ -41,7 +41,9 @@ export async function POST(request: Request) {
   const parsed = storeFormSchema.safeParse(payload);
 
   if (!parsed.success) {
-    return errorResponse("VALIDATION_ERROR", "스토어 정보를 확인해 주세요.", 422);
+    return errorResponse("VALIDATION_ERROR", "스토어 정보를 확인해 주세요.", 422, {
+      fieldErrors: parsed.error.flatten().fieldErrors
+    });
   }
 
   try {

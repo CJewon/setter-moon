@@ -1,9 +1,11 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
-import { updateMyPageAction } from "@/features/my-page/actions/my-page-actions";
+import { useRef, useState, type FormEvent } from "react";
+import { useUpdateMyPageMutation } from "@/features/my-page/hooks/use-my-page-mutation";
+import { myPageFormSchema } from "@/features/my-page/schemas/my-page-schema";
 import { salesChannels } from "@/features/stores/schemas/store-form-schema";
-import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
+import { getApiErrorState } from "@/shared/api/http";
+import { useToast } from "@/shared/components/toast-provider";
 import { initialActionState, type ActionState } from "@/shared/types/action-state";
 import { cn } from "@/shared/utils/cn";
 
@@ -66,26 +68,13 @@ function isSameSnapshot(first: MyPageFormSnapshot, second: MyPageFormSnapshot) {
 }
 
 export function MyPageForm({ displayName, email, storeName, businessType, memo }: MyPageFormProps) {
+  const { showToast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const [savedSnapshot, setSavedSnapshot] = useState(() => createInitialSnapshot({ displayName, storeName, businessType, memo }));
   const [isDirty, setIsDirty] = useState(false);
-  const [state, formAction, pending] = useActionState(async (prevState: ActionState, formData: FormData) => {
-    const nextState = await updateMyPageAction(prevState, formData);
-
-    if (nextState.status === "success") {
-      setSavedSnapshot(
-        normalizeSnapshot({
-          displayName: String(formData.get("displayName") ?? ""),
-          storeName: String(formData.get("storeName") ?? ""),
-          businessType: String(formData.get("businessType") ?? ""),
-          memo: String(formData.get("memo") ?? "")
-        })
-      );
-      setIsDirty(false);
-    }
-
-    return nextState;
-  }, initialActionState);
+  const [state, setState] = useState<ActionState>(initialActionState);
+  const updateMyPageMutation = useUpdateMyPageMutation();
+  const pending = updateMyPageMutation.isPending;
   const displayNameError = state.fieldErrors?.displayName?.[0];
   const storeNameError = state.fieldErrors?.storeName?.[0];
   const memoError = state.fieldErrors?.memo?.[0];
@@ -101,17 +90,69 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
     setIsDirty(!isSameSnapshot(readFormSnapshot(form), savedSnapshot));
   }
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const parsed = myPageFormSchema.safeParse({
+      displayName: formData.get("displayName"),
+      storeName: formData.get("storeName"),
+      businessType: formData.get("businessType"),
+      memo: formData.get("memo")
+    });
+
+    if (!parsed.success) {
+      setState({
+        status: "error",
+        message: "입력한 정보를 다시 확인해 주세요.",
+        fieldErrors: parsed.error.flatten().fieldErrors
+      });
+      return;
+    }
+
+    setState(initialActionState);
+    updateMyPageMutation.mutate(parsed.data, {
+      onSuccess: ({ message }) => {
+        setSavedSnapshot(
+          normalizeSnapshot({
+            displayName: parsed.data.displayName ?? "",
+            storeName: parsed.data.storeName,
+            businessType: parsed.data.businessType ?? "",
+            memo: parsed.data.memo ?? ""
+          })
+        );
+        setIsDirty(false);
+        setState({
+          status: "success",
+          message: message ?? "마이페이지 정보를 저장했습니다."
+        });
+        showToast({
+          tone: "success",
+          title: "저장 완료",
+          message: message ?? "마이페이지 정보를 저장했습니다."
+        });
+      },
+      onError: (error) => {
+        const nextState = getApiErrorState(error, "정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+        setState(nextState);
+        showToast({
+          tone: "error",
+          title: "저장 실패",
+          message: nextState.message
+        });
+      }
+    });
+  }
+
   return (
     <form
       id="my-page-form"
       ref={formRef}
-      action={formAction}
+      onSubmit={handleSubmit}
       className="grid gap-4 lg:grid-cols-2"
       noValidate
       onChange={(event) => updateDirtyState(event.currentTarget)}
     >
-      <ActionToastBridge state={state} successTitle="저장 완료" errorTitle="저장 실패" />
-
       <section className="rounded-md border border-slate-200 bg-white p-5">
         <div className="flex items-start justify-between gap-3">
           <div>

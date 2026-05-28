@@ -7,14 +7,20 @@ export type ApiErrorCode =
   | "VALIDATION_ERROR"
   | "INSUFFICIENT_STOCK"
   | "INVALID_STATUS_TRANSITION"
-  | "CONFLICT";
+  | "CONFLICT"
+  | "RATE_LIMIT";
 
-export function errorResponse(code: ApiErrorCode, message: string, status = 400) {
+type ErrorResponseOptions = {
+  fieldErrors?: Record<string, string[] | undefined>;
+};
+
+export function errorResponse(code: ApiErrorCode, message: string, status = 400, options: ErrorResponseOptions = {}) {
   return NextResponse.json(
     {
       ok: false,
       code,
-      message
+      message,
+      ...(options.fieldErrors ? { fieldErrors: options.fieldErrors } : {})
     },
     { status }
   );
