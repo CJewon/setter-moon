@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import type { Route } from "next";
 import { Check, ChevronDown } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/shared/utils/cn";
@@ -12,15 +14,18 @@ export type FilterDropdownOption = {
 type FilterDropdownProps = {
   ariaLabel: string;
   defaultValue?: string;
+  getOptionHref?: (value: string) => Route;
   options: FilterDropdownOption[];
+  selectedValue?: string;
 };
 
-export function FilterDropdown({ ariaLabel, defaultValue = "", options }: FilterDropdownProps) {
+export function FilterDropdown({ ariaLabel, defaultValue = "", getOptionHref, options, selectedValue }: FilterDropdownProps) {
   const dropdownId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
-  const selectedOption = options.find((option) => option.value === selectedValue) ?? options[0];
+  const [internalSelectedValue, setInternalSelectedValue] = useState(defaultValue);
+  const currentValue = selectedValue ?? internalSelectedValue;
+  const selectedOption = options.find((option) => option.value === currentValue) ?? options[0];
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -76,7 +81,32 @@ export function FilterDropdown({ ariaLabel, defaultValue = "", options }: Filter
           className="absolute left-0 right-0 top-[calc(100%+8px)] z-30 max-h-64 overflow-auto rounded-lg border border-slate-200 bg-white p-1 shadow-xl shadow-slate-900/15"
         >
           {options.map((option) => {
-            const selected = option.value === selectedValue;
+            const selected = option.value === currentValue;
+            const className = cn(
+              "flex min-h-10 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm transition",
+              selected ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-700 hover:bg-slate-50"
+            );
+            const content = (
+              <>
+                <span className="min-w-0 truncate">{option.label}</span>
+                {selected ? <Check aria-hidden size={16} className="shrink-0" /> : null}
+              </>
+            );
+
+            if (getOptionHref) {
+              return (
+                <Link
+                  key={option.value}
+                  role="option"
+                  aria-selected={selected}
+                  className={className}
+                  href={getOptionHref(option.value)}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {content}
+                </Link>
+              );
+            }
 
             return (
               <button
@@ -84,17 +114,13 @@ export function FilterDropdown({ ariaLabel, defaultValue = "", options }: Filter
                 type="button"
                 role="option"
                 aria-selected={selected}
-                className={cn(
-                  "flex min-h-10 w-full items-center justify-between gap-2 rounded-md px-3 text-left text-sm transition",
-                  selected ? "bg-blue-50 font-semibold text-blue-700" : "text-slate-700 hover:bg-slate-50"
-                )}
+                className={className}
                 onClick={() => {
-                  setSelectedValue(option.value);
+                  setInternalSelectedValue(option.value);
                   setIsOpen(false);
                 }}
               >
-                <span className="min-w-0 truncate">{option.label}</span>
-                {selected ? <Check aria-hidden size={16} className="shrink-0" /> : null}
+                {content}
               </button>
             );
           })}

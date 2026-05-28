@@ -125,7 +125,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         basePath={routes.orders}
         page={orderPage.page}
         pageSize={orderPage.pageSize}
-        pageSizeOptions={orderPageSizeOptions}
         searchParams={{
           page: resolvedSearchParams.page,
           pageSize: resolvedSearchParams.pageSize,

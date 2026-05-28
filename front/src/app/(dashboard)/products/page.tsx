@@ -14,11 +14,14 @@ import { createClient } from "@/shared/lib/supabase/server";
 
 const productPageSizeOptions = [20, 50];
 const defaultProductPageSize = 20;
+const productStatuses = ["active", "sold_out", "hidden"] as const;
 
 type ProductsPageProps = {
   searchParams: Promise<{
+    keyword?: string;
     page?: string;
     pageSize?: string;
+    status?: string;
   }>;
 };
 
@@ -27,7 +30,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const supabase = await createClient();
   const resolvedSearchParams = await searchParams;
   const pagination = normalizePaginationParams(resolvedSearchParams, productPageSizeOptions, defaultProductPageSize);
-  const productPage = await listProductsForStore(supabase, access.store.id, pagination);
+  const keyword = resolvedSearchParams.keyword?.trim() ?? "";
+  const selectedStatus = productStatuses.find((status) => status === resolvedSearchParams.status);
+  const productPage = await listProductsForStore(supabase, access.store.id, pagination, {
+    keyword,
+    status: selectedStatus
+  });
+  const hasFilters = Boolean(keyword || selectedStatus);
 
   return (
     <>
@@ -36,19 +45,28 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         description="등록된 상품을 검색하고 옵션별 재고 상태를 확인합니다."
         action={{ href: routes.newProduct, label: "상품 등록" }}
       />
-      <ProductListFilters />
+      <ProductListFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
 
       {productPage.items.length === 0 ? (
         <EmptyState
-          title="아직 등록된 상품이 없습니다."
-          description="첫 상품을 등록하고 옵션별 재고를 관리해보세요."
+          title={hasFilters ? "조건에 맞는 상품이 없습니다." : "아직 등록된 상품이 없습니다."}
+          description={hasFilters ? "검색어나 판매상태를 바꿔 다시 확인해 주세요." : "첫 상품을 등록하고 옵션별 재고를 관리해보세요."}
           action={
-            <Link
-              href="/products/new"
-              className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700"
-            >
-              상품 등록하기
-            </Link>
+            hasFilters ? (
+              <Link
+                href={routes.products}
+                className="inline-flex min-h-10 items-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                전체 상품 보기
+              </Link>
+            ) : (
+              <Link
+                href="/products/new"
+                className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                상품 등록하기
+              </Link>
+            )
           }
         />
       ) : (
@@ -89,8 +107,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             basePath={routes.products}
             page={productPage.page}
             pageSize={productPage.pageSize}
-            pageSizeOptions={productPageSizeOptions}
-            searchParams={resolvedSearchParams}
+            searchParams={{
+              keyword,
+              page: resolvedSearchParams.page,
+              pageSize: resolvedSearchParams.pageSize,
+              status: selectedStatus
+            }}
             totalCount={productPage.totalCount}
             totalPages={productPage.totalPages}
           />

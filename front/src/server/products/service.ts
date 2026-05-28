@@ -17,6 +17,11 @@ export {
 } from "@/server/products/errors";
 export type { CreateProductResult, ProductDetail, ProductListItem } from "@/server/products/types";
 
+export type ProductListFilters = {
+  keyword?: string;
+  status?: ProductListItem["status"];
+};
+
 function isSchemaMissingError(error: { code?: string; message?: string }) {
   const message = error.message?.toLowerCase() ?? "";
 
@@ -26,15 +31,24 @@ function isSchemaMissingError(error: { code?: string; message?: string }) {
 export async function listProductsForStore(
   supabase: ProductsSupabaseClient,
   storeId: string,
-  pagination: PaginationParams
+  pagination: PaginationParams,
+  filters: ProductListFilters = {}
 ): Promise<PaginatedResult<ProductListItem>> {
   const { from, to } = getPaginationRange(pagination);
-  const { count, data: products, error: productError } = await supabase
+  let query = supabase
     .from("products")
     .select("id, name, base_price, status, has_options, created_at", { count: "exact" })
-    .eq("store_id", storeId)
-    .order("created_at", { ascending: false })
-    .range(from, to);
+    .eq("store_id", storeId);
+
+  if (filters.keyword) {
+    query = query.ilike("name", `%${filters.keyword}%`);
+  }
+
+  if (filters.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  const { count, data: products, error: productError } = await query.order("created_at", { ascending: false }).range(from, to);
 
   if (productError) {
     throw new ProductMutationError(productError);

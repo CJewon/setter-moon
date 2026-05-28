@@ -1,13 +1,11 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getVisibleItemRange } from "@/server/shared/pagination";
 import type { PaginationParams } from "@/shared/types/pagination";
 import { cn } from "@/shared/utils/cn";
 
 type PaginationControlsProps = PaginationParams & {
   basePath: string;
-  pageSizeOptions: number[];
   searchParams?: Record<string, string | undefined>;
   totalCount: number;
   totalPages: number;
@@ -24,15 +22,13 @@ export function PaginationControls({
   basePath,
   page,
   pageSize,
-  pageSizeOptions,
   searchParams = {},
   totalCount,
   totalPages
 }: PaginationControlsProps) {
-  const itemRange = getVisibleItemRange({ page, pageSize }, totalCount);
   const pageNumbers = getPageNumbers(page, totalPages);
 
-  function getHref(nextPage: number, nextPageSize = pageSize) {
+  function getHref(nextPage: number) {
     const params = new URLSearchParams();
 
     Object.entries(searchParams).forEach(([key, value]) => {
@@ -42,7 +38,7 @@ export function PaginationControls({
     });
 
     params.set("page", String(nextPage));
-    params.set("pageSize", String(nextPageSize));
+    params.set("pageSize", String(pageSize));
 
     return `${basePath}?${params.toString()}` as Route;
   }
@@ -53,35 +49,9 @@ export function PaginationControls({
 
   return (
     <nav
-      className="mt-4 flex flex-col gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm lg:flex-row lg:items-center lg:justify-between"
+      className="mt-4 flex justify-center text-sm text-slate-600"
       aria-label="목록 페이지 이동"
     >
-      <div className="font-medium">
-        총 <span className="text-slate-950">{totalCount.toLocaleString("ko-KR")}</span>건 중{" "}
-        <span className="text-slate-950">
-          {itemRange.from.toLocaleString("ko-KR")}-{itemRange.to.toLocaleString("ko-KR")}
-        </span>
-        건 표시
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs font-semibold text-slate-500">페이지당</span>
-        {pageSizeOptions.map((option) => (
-          <Link
-            key={option}
-            href={getHref(1, option)}
-            className={cn(
-              "inline-flex min-h-8 min-w-9 items-center justify-center rounded-md border px-2 text-xs font-semibold transition",
-              option === pageSize
-                ? "border-blue-600 bg-blue-600 text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50"
-            )}
-          >
-            {option}
-          </Link>
-        ))}
-      </div>
-
       <div className="flex flex-wrap items-center gap-2">
         <Link
           href={getHref(Math.max(page - 1, 1))}
