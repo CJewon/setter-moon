@@ -1,4 +1,5 @@
 import { ProductMutationError, ProductNotFoundError } from "@/server/products/errors";
+import type { ProductEditValues } from "@/features/products/schemas/product-edit-schema";
 import type { ProductDetail, ProductListItem, ProductsSupabaseClient } from "@/server/products/types";
 import { getReservedQuantitiesForStore } from "@/server/orders/service";
 import { getPaginationRange, getTotalPages } from "@/server/shared/pagination";
@@ -134,6 +135,51 @@ export async function getProductDetailForStore(
         reservedQuantity
       };
     })
+  };
+}
+
+export async function updateProductBasicForStore(
+  supabase: ProductsSupabaseClient,
+  storeId: string,
+  productId: string,
+  values: ProductEditValues
+) {
+  const { data: product, error: productError } = await supabase
+    .from("products")
+    .update({
+      base_price: values.basePrice,
+      memo: values.memo?.trim() || null,
+      name: values.name.trim(),
+      status: values.status
+    })
+    .eq("store_id", storeId)
+    .eq("id", productId)
+    .select("id, has_options")
+    .maybeSingle();
+
+  if (productError) {
+    throw new ProductMutationError(productError);
+  }
+
+  if (!product) {
+    throw new ProductNotFoundError();
+  }
+
+  if (!product.has_options) {
+    const { error: variantError } = await supabase
+      .from("product_variants")
+      .update({
+        price: values.basePrice
+      })
+      .eq("product_id", product.id);
+
+    if (variantError) {
+      throw new ProductMutationError(variantError);
+    }
+  }
+
+  return {
+    productId: product.id
   };
 }
 

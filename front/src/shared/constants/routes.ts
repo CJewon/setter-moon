@@ -11,6 +11,8 @@ export const routes = {
   productDetail: (productId: string) => `/products/${productId}` as Route,
   productEdit: (productId: string) => `/products/${productId}/edit` as Route,
   inventory: "/inventory",
+  inventoryLowStock: "/inventory/low-stock",
+  inventoryMovements: "/inventory/movements",
   orders: "/orders",
   newOrder: "/orders/new",
   orderDetail: (orderId: string) => `/orders/${orderId}` as Route,

@@ -1,12 +1,75 @@
+import Link from "next/link";
 import { InventoryFilters } from "@/features/inventory/components/inventory-filters";
+import { listInventoryItemsForStore, type InventoryStatus } from "@/server/inventory/service";
+import { normalizePaginationParams } from "@/server/shared/pagination";
 import { PageHeader } from "@/shared/components/page-header";
+import { PaginationControls } from "@/shared/components/pagination-controls";
 import { StatusBadge } from "@/shared/components/status-badge";
+import { routes } from "@/shared/constants/routes";
+import { requireDashboardAccess } from "@/server/auth/session";
+import { formatNumber } from "@/shared/lib/format";
+import { createClient } from "@/shared/lib/supabase/server";
 
-export default function InventoryPage() {
+const inventoryPageSizeOptions = [20, 50, 100];
+const defaultInventoryPageSize = 20;
+const inventoryStatuses = ["normal", "low", "out"] as const;
+const inventoryStatusLabel: Record<InventoryStatus, string> = {
+  low: "부족",
+  normal: "정상",
+  out: "품절"
+};
+
+function getInventoryStatusTone(status: InventoryStatus) {
+  if (status === "out") {
+    return "danger";
+  }
+
+  if (status === "low") {
+    return "warning";
+  }
+
+  return "success";
+}
+
+type InventoryPageProps = {
+  searchParams: Promise<{
+    keyword?: string;
+    page?: string;
+    pageSize?: string;
+    status?: string;
+  }>;
+};
+
+export default async function InventoryPage({ searchParams }: InventoryPageProps) {
+  const access = await requireDashboardAccess();
+  const supabase = await createClient();
+  const resolvedSearchParams = await searchParams;
+  const pagination = normalizePaginationParams(resolvedSearchParams, inventoryPageSizeOptions, defaultInventoryPageSize);
+  const keyword = resolvedSearchParams.keyword?.trim() ?? "";
+  const selectedStatus = inventoryStatuses.find((status) => status === resolvedSearchParams.status);
+  const inventoryPage = await listInventoryItemsForStore(supabase, access.store.id, pagination, {
+    keyword,
+    status: selectedStatus
+  });
+
   return (
     <>
       <PageHeader title="재고" description="전체 옵션 조합의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
-      <InventoryFilters />
+      <div className="mb-4 flex flex-wrap gap-2">
+        <Link
+          href={routes.inventoryLowStock}
+          className="inline-flex min-h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          재고 부족 보기
+        </Link>
+        <Link
+          href={routes.inventoryMovements}
+          className="inline-flex min-h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          재고 이력 보기
+        </Link>
+      </div>
+      <InventoryFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
       <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
         <table className="app-table">
           <thead>
@@ -20,17 +83,46 @@ export default function InventoryPage() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td colSpan={5} className="text-sm text-slate-500">
-                아직 재고 데이터가 없습니다.
-              </td>
-              <td>
-                <StatusBadge>대기</StatusBadge>
-              </td>
-            </tr>
+            {inventoryPage.items.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="text-sm text-slate-500">
+                  조건에 맞는 재고 데이터가 없습니다.
+                </td>
+              </tr>
+            ) : (
+              inventoryPage.items.map((item) => (
+                <tr key={item.variantId}>
+                  <td className="font-semibold text-slate-950">
+                    <Link href={routes.productDetail(item.productId)} className="hover:text-blue-700">
+                      {item.productName}
+                    </Link>
+                  </td>
+                  <td>{item.variantName}</td>
+                  <td>{formatNumber(item.currentStock)}개</td>
+                  <td>{formatNumber(item.reservedQuantity)}개</td>
+                  <td>{formatNumber(item.availableStock)}개</td>
+                  <td>
+                    <StatusBadge tone={getInventoryStatusTone(item.status)}>{inventoryStatusLabel[item.status]}</StatusBadge>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
+      <PaginationControls
+        basePath={routes.inventory}
+        page={inventoryPage.page}
+        pageSize={inventoryPage.pageSize}
+        searchParams={{
+          keyword,
+          page: resolvedSearchParams.page,
+          pageSize: resolvedSearchParams.pageSize,
+          status: selectedStatus
+        }}
+        totalCount={inventoryPage.totalCount}
+        totalPages={inventoryPage.totalPages}
+      />
     </>
   );
 }
