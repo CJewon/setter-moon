@@ -1,30 +1,32 @@
 import { getAppAccess, getAppAccessPlanId } from "@/server/auth/session";
-import { errorResponse, successResponse } from "@/server/shared/error-response";
+import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
 import { getStoreUsageSummary } from "@/server/usage/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 
-export async function GET() {
+export const GET = withApiErrorBoundary(async () => {
   if (!hasSupabasePublicEnv()) {
-    return errorResponse("VALIDATION_ERROR", "Supabase 환경 변수를 먼저 설정해야 합니다.", 500);
+    return errorResponse(500, "Supabase 환경 변수를 먼저 설정해야 합니다.");
   }
 
   const supabase = await createClient();
   const access = await getAppAccess();
 
   if (!access.isSupabaseConfigured || !access.user) {
-    return errorResponse("UNAUTHORIZED", "로그인이 필요합니다.", 401);
+    return errorResponse(401, "로그인이 필요합니다.");
   }
 
   if (!access.store) {
-    return errorResponse("NOT_FOUND", "스토어를 먼저 생성해야 합니다.", 404);
+    return errorResponse(404, "스토어를 먼저 생성해야 합니다.");
   }
 
   try {
-    return successResponse(await getStoreUsageSummary(supabase, access.store, getAppAccessPlanId(access)));
+    return successResponse(await getStoreUsageSummary(supabase, access.store, getAppAccessPlanId(access)), {
+      message: "사용량 정보를 불러왔습니다."
+    });
   } catch {
-    return errorResponse("CONFLICT", "사용량 정보를 불러오지 못했습니다.", 409);
+    return errorResponse(500, "사용량 정보를 불러오지 못했습니다.");
   }
-}
+});
 
 export const dynamic = "force-dynamic";

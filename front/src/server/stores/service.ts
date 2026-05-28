@@ -27,12 +27,23 @@ export class StoreMutationError extends Error {
   }
 }
 
+export class StoreNotFoundError extends Error {
+  constructor(message = "Store not found.") {
+    super(message);
+    this.name = "StoreNotFoundError";
+  }
+}
+
 export function isStoreSchemaMissingError(error: unknown) {
   return error instanceof StoreSchemaMissingError;
 }
 
 export function isStoreMutationError(error: unknown) {
   return error instanceof StoreMutationError;
+}
+
+export function isStoreNotFoundError(error: unknown) {
+  return error instanceof StoreNotFoundError;
 }
 
 function isMissingStoreTableError(error: { code?: string; message?: string }) {
@@ -105,10 +116,7 @@ export async function updateCurrentStoreForUser(supabase: StoreSupabaseClient, u
   const currentStore = await getCurrentStore(supabase, userId);
 
   if (!currentStore) {
-    throw new StoreMutationError({
-      code: "NOT_FOUND",
-      message: "Store not found."
-    });
+    throw new StoreNotFoundError();
   }
 
   const { data, error } = await supabase

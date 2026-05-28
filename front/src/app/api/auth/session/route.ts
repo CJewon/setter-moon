@@ -1,6 +1,6 @@
 import { getAppAccess, getAppAccessNextPath, getAppAccessPlanId } from "@/server/auth/session";
 import { getUserDisplayName } from "@/server/profiles/service";
-import { successResponse } from "@/server/shared/error-response";
+import { successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
 
 type SafeUserProfile = {
   id: string;
@@ -49,7 +49,7 @@ function toSafePlanProfile(access: Awaited<ReturnType<typeof getAppAccess>>): Sa
   };
 }
 
-export async function GET() {
+export const GET = withApiErrorBoundary(async () => {
   const access = await getAppAccess();
 
   return successResponse(
@@ -61,13 +61,13 @@ export async function GET() {
       user: toSafeUserProfile(access),
       plan: toSafePlanProfile(access)
     },
-    200,
     {
+      message: "세션 정보를 불러왔습니다.",
       headers: {
         "Cache-Control": "private, no-store"
       }
     }
   );
-}
+});
 
 export const dynamic = "force-dynamic";
