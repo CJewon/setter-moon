@@ -47,7 +47,9 @@ export async function POST(request: Request) {
   try {
     const store = await createStoreForUser(supabase, user.id, parsed.data);
 
-    return successResponse(store, 201);
+    return successResponse(store, 201, {
+      message: "스토어를 만들었습니다."
+    });
   } catch (error) {
     console.error("Failed to create store", error);
 

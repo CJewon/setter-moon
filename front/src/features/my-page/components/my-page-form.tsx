@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { updateMyPageAction } from "@/features/my-page/actions/my-page-actions";
 import { salesChannels } from "@/features/stores/schemas/store-form-schema";
+import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
 import { initialActionState } from "@/shared/types/action-state";
 import { cn } from "@/shared/utils/cn";
 
@@ -22,19 +23,7 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
 
   return (
     <form action={formAction} className="grid gap-4 lg:grid-cols-2" noValidate>
-      {state.message ? (
-        <p
-          className={cn(
-            "lg:col-span-2 rounded-md border px-3 py-2 text-sm",
-            state.status === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-              : "border-red-200 bg-red-50 text-red-700"
-          )}
-          aria-live="polite"
-        >
-          {state.message}
-        </p>
-      ) : null}
+      <ActionToastBridge state={state} successTitle="저장 완료" errorTitle="저장 실패" />
 
       <section className="rounded-md border border-slate-200 bg-white p-5">
         <div className="flex items-start justify-between gap-3">

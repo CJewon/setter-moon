@@ -13,7 +13,7 @@ describe("auth form schemas", () => {
 
   it("rejects mismatched sign-up passwords", () => {
     const result = signUpSchema.safeParse({
-      name: "셀러",
+      name: "김셀러",
       email: "seller@example.com",
       password: "password123",
       passwordConfirm: "password456"
@@ -25,7 +25,7 @@ describe("auth form schemas", () => {
   it("rejects sign-up passwords without a letter and number", () => {
     expect(
       signUpSchema.safeParse({
-        name: "셀러",
+        name: "김셀러",
         email: "seller@example.com",
         password: "password",
         passwordConfirm: "password"
@@ -34,7 +34,7 @@ describe("auth form schemas", () => {
 
     expect(
       signUpSchema.safeParse({
-        name: "셀러",
+        name: "김셀러",
         email: "seller@example.com",
         password: "12345678",
         passwordConfirm: "12345678"
@@ -45,7 +45,7 @@ describe("auth form schemas", () => {
   it("accepts minimal sign-up profile data", () => {
     expect(
       signUpSchema.safeParse({
-        name: "셀러",
+        name: "김셀러",
         email: "seller@example.com",
         password: "password123",
         passwordConfirm: "password123"

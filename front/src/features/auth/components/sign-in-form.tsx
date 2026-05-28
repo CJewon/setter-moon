@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { signInAction } from "@/features/auth/actions/auth-actions";
 import { PasswordInput } from "@/features/auth/components/password-input";
-import { cn } from "@/shared/utils/cn";
+import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
 import { initialActionState } from "@/shared/types/action-state";
+import { cn } from "@/shared/utils/cn";
 
 export function SignInForm() {
   const [state, formAction, pending] = useActionState(signInAction, initialActionState);
@@ -14,18 +15,7 @@ export function SignInForm() {
 
   return (
     <form action={formAction} className="mt-6 space-y-4" noValidate>
-      {state.message ? (
-        <p
-          className={
-            state.status === "success"
-              ? "rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
-              : "rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-          }
-          aria-live="polite"
-        >
-          {state.message}
-        </p>
-      ) : null}
+      <ActionToastBridge state={state} errorTitle="로그인 실패" />
       <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="email">
         <span>이메일</span>
         <input

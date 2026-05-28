@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { signUpAction } from "@/features/auth/actions/auth-actions";
 import { PasswordInput } from "@/features/auth/components/password-input";
-import { cn } from "@/shared/utils/cn";
+import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
 import { initialActionState } from "@/shared/types/action-state";
+import { cn } from "@/shared/utils/cn";
 
 export function SignUpForm() {
   const [state, formAction, pending] = useActionState(signUpAction, initialActionState);
@@ -16,18 +17,7 @@ export function SignUpForm() {
 
   return (
     <form action={formAction} className="mt-6 space-y-4" noValidate>
-      {state.message ? (
-        <p
-          className={
-            state.status === "success"
-              ? "rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
-              : "rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-          }
-          aria-live="polite"
-        >
-          {state.message}
-        </p>
-      ) : null}
+      <ActionToastBridge state={state} successTitle="가입 안내" errorTitle="계정 생성 실패" />
       <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="name">
         <span>이름</span>
         <input
@@ -105,7 +95,7 @@ export function SignUpForm() {
         className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         disabled={pending}
       >
-        {pending ? "계정 만드는 중" : "계정 만들기"}
+        {pending ? "계정 생성 중" : "계정 만들기"}
       </button>
       <p className="text-center text-sm text-slate-600">
         이미 계정이 있나요?{" "}

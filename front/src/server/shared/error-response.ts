@@ -22,13 +22,15 @@ export function errorResponse(code: ApiErrorCode, message: string, status = 400)
 
 type SuccessResponseOptions = {
   headers?: HeadersInit;
+  message?: string;
 };
 
 export function successResponse<T>(data: T, status = 200, options: SuccessResponseOptions = {}) {
   return NextResponse.json(
     {
       ok: true,
-      data
+      data,
+      ...(options.message ? { message: options.message } : {})
     },
     {
       status,

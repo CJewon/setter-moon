@@ -3,11 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { salesChannels, storeFormSchema } from "@/features/stores/schemas/store-form-schema";
+import { ActionToastBridge } from "@/shared/components/action-toast-bridge";
+import { useToast } from "@/shared/components/toast-provider";
 import type { ActionState } from "@/shared/types/action-state";
 import { initialActionState } from "@/shared/types/action-state";
 
 export function StoreOnboardingForm() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [state, setState] = useState<ActionState>(initialActionState);
   const [pending, setPending] = useState(false);
 
@@ -52,6 +55,11 @@ export function StoreOnboardingForm() {
         return;
       }
 
+      showToast({
+        tone: "success",
+        title: "스토어 생성 완료",
+        message: result.message ?? "스토어를 만들었습니다."
+      });
       router.replace("/dashboard");
       router.refresh();
     } catch {
@@ -65,11 +73,7 @@ export function StoreOnboardingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="rounded-md border border-slate-200 bg-white p-5">
-      {state.message ? (
-        <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700" aria-live="polite">
-          {state.message}
-        </p>
-      ) : null}
+      <ActionToastBridge state={state} errorTitle="스토어 생성 실패" />
       <div className="grid gap-4">
         <label className="grid gap-2 text-sm font-medium" htmlFor="store-name">
           스토어명
