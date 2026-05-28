@@ -21,7 +21,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
   [PLAN_IDS.FREE]: {
     maxProducts: 10,
     maxSkus: 100,
-    maxMonthlyOrders: 100
+    maxMonthlyOrders: 300
   },
   [PLAN_IDS.PAID_FULL]: {
     maxProducts: null,
