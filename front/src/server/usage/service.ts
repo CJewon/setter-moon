@@ -1,43 +1,44 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/shared/types/database";
 import type { Store } from "@/server/stores/service";
-import { createUsageSummary } from "@/server/usage/usage-policy";
+import { createUsageSummary, type UsageSummary } from "@/server/usage/usage-policy";
+import type { Database } from "@/shared/types/database";
 
 type UsageSupabaseClient = SupabaseClient<Database>;
 
-type UsageCountRow = {
-  product_count: number;
-  sku_count: number;
-  monthly_order_count: number;
+export type StoreUsageCounts = {
+  productCount: number;
+  skuCount: number;
+  monthlyOrderCount: number;
 };
 
-export async function getStoreUsageSummary(supabase: UsageSupabaseClient, store: Store, planId = store.plan_id) {
-  const referenceDate = new Date();
-
-  const { data, error } = await supabase
-    .rpc("get_store_usage_counts", {
-      target_store_id: store.id,
-      reference_time: referenceDate.toISOString()
-    })
-    .single();
+export async function getStoreUsageCounts(supabase: UsageSupabaseClient, storeId: string): Promise<StoreUsageCounts> {
+  const { data, error } = await supabase.rpc("get_store_usage_counts", {
+    target_store_id: storeId
+  });
 
   if (error) {
     throw new Error(error.message);
   }
 
-  const counts = normalizeUsageCountRow(data);
+  const usage = data?.[0];
 
-  return createUsageSummary(planId, {
-    products: counts.product_count,
-    skus: counts.sku_count,
-    monthlyOrders: counts.monthly_order_count
-  }, referenceDate);
+  return {
+    productCount: usage?.product_count ?? 0,
+    skuCount: usage?.sku_count ?? 0,
+    monthlyOrderCount: usage?.monthly_order_count ?? 0
+  };
 }
 
-function normalizeUsageCountRow(row: UsageCountRow | null): UsageCountRow {
-  return {
-    product_count: row?.product_count ?? 0,
-    sku_count: row?.sku_count ?? 0,
-    monthly_order_count: row?.monthly_order_count ?? 0
-  };
+export async function getStoreUsageSummary(
+  supabase: UsageSupabaseClient,
+  store: Store,
+  planId: "free" | "paid_full"
+): Promise<UsageSummary> {
+  const counts = await getStoreUsageCounts(supabase, store.id);
+
+  return createUsageSummary(planId, {
+    products: counts.productCount,
+    skus: counts.skuCount,
+    monthlyOrders: counts.monthlyOrderCount
+  });
 }

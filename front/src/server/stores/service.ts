@@ -100,3 +100,37 @@ export async function createStoreForUser(supabase: StoreSupabaseClient, userId: 
 
   return data;
 }
+
+export async function updateCurrentStoreForUser(supabase: StoreSupabaseClient, userId: string, values: StoreFormValues) {
+  const currentStore = await getCurrentStore(supabase, userId);
+
+  if (!currentStore) {
+    throw new StoreMutationError({
+      code: "NOT_FOUND",
+      message: "Store not found."
+    });
+  }
+
+  const { data, error } = await supabase
+    .from("stores")
+    .update({
+      name: values.name.trim(),
+      business_type: values.businessType || null,
+      memo: values.memo?.trim() || null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", currentStore.id)
+    .eq("owner_id", userId)
+    .select("id, owner_id, name, business_type, plan_id, memo, created_at, updated_at")
+    .single();
+
+  if (error && isMissingStoreTableError(error)) {
+    throw new StoreSchemaMissingError(error.message);
+  }
+
+  if (error) {
+    throw new StoreMutationError(error);
+  }
+
+  return data;
+}

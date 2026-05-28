@@ -45,6 +45,39 @@ export async function getUserProfile(supabase: ProfileSupabaseClient, userId: st
   return data;
 }
 
+export async function updateUserDisplayName(
+  supabase: ProfileSupabaseClient,
+  userId: string,
+  email: string | null,
+  displayName: string | null
+) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .upsert(
+      {
+        id: userId,
+        email,
+        display_name: displayName,
+        updated_at: new Date().toISOString()
+      },
+      {
+        onConflict: "id"
+      }
+    )
+    .select("id, email, display_name, plan_id, plan_status, plan_current_period_end, created_at, updated_at")
+    .single();
+
+  if (error) {
+    if (isMissingProfilesTableError(error)) {
+      throw new ProfileSchemaMissingError(error.message);
+    }
+
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export function getEffectiveProfilePlanId(profile: UserProfile | null | undefined) {
   if (!profile) {
     return null;
