@@ -119,6 +119,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      product_option_groups: {
+        Row: {
+          id: string;
+          product_id: string;
+          name: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          name: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          product_id?: string;
+          name?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      product_option_values: {
+        Row: {
+          id: string;
+          option_group_id: string;
+          value: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          option_group_id: string;
+          value: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          option_group_id?: string;
+          value?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       product_variants: {
         Row: {
           id: string;
@@ -161,6 +209,69 @@ export type Database = {
           memo?: string | null;
           created_at?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      product_variant_options: {
+        Row: {
+          id: string;
+          variant_id: string;
+          option_value_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          variant_id: string;
+          option_value_id: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          variant_id?: string;
+          option_value_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      stock_movements: {
+        Row: {
+          id: string;
+          store_id: string;
+          product_id: string;
+          variant_id: string;
+          type: "inbound" | "sale_deduction" | "cancel_restore" | "manual_adjust";
+          quantity: number;
+          before_stock: number;
+          after_stock: number;
+          order_id: string | null;
+          memo: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          store_id: string;
+          product_id: string;
+          variant_id: string;
+          type: "inbound" | "sale_deduction" | "cancel_restore" | "manual_adjust";
+          quantity: number;
+          before_stock: number;
+          after_stock: number;
+          order_id?: string | null;
+          memo?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          store_id?: string;
+          product_id?: string;
+          variant_id?: string;
+          type?: "inbound" | "sale_deduction" | "cancel_restore" | "manual_adjust";
+          quantity?: number;
+          before_stock?: number;
+          after_stock?: number;
+          order_id?: string | null;
+          memo?: string | null;
+          created_at?: string;
         };
         Relationships: [];
       };

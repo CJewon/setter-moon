@@ -5,7 +5,6 @@ const protectedScreens = [
   { path: "/dashboard", heading: "대시보드", visibleText: "오늘 주문" },
   { path: "/products", heading: "상품", visibleText: "상품 등록" },
   { path: "/products/new", heading: "상품 등록", visibleText: "상품 기본 정보" },
-  { path: "/products/e2e-product", heading: "상품 상세", visibleText: "옵션별 재고" },
   { path: "/products/e2e-product/edit", heading: "상품 수정", visibleText: "상품 기본 정보 수정 폼" },
   { path: "/inventory", heading: "재고", visibleText: "현재 재고" },
   { path: "/inventory/low-stock", heading: "재고 부족", visibleText: "재고 부족 옵션 조합 목록" },

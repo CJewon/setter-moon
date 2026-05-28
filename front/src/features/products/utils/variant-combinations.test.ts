@@ -1,5 +1,9 @@
 import { describe, expect, it } from "@jest/globals";
-import { createVariantCombinations } from "@/features/products/utils/variant-combinations";
+import {
+  createVariantCombinationItems,
+  createVariantCombinations,
+  normalizeOptionGroups
+} from "@/features/products/utils/variant-combinations";
 
 describe("createVariantCombinations", () => {
   it("creates a default SKU when no options exist", () => {
@@ -17,6 +21,30 @@ describe("createVariantCombinations", () => {
       ["블랙", "L"],
       ["화이트", "M"],
       ["화이트", "L"]
+    ]);
+  });
+
+  it("normalizes empty and duplicate option values", () => {
+    expect(normalizeOptionGroups([{ name: " 색상 ", values: ["블랙", "블랙", " "] }])).toEqual([
+      { name: "색상", values: ["블랙"] }
+    ]);
+  });
+
+  it("creates labeled option combination items", () => {
+    expect(
+      createVariantCombinationItems([
+        { name: "색상", values: ["블랙"] },
+        { name: "사이즈", values: ["M"] }
+      ])
+    ).toEqual([
+      {
+        key: "색상:블랙|사이즈:M",
+        label: "블랙 / M",
+        options: [
+          { groupName: "색상", value: "블랙" },
+          { groupName: "사이즈", value: "M" }
+        ]
+      }
     ]);
   });
 });
