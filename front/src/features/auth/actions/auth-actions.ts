@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { signInSchema, signUpSchema } from "@/features/auth/schemas/auth-form-schema";
+import { getSignUpAuthErrorState } from "@/features/auth/utils/auth-error";
 import { getCurrentStore, isStoreSchemaMissingError } from "@/server/stores/service";
-import { hasSupabasePublicEnv } from "@/shared/lib/env";
+import { hasSupabasePublicEnv, hasSupabaseServerAuthEnv } from "@/shared/lib/env";
+import { createAdminClient } from "@/shared/lib/supabase/admin";
 import { createClient } from "@/shared/lib/supabase/server";
 import type { ActionState } from "@/shared/types/action-state";
 import type { Database } from "@/shared/types/database";
@@ -16,10 +18,6 @@ function invalidState(message: string, fieldErrors?: ActionState["fieldErrors"])
     message,
     fieldErrors
   };
-}
-
-function isExistingUserError(error: { code?: string; message?: string }) {
-  return error.code === "user_already_exists" || error.message?.toLowerCase().includes("user already registered");
 }
 
 async function getPostAuthRedirectPath(supabase: SupabaseClient<Database>) {
@@ -83,36 +81,32 @@ export async function signUpAction(_prevState: ActionState, formData: FormData):
     return invalidState("입력한 정보를 다시 확인해 주세요.", parsed.error.flatten().fieldErrors);
   }
 
-  if (!hasSupabasePublicEnv()) {
+  if (!hasSupabasePublicEnv() || !hasSupabaseServerAuthEnv()) {
     return invalidState("계정 만들기 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
   }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+  const admin = createAdminClient();
+  const { error: createUserError } = await admin.auth.admin.createUser({
     email: parsed.data.email,
     password: parsed.data.password,
-    options: {
-      data: {
-        name: parsed.data.name
-      }
+    email_confirm: true,
+    user_metadata: {
+      name: parsed.data.name
     }
   });
 
-  if (error) {
-    if (isExistingUserError(error)) {
-      return invalidState("이미 가입된 이메일입니다. 로그인해 주세요.", {
-        email: ["이미 가입된 이메일입니다."]
-      });
-    }
-
-    return invalidState("계정을 만들 수 없습니다. 입력 정보를 확인한 뒤 다시 시도해 주세요.");
+  if (createUserError) {
+    return getSignUpAuthErrorState(createUserError);
   }
 
-  if (!data.session) {
-    return {
-      status: "success",
-      message: "가입 확인 메일을 보냈습니다. 이메일 확인 후 로그인해 주세요."
-    };
+  const supabase = await createClient();
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password
+  });
+
+  if (signInError) {
+    return invalidState("계정은 만들었지만 로그인하지 못했습니다. 로그인 화면에서 다시 시도해 주세요.");
   }
 
   revalidatePath("/", "layout");
