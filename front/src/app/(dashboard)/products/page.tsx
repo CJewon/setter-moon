@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProductListFilters } from "@/features/products/components/product-list-filters";
 import { EmptyState } from "@/shared/components/empty-state";
 import { PageHeader } from "@/shared/components/page-header";
 import { StatusBadge } from "@/shared/components/status-badge";
@@ -21,18 +22,7 @@ export default async function ProductsPage() {
         description="등록된 상품을 검색하고 옵션별 재고 상태를 확인합니다."
         action={{ href: routes.newProduct, label: "상품 등록" }}
       />
-      <div className="mb-4 grid gap-3 md:grid-cols-[1fr_180px_180px]">
-        <input className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" placeholder="상품명 검색" />
-        <select className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" defaultValue="">
-          <option value="">전체 카테고리</option>
-        </select>
-        <select className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" defaultValue="">
-          <option value="">전체 판매상태</option>
-          <option value="active">판매중</option>
-          <option value="sold_out">품절</option>
-          <option value="hidden">숨김</option>
-        </select>
-      </div>
+      <ProductListFilters />
 
       {products.length === 0 ? (
         <EmptyState

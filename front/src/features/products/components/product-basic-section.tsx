@@ -1,5 +1,6 @@
 import type { ProductBasicDraft } from "@/features/products/types/product-create-draft";
 import { productStatuses } from "@/features/products/utils/product-create-draft";
+import { FormSelect } from "@/shared/components/form-select";
 import { productStatusLabel } from "@/shared/constants/status-labels";
 import { cn } from "@/shared/utils/cn";
 
@@ -61,9 +62,8 @@ export function ProductBasicSection({ basic, basePriceError, nameError, updateBa
         </label>
         <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="product-status">
           판매 상태
-          <select
+          <FormSelect
             id="product-status"
-            className="min-h-10 rounded-md border border-slate-300 px-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             value={basic.status}
             onChange={(event) => updateBasic("status", event.target.value as ProductBasicDraft["status"])}
           >
@@ -72,7 +72,7 @@ export function ProductBasicSection({ basic, basePriceError, nameError, updateBa
                 {productStatusLabel[status]}
               </option>
             ))}
-          </select>
+          </FormSelect>
         </label>
       </div>
       <label className="mt-4 grid gap-2 text-sm font-medium text-slate-800" htmlFor="product-memo">

@@ -99,6 +99,18 @@ test.describe("현재 구현 화면 E2E", () => {
     await page.getByRole("link", { name: "상품 목록으로" }).click();
     await expect(page).toHaveURL(/\/products$/);
 
+    await page.goto("/products");
+    await page.getByRole("button", { name: "판매상태 필터" }).click();
+    await expect(page.getByRole("option", { name: "판매중" })).toBeVisible();
+    await page.getByRole("option", { name: "판매중" }).click();
+    await expect(page.getByRole("button", { name: "판매상태 필터" })).toContainText("판매중");
+
+    await page.goto("/inventory");
+    await page.getByRole("button", { name: "재고상태 필터" }).click();
+    await expect(page.getByRole("option", { name: "부족" })).toBeVisible();
+    await page.getByRole("option", { name: "부족" }).click();
+    await expect(page.getByRole("button", { name: "재고상태 필터" })).toContainText("부족");
+
     await page.goto("/orders/new");
     await page.getByRole("link", { name: "주문 목록으로" }).click();
     await expect(page).toHaveURL(/\/orders$/);

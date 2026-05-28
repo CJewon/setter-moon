@@ -1,3 +1,4 @@
+import { InventoryFilters } from "@/features/inventory/components/inventory-filters";
 import { PageHeader } from "@/shared/components/page-header";
 import { StatusBadge } from "@/shared/components/status-badge";
 
@@ -5,18 +6,7 @@ export default function InventoryPage() {
   return (
     <>
       <PageHeader title="재고" description="전체 옵션 조합의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
-      <div className="mb-4 grid gap-3 md:grid-cols-[1fr_180px_180px]">
-        <input className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" placeholder="상품명 또는 옵션 조합 검색" />
-        <select className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" defaultValue="">
-          <option value="">전체 카테고리</option>
-        </select>
-        <select className="min-h-10 rounded-md border border-slate-300 px-3 text-sm" defaultValue="">
-          <option value="">전체 재고상태</option>
-          <option value="normal">정상</option>
-          <option value="low">부족</option>
-          <option value="sold_out">품절</option>
-        </select>
-      </div>
+      <InventoryFilters />
       <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
         <table className="app-table">
           <thead>
