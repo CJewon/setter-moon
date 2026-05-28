@@ -667,7 +667,7 @@ function PlanSection() {
         <PricingComparisonTable rows={PRICING_COMPARISON_ROWS} />
 
         <div className="mt-5 rounded-md border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
-          월 새 주문 한도는 새 주문 등록 기준입니다. 이미 생성된 주문의 배송대기, 배송중, 배송완료, 취소, 보류 처리는 한도 도달 후에도 계속 진행할 수 있습니다.
+          월 신규 주문 등록 한도는 새 주문 등록 기준입니다. 이미 생성된 주문의 배송대기, 배송중, 배송완료, 취소, 보류 처리는 한도 도달 후에도 계속 진행할 수 있습니다.
         </div>
       </div>
     </section>

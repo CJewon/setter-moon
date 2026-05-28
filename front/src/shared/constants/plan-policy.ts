@@ -12,9 +12,9 @@ export const FREE_PLAN_LIMIT_ITEMS = [
     description: "색상, 사이즈 등 옵션 조합을 충분히 실험할 수 있는 기준입니다."
   },
   {
-    label: "월 새 주문",
-    value: "100건",
-    description: "주문/배송 처리 한도는 새 주문 등록 기준이며 기존 배송 상태 변경은 계속 가능합니다."
+    label: "월 신규 주문 등록",
+    value: "300건",
+    description: "월평균 300건까지 새 주문을 등록할 수 있으며 기존 배송 상태 변경은 계속 가능합니다."
   }
 ] as const;
 
@@ -68,7 +68,7 @@ export const PRICING_PLANS = [
     features: [
       "상품 등록 한도 해제",
       "옵션 조합 한도 해제",
-      "월 새 주문 등록 한도 해제",
+      "월 신규 주문 등록 한도 해제",
       "무료 플랜의 모든 운영 기능 포함"
     ]
   }
@@ -86,7 +86,7 @@ export const PRICING_COMPARISON_ROWS = [
     paid: "한도 해제"
   },
   {
-    label: "월 새 주문 등록",
+    label: "월 신규 주문 등록",
     free: MONTHLY_ORDER_LIMIT.value,
     paid: "한도 해제"
   },

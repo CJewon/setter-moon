@@ -38,7 +38,7 @@ const PLAN_LIMITS: Record<PlanId, Record<UsageMetricKey, PlanLimit>> = {
   [PLAN_IDS.FREE]: {
     products: 10,
     skus: 100,
-    monthlyOrders: 100
+    monthlyOrders: 300
   },
   [PLAN_IDS.PAID_FULL]: {
     products: null,
@@ -50,7 +50,7 @@ const PLAN_LIMITS: Record<PlanId, Record<UsageMetricKey, PlanLimit>> = {
 const METRIC_LABELS: Record<UsageMetricKey, string> = {
   products: "상품",
   skus: "옵션 조합",
-  monthlyOrders: "월 새 주문"
+  monthlyOrders: "월 신규 주문 등록"
 };
 
 export function normalizePlanId(planId: string | null | undefined): PlanId {

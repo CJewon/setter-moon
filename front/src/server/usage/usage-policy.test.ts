@@ -24,7 +24,7 @@ describe("usage policy", () => {
       {
         products: 8,
         skus: 100,
-        monthlyOrders: 32
+        monthlyOrders: 240
       },
       new Date("2026-05-27T05:00:00.000Z")
     );
@@ -33,7 +33,7 @@ describe("usage policy", () => {
     expect(summary.metrics).toMatchObject([
       { key: "products", count: 8, limit: 10, percent: 80, state: "warning" },
       { key: "skus", count: 100, limit: 100, percent: 100, state: "blocked" },
-      { key: "monthlyOrders", count: 32, limit: 100, percent: 32, state: "normal" }
+      { key: "monthlyOrders", count: 240, limit: 300, percent: 80, state: "warning" }
     ]);
   });
 
