@@ -27,11 +27,63 @@ test.describe("현재 구현 화면 E2E", () => {
     await expect(page.getByRole("heading", { name: "로그인" })).toBeVisible();
     await expect(page.getByLabel("이메일")).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
+    await expect(page.getByLabel("아이디 저장")).toBeVisible();
+    await expect(page.getByRole("link", { name: "아이디 찾기" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "비밀번호 찾기" })).toBeVisible();
 
     await page.goto("/sign-up");
     await expect(page.getByRole("heading", { name: "계정 만들기" })).toBeVisible();
     await expect(page.getByLabel("이름")).toBeVisible();
     await expect(page.getByLabel("이메일")).toBeVisible();
+
+    await page.goto("/find-id");
+    await expect(page.getByRole("heading", { name: "아이디 찾기" })).toBeVisible();
+    await expect(page.getByLabel("이름")).toBeVisible();
+    await expect(page.getByLabel("스토어명")).toBeVisible();
+
+    await page.goto("/forgot-password");
+    await expect(page.getByRole("heading", { name: "비밀번호 찾기" })).toBeVisible();
+    await expect(page.getByLabel("이메일")).toBeVisible();
+  });
+
+  test("아이디 저장은 이메일만 브라우저에 보관한다", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      window.localStorage.setItem("sellerroom:remembered-email", "saved@example.com");
+      window.localStorage.setItem("sellerroom:password-check", "should-not-be-used");
+    });
+
+    await page.goto("/sign-in");
+    await expect(page.getByLabel("이메일")).toHaveValue("saved@example.com");
+    await expect(page.locator('input[name="password"]')).toHaveValue("");
+
+    await page.getByLabel("아이디 저장").uncheck();
+    await page.reload();
+    await expect(page.getByLabel("이메일")).toHaveValue("");
+    expect(await page.evaluate(() => window.localStorage.getItem("sellerroom:remembered-email"))).toBeNull();
+  });
+
+  test("아이디 찾기와 비밀번호 찾기는 서버 메시지를 표시한다", async ({ page }) => {
+    await page.goto("/find-id");
+    await page.getByLabel("이름").fill("테스터");
+    await page.getByLabel("스토어명").fill("셀러룸 E2E 스토어");
+    const findIdResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/auth/find-id") && response.request().method() === "POST"
+    );
+    await page.getByRole("button", { name: "아이디 찾기" }).click();
+    const findIdResponse = await findIdResponsePromise;
+    expect(findIdResponse.ok(), await findIdResponse.text()).toBe(true);
+    await expect(page.getByRole("main").getByText("확인 요청을 접수했습니다.").first()).toBeVisible();
+
+    await page.goto("/forgot-password");
+    await page.getByLabel("이메일").fill("test@gmail.com");
+    const forgotPasswordResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/auth/forgot-password") && response.request().method() === "POST"
+    );
+    await page.getByRole("button", { name: "비밀번호 찾기" }).click();
+    const forgotPasswordResponse = await forgotPasswordResponsePromise;
+    expect(forgotPasswordResponse.ok(), await forgotPasswordResponse.text()).toBe(true);
+    await expect(page.getByRole("main").getByText("비밀번호 재설정 요청을 접수했습니다.").first()).toBeVisible();
   });
 
   test("테스트 계정으로 현재 개발된 인증 화면을 모두 진입한다", async ({ page }) => {

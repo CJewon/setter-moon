@@ -1,6 +1,10 @@
 import type { Route } from "next";
 
 export const routes = {
+  signIn: "/sign-in" as Route,
+  signUp: "/sign-up" as Route,
+  findId: "/find-id" as Route,
+  forgotPassword: "/forgot-password" as Route,
   dashboard: "/dashboard",
   products: "/products",
   newProduct: "/products/new",

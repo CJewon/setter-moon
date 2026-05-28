@@ -52,6 +52,26 @@ textarea {
   font: inherit;
 }
 
+select:not([multiple]) {
+  appearance: none;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.75 7.5L10 11.75L14.25 7.5' stroke='%23475569' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.1rem;
+  padding-right: 2.5rem;
+}
+
+select:not([multiple]):hover {
+  border-color: #94a3b8;
+}
+
+select:not([multiple]):disabled {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
 .app-table {
   width: 100%;
   border-collapse: collapse;

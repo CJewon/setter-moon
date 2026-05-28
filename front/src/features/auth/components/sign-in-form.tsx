@@ -3,23 +3,48 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { PasswordInput } from "@/features/auth/components/password-input";
 import { useSignInMutation } from "@/features/auth/hooks/use-auth-mutations";
 import { signInSchema } from "@/features/auth/schemas/auth-form-schema";
 import { getApiErrorState } from "@/shared/api/http";
 import { useToast } from "@/shared/components/toast-provider";
+import { routes } from "@/shared/constants/routes";
 import { initialActionState, type ActionState } from "@/shared/types/action-state";
 import { cn } from "@/shared/utils/cn";
+
+const rememberedEmailStorageKey = "sellerroom:remembered-email";
 
 export function SignInForm() {
   const router = useRouter();
   const { showToast } = useToast();
   const [state, setState] = useState<ActionState>(initialActionState);
+  const [email, setEmail] = useState("");
+  const [rememberEmail, setRememberEmail] = useState(false);
   const signInMutation = useSignInMutation();
   const pending = signInMutation.isPending;
   const emailError = state.fieldErrors?.email?.[0];
   const passwordError = state.fieldErrors?.password?.[0];
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      const savedEmail = window.localStorage.getItem(rememberedEmailStorageKey) ?? "";
+
+      setEmail(savedEmail);
+      setRememberEmail(Boolean(savedEmail));
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
+
+  function handleRememberEmailChange(nextValue: boolean) {
+    setRememberEmail(nextValue);
+
+    if (!nextValue) {
+      setEmail("");
+      window.localStorage.removeItem(rememberedEmailStorageKey);
+    }
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,6 +67,12 @@ export function SignInForm() {
     setState(initialActionState);
     signInMutation.mutate(parsed.data, {
       onSuccess: ({ data }) => {
+        if (rememberEmail) {
+          window.localStorage.setItem(rememberedEmailStorageKey, parsed.data.email);
+        } else {
+          window.localStorage.removeItem(rememberedEmailStorageKey);
+        }
+
         router.replace(data.redirectTo as Route);
         router.refresh();
       },
@@ -70,6 +101,8 @@ export function SignInForm() {
           )}
           type="email"
           autoComplete="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
           aria-describedby={emailError ? "email-error" : undefined}
           required
         />
@@ -94,6 +127,28 @@ export function SignInForm() {
           </span>
         ) : null}
       </label>
+      <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <label className="inline-flex w-fit items-center gap-2 text-slate-600" htmlFor="rememberEmail">
+          <input
+            id="rememberEmail"
+            name="rememberEmail"
+            type="checkbox"
+            className="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-200"
+            checked={rememberEmail}
+            onChange={(event) => handleRememberEmailChange(event.target.checked)}
+          />
+          <span>아이디 저장</span>
+        </label>
+        <div className="flex items-center gap-2 text-slate-500">
+          <Link href={routes.findId} className="font-medium text-blue-700">
+            아이디 찾기
+          </Link>
+          <span aria-hidden className="h-3 w-px bg-slate-300" />
+          <Link href={routes.forgotPassword} className="font-medium text-blue-700">
+            비밀번호 찾기
+          </Link>
+        </div>
+      </div>
       <button
         className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         disabled={pending}
@@ -102,7 +157,7 @@ export function SignInForm() {
       </button>
       <p className="text-center text-sm text-slate-600">
         처음 오셨나요?{" "}
-        <Link href="/sign-up" className="font-medium text-blue-700">
+        <Link href={routes.signUp} className="font-medium text-blue-700">
           계정 만들기
         </Link>
       </p>

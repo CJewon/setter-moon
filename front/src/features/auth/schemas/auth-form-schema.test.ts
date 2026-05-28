@@ -1,5 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
-import { signInSchema, signUpSchema } from "@/features/auth/schemas/auth-form-schema";
+import {
+  findIdSchema,
+  forgotPasswordSchema,
+  signInSchema,
+  signUpSchema
+} from "@/features/auth/schemas/auth-form-schema";
 
 describe("auth form schemas", () => {
   it("accepts a valid sign-in payload", () => {
@@ -51,5 +56,35 @@ describe("auth form schemas", () => {
         passwordConfirm: "password123"
       }).success
     ).toBe(true);
+  });
+
+  it("validates account recovery forms", () => {
+    expect(
+      findIdSchema.safeParse({
+        name: "김셀러",
+        storeName: "셀러룸 테스트 스토어"
+      }).success
+    ).toBe(true);
+
+    expect(
+      forgotPasswordSchema.safeParse({
+        email: "seller@example.com"
+      }).success
+    ).toBe(true);
+  });
+
+  it("rejects incomplete account recovery forms", () => {
+    expect(
+      findIdSchema.safeParse({
+        name: "",
+        storeName: "셀러룸 테스트 스토어"
+      }).success
+    ).toBe(false);
+
+    expect(
+      forgotPasswordSchema.safeParse({
+        email: "seller"
+      }).success
+    ).toBe(false);
   });
 });
