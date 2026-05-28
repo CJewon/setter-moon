@@ -2,7 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { myPageFormSchema } from "@/features/my-page/schemas/my-page-schema";
-import { isProfileSchemaMissingError, updateUserDisplayName } from "@/server/profiles/service";
+import {
+  isProfileMutationError,
+  isProfileSchemaMissingError,
+  updateUserDisplayName
+} from "@/server/profiles/service";
 import { isStoreMutationError, isStoreSchemaMissingError, updateCurrentStoreForUser } from "@/server/stores/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
@@ -43,7 +47,7 @@ export async function updateMyPageAction(_prevState: ActionState, formData: Form
   }
 
   try {
-    await updateUserDisplayName(supabase, user.id, user.email ?? null, parsed.data.displayName?.trim() || null);
+    await updateUserDisplayName(supabase, user.id, parsed.data.displayName?.trim() || null);
     await updateCurrentStoreForUser(supabase, user.id, {
       name: parsed.data.storeName,
       businessType: parsed.data.businessType,
@@ -56,8 +60,11 @@ export async function updateMyPageAction(_prevState: ActionState, formData: Form
       return invalidState("Supabase DB 테이블이 아직 준비되지 않았습니다.");
     }
 
-    if (isStoreMutationError(error) && error.code === "42501") {
-      return invalidState("스토어 정보를 수정할 권한을 확인하지 못했습니다. 다시 로그인해 주세요.");
+    if (
+      (isProfileMutationError(error) || isStoreMutationError(error)) &&
+      (error.code === "42501" || error.code === "PGRST301")
+    ) {
+      return invalidState("정보를 수정할 권한을 확인하지 못했습니다. 다시 로그인해 주세요.");
     }
 
     return invalidState("정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");

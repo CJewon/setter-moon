@@ -12,8 +12,26 @@ export class ProfileSchemaMissingError extends Error {
   }
 }
 
+export class ProfileMutationError extends Error {
+  code?: string;
+  details?: string;
+  hint?: string;
+
+  constructor(error: { code?: string; message?: string; details?: string; hint?: string }) {
+    super(error.message ?? "Profile mutation failed.");
+    this.name = "ProfileMutationError";
+    this.code = error.code;
+    this.details = error.details;
+    this.hint = error.hint;
+  }
+}
+
 export function isProfileSchemaMissingError(error: unknown) {
   return error instanceof ProfileSchemaMissingError;
+}
+
+export function isProfileMutationError(error: unknown) {
+  return error instanceof ProfileMutationError;
 }
 
 function isMissingProfilesTableError(error: { code?: string; message?: string }) {
@@ -39,7 +57,7 @@ export async function getUserProfile(supabase: ProfileSupabaseClient, userId: st
       throw new ProfileSchemaMissingError(error.message);
     }
 
-    throw new Error(error.message);
+    throw new ProfileMutationError(error);
   }
 
   return data;
@@ -48,31 +66,24 @@ export async function getUserProfile(supabase: ProfileSupabaseClient, userId: st
 export async function updateUserDisplayName(
   supabase: ProfileSupabaseClient,
   userId: string,
-  email: string | null,
   displayName: string | null
 ) {
   const { data, error } = await supabase
     .from("profiles")
-    .upsert(
-      {
-        id: userId,
-        email,
-        display_name: displayName,
-        updated_at: new Date().toISOString()
-      },
-      {
-        onConflict: "id"
-      }
-    )
+    .update({
+      display_name: displayName,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", userId)
     .select("id, email, display_name, plan_id, plan_status, plan_current_period_end, created_at, updated_at")
-    .single();
+    .maybeSingle();
 
   if (error) {
     if (isMissingProfilesTableError(error)) {
       throw new ProfileSchemaMissingError(error.message);
     }
 
-    throw new Error(error.message);
+    throw new ProfileMutationError(error);
   }
 
   return data;

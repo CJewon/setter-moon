@@ -3,8 +3,8 @@
 import { useActionState } from "react";
 import { updateMyPageAction } from "@/features/my-page/actions/my-page-actions";
 import { salesChannels } from "@/features/stores/schemas/store-form-schema";
-import { cn } from "@/shared/utils/cn";
 import { initialActionState } from "@/shared/types/action-state";
+import { cn } from "@/shared/utils/cn";
 
 type MyPageFormProps = {
   displayName: string;
@@ -40,7 +40,7 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-base font-semibold text-slate-950">계정 정보</h2>
-            <p className="mt-1 text-sm text-slate-500">서비스 안에서 표시할 이름만 수정할 수 있습니다.</p>
+            <p className="mt-1 text-sm text-slate-500">서비스 안에서 표시될 이름을 관리합니다.</p>
           </div>
         </div>
         <div className="mt-5 grid gap-4">
@@ -76,7 +76,7 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
       <section className="rounded-md border border-slate-200 bg-white p-5">
         <div>
           <h2 className="text-base font-semibold text-slate-950">스토어 정보</h2>
-          <p className="mt-1 text-sm text-slate-500">운영 화면에서 기준으로 사용할 스토어 정보를 관리합니다.</p>
+          <p className="mt-1 text-sm text-slate-500">운영 화면에서 기본으로 사용할 스토어 정보를 관리합니다.</p>
         </div>
         <div className="mt-5 grid gap-4">
           <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="store-name">
@@ -100,7 +100,7 @@ export function MyPageForm({ displayName, email, storeName, businessType, memo }
             ) : null}
           </label>
           <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="business-type">
-            업종/판매 유형
+            판매 채널
             <select
               id="business-type"
               name="businessType"

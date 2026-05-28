@@ -2,7 +2,7 @@ import { MyPageForm } from "@/features/my-page/components/my-page-form";
 import { getAppAccessPlanId, requireDashboardAccess } from "@/server/auth/session";
 import { getUserDisplayName } from "@/server/profiles/service";
 import { getStoreUsageSummary } from "@/server/usage/service";
-import type { UsageMetric, UsageLimitState } from "@/server/usage/usage-policy";
+import type { UsageLimitState, UsageMetric } from "@/server/usage/usage-policy";
 import { PageHeader } from "@/shared/components/page-header";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { formatNumber } from "@/shared/lib/format";
@@ -29,12 +29,12 @@ function getUsageTone(state: UsageLimitState, limit: number | null) {
 }
 
 function getUsageSuffix(key: UsageMetric["key"]) {
-  return key === "monthlyOrders" ? "건 처리" : "개 사용";
+  return key === "monthlyOrders" ? "건 등록" : "개 사용";
 }
 
 function getLimitLabel(metric: UsageMetric) {
   if (metric.limit === null) {
-    return "제한 없음";
+    return "한도 없음";
   }
 
   return metric.key === "monthlyOrders" ? `월 ${formatNumber(metric.limit)}건` : `${formatNumber(metric.limit)}개`;
@@ -57,7 +57,7 @@ function UsageMeter({ metric }: { metric: UsageMetric }) {
           <p className="text-sm font-semibold text-slate-950">{metric.label}</p>
           <p className="mt-1 text-xs text-slate-500">무료 플랜 기준 한도: {getLimitLabel(metric)}</p>
         </div>
-        <StatusBadge tone={tone}>{metric.limit === null ? "제한 없음" : `${percent}%`}</StatusBadge>
+        <StatusBadge tone={tone}>{metric.limit === null ? "한도 없음" : `${percent}%`}</StatusBadge>
       </div>
       <p className="mt-4 text-xl font-bold text-slate-950">
         {formatNumber(metric.count)}
@@ -98,7 +98,7 @@ export default async function MyPage() {
           <div>
             <p className="text-sm font-semibold text-slate-500">연결된 스토어</p>
             <p className="mt-1 break-words text-lg font-bold text-slate-950">{access.store.name}</p>
-            <p className="mt-1 text-sm text-slate-500">{access.store.business_type ?? "업종/판매 유형 선택 안 함"}</p>
+            <p className="mt-1 text-sm text-slate-500">{access.store.business_type ?? "판매 채널 선택 전"}</p>
           </div>
           <div className="flex flex-col items-start gap-2 lg:items-end">
             <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 풀버전" : "무료 플랜"}</StatusBadge>
@@ -119,7 +119,7 @@ export default async function MyPage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <h2 className="text-base font-semibold text-slate-950">현재 플랜</h2>
-            <p className="mt-1 text-sm text-slate-500">플랜과 사용량은 서버 기준으로 계산됩니다.</p>
+            <p className="mt-1 text-sm text-slate-500">플랜과 사용량은 서버 기준으로 계산합니다.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 풀버전" : "무료 플랜"}</StatusBadge>
@@ -129,11 +129,11 @@ export default async function MyPage() {
         <div className="mt-4 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
           <div className="rounded-md bg-slate-50 p-3">
             <p className="font-semibold text-slate-950">플랜 기준</p>
-            <p className="mt-1">{isPaidPlan ? "한도 제한 없이 운영" : "초기 1인 셀러 무료 한도"}</p>
+            <p className="mt-1">{isPaidPlan ? "한도 없이 운영" : "초기 1인 셀러 무료 한도"}</p>
           </div>
           <div className="rounded-md bg-slate-50 p-3">
             <p className="font-semibold text-slate-950">다음 결제일</p>
-            <p className="mt-1">{isPaidPlan ? formatDate(access.profile?.plan_current_period_end) : "결제 기능 준비 전"}</p>
+            <p className="mt-1">{isPaidPlan ? formatDate(access.profile?.plan_current_period_end) : "결제 기능 준비 중"}</p>
           </div>
           <div className="rounded-md bg-slate-50 p-3">
             <p className="font-semibold text-slate-950">플랜 변경</p>
