@@ -7,6 +7,7 @@ import {
   isProductValidationError,
   isProductUsageLimitError
 } from "@/server/products/service";
+import { parseJsonBody } from "@/server/shared/api-route";
 import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
 import { productCreateSchema } from "@/features/products/schemas/product-form-schema";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
@@ -17,13 +18,10 @@ export const POST = withApiErrorBoundary(async (request: Request) => {
     return errorResponse(500, "Supabase 환경 변수를 먼저 설정해야 합니다.");
   }
 
-  const payload = await request.json().catch(() => null);
-  const parsed = productCreateSchema.safeParse(payload);
+  const parsed = await parseJsonBody(request, productCreateSchema, "상품 정보를 다시 확인해 주세요.");
 
-  if (!parsed.success) {
-    return errorResponse(400, "상품 정보를 다시 확인해 주세요.", {
-      fieldErrors: parsed.error.flatten().fieldErrors
-    });
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const supabase = await createClient();

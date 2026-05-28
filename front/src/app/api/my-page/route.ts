@@ -5,6 +5,7 @@ import {
   isProfileSchemaMissingError,
   updateUserDisplayName
 } from "@/server/profiles/service";
+import { parseJsonBody, requireApiUser } from "@/server/shared/api-route";
 import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
 import {
   isStoreMutationError,
@@ -20,28 +21,22 @@ export const PATCH = withApiErrorBoundary(async (request: Request) => {
     return errorResponse(500, "계정 정보를 저장할 연결이 아직 준비되지 않았습니다.");
   }
 
-  const payload = await request.json().catch(() => null);
-  const parsed = myPageFormSchema.safeParse(payload);
+  const parsed = await parseJsonBody(request, myPageFormSchema, "입력한 정보를 다시 확인해 주세요.");
 
-  if (!parsed.success) {
-    return errorResponse(400, "입력한 정보를 다시 확인해 주세요.", {
-      fieldErrors: parsed.error.flatten().fieldErrors
-    });
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
+  const userResult = await requireApiUser(supabase);
 
-  if (userError || !user) {
-    return errorResponse(401, "로그인이 필요합니다.");
+  if (!userResult.ok) {
+    return userResult.response;
   }
 
   try {
-    await updateUserDisplayName(supabase, user.id, parsed.data.displayName?.trim() || null);
-    const store = await updateCurrentStoreForUser(supabase, user.id, {
+    await updateUserDisplayName(supabase, userResult.data.id, parsed.data.displayName?.trim() || null);
+    const store = await updateCurrentStoreForUser(supabase, userResult.data.id, {
       name: parsed.data.storeName,
       businessType: parsed.data.businessType,
       memo: parsed.data.memo

@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { signUpSchema } from "@/features/auth/schemas/auth-form-schema";
 import { getSignUpAuthApiError } from "@/features/auth/utils/auth-error";
+import { parseJsonBody } from "@/server/shared/api-route";
 import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
 import { hasSupabasePublicEnv, hasSupabaseServerAuthEnv } from "@/shared/lib/env";
 import { createAdminClient } from "@/shared/lib/supabase/admin";
@@ -11,13 +12,10 @@ export const POST = withApiErrorBoundary(async (request: Request) => {
     return errorResponse(500, "계정 만들기 연결이 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.");
   }
 
-  const payload = await request.json().catch(() => null);
-  const parsed = signUpSchema.safeParse(payload);
+  const parsed = await parseJsonBody(request, signUpSchema, "입력한 정보를 다시 확인해 주세요.");
 
-  if (!parsed.success) {
-    return errorResponse(400, "입력한 정보를 다시 확인해 주세요.", {
-      fieldErrors: parsed.error.flatten().fieldErrors
-    });
+  if (!parsed.ok) {
+    return parsed.response;
   }
 
   const admin = createAdminClient();
