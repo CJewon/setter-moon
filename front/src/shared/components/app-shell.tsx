@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import type { Route } from "next";
+import { useQuery } from "@tanstack/react-query";
 import { BarChart3, Boxes, ClipboardList, Package, Settings } from "lucide-react";
-import type { DashboardSummary } from "@/server/dashboard/summary";
-import { getUserDisplayName } from "@/server/profiles/service";
-import type { AppAccess } from "@/server/auth/session";
+import type { DashboardPageData, DashboardSummary } from "@/server/dashboard/summary";
+import type { Store } from "@/server/stores/service";
+import { requestJson } from "@/shared/api/http";
 import { formatNumber } from "@/shared/lib/format";
 import { SignOutButton } from "@/shared/components/sign-out-button";
 import { UserMenu } from "@/shared/components/user-menu";
@@ -13,6 +16,15 @@ type NavItem = {
   href: Route;
   label: string;
   icon: typeof BarChart3;
+};
+
+type SessionData = {
+  isAuthenticated: boolean;
+  user: {
+    email: string | null;
+    id: string;
+    name: string | null;
+  } | null;
 };
 
 const navItems: NavItem[] = [
@@ -30,14 +42,44 @@ const summaryItems = [
   { label: "배송중", key: "shippingOrders", href: "/orders?status=shipping" }
 ] as const;
 
-type AppShellProps = {
-  access: Extract<AppAccess, { isSupabaseConfigured: true }>;
-  summary: DashboardSummary;
-  children: React.ReactNode;
+const emptySummary: DashboardSummary = {
+  lowStockVariantCount: 0,
+  readyToShipOrders: 0,
+  receivedOrders: 0,
+  shippingOrders: 0,
+  todayOrders: 0,
+  todaySalesAmount: 0
 };
 
-export function AppShell({ access, summary, children }: AppShellProps) {
-  const displayName = access.user ? getUserDisplayName(access.user, access.profile) ?? "사용자" : "사용자";
+function useSessionQuery() {
+  return useQuery({
+    queryKey: ["session"],
+    queryFn: async () => (await requestJson<SessionData>("/api/auth/session")).data
+  });
+}
+
+function useCurrentStoreQuery() {
+  return useQuery({
+    queryKey: ["current-store"],
+    queryFn: async () => (await requestJson<Store | null>("/api/stores/current")).data
+  });
+}
+
+function useDashboardShellQuery() {
+  return useQuery({
+    queryKey: ["dashboard"],
+    queryFn: async () => (await requestJson<DashboardPageData>("/api/dashboard")).data
+  });
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const sessionQuery = useSessionQuery();
+  const storeQuery = useCurrentStoreQuery();
+  const dashboardQuery = useDashboardShellQuery();
+  const summary = dashboardQuery.data?.summary ?? emptySummary;
+  const displayName = sessionQuery.data?.user?.name || "사용자";
+  const email = sessionQuery.data?.user?.email ?? null;
+  const storeName = storeQuery.data?.name ?? null;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
@@ -74,7 +116,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                 SellerRoom
               </Link>
               <div className="lg:hidden">
-                <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+                <UserMenu displayName={displayName} email={email} storeName={storeName} />
               </div>
             </div>
             <nav className="flex gap-2 overflow-x-auto pb-1 text-xs text-slate-600 lg:hidden">
@@ -100,7 +142,7 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                   ))}
                 </div>
                 <div className="hidden shrink-0 lg:block">
-                  <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+                  <UserMenu displayName={displayName} email={email} storeName={storeName} />
                 </div>
               </div>
             </div>

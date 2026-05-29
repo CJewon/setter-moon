@@ -44,6 +44,11 @@ export const GET = withApiErrorBoundary(async () => {
     {
       displayName: getUserDisplayName(access.user, access.profile) ?? "",
       email: access.user.email ?? access.profile?.email ?? "",
+      plan: {
+        currentPeriodEnd: access.profile?.plan_current_period_end ?? null,
+        id: getAppAccessPlanId(access),
+        status: access.profile?.plan_status ?? null
+      },
       store,
       usageSummary
     },
