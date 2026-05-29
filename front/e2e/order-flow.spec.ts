@@ -89,10 +89,13 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     await page.getByPlaceholder("고객명 또는 주문번호").fill(`주문 테스트 ${suffix}`);
     await page.getByRole("button", { name: "검색" }).click();
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(/customerKeyword=/);
     await expect(page.getByText(`주문 테스트 ${suffix}`)).toBeVisible();
 
-    await page.getByLabel(`${createPayload.data?.orderNo ?? ""} 선택`).check();
+    await page.getByLabel(`${createPayload.data?.orderNo ?? ""} 선택`).click();
+    await expect(page.getByText("선택 1건")).toBeVisible();
+    await expect(page.getByRole("button", { name: "배송대기" })).toBeEnabled();
     page.once("dialog", (dialog) => dialog.accept());
     const statusResponsePromise = page.waitForResponse(
       (response) => response.url().includes("/api/orders/bulk-status") && response.request().method() === "PATCH"

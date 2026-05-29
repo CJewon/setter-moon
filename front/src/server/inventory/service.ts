@@ -3,6 +3,7 @@ import { getReservedQuantitiesForStore } from "@/server/orders/service";
 import { getPaginationRange, getTotalPages } from "@/server/shared/pagination";
 import type { Database } from "@/shared/types/database";
 import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
+import type { InventoryAdjustmentValues } from "@/features/inventory/schemas/inventory-adjustment-schema";
 
 type InventorySupabaseClient = SupabaseClient<Database>;
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
@@ -10,6 +11,37 @@ type ProductVariantRow = Database["public"]["Tables"]["product_variants"]["Row"]
 type StockMovementRow = Database["public"]["Tables"]["stock_movements"]["Row"];
 
 export type InventoryStatus = "low" | "normal" | "out";
+
+export class InventoryMutationError extends Error {
+  code?: string;
+
+  constructor(error: { code?: string; message?: string }) {
+    super(error.message ?? "Inventory mutation failed");
+    this.name = "InventoryMutationError";
+    this.code = error.code;
+  }
+}
+
+export class InventoryNotFoundError extends Error {
+  constructor() {
+    super("재고를 조정할 상품 옵션을 찾을 수 없습니다.");
+    this.name = "InventoryNotFoundError";
+  }
+}
+
+export class InventoryValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InventoryValidationError";
+  }
+}
+
+export class InventoryConflictError extends Error {
+  constructor() {
+    super("다른 작업으로 재고가 변경되었습니다. 새로고침 후 다시 시도해 주세요.");
+    this.name = "InventoryConflictError";
+  }
+}
 
 export type InventoryListFilters = {
   keyword?: string;
@@ -51,6 +83,22 @@ export type StockMovementListItem = {
   type: StockMovementRow["type"];
   variantName: string;
 };
+
+export function isInventoryConflictError(error: unknown) {
+  return error instanceof InventoryConflictError;
+}
+
+export function isInventoryMutationError(error: unknown) {
+  return error instanceof InventoryMutationError;
+}
+
+export function isInventoryNotFoundError(error: unknown) {
+  return error instanceof InventoryNotFoundError;
+}
+
+export function isInventoryValidationError(error: unknown) {
+  return error instanceof InventoryValidationError;
+}
 
 function getInventoryStatus(availableStock: number, safetyStock: number): InventoryStatus {
   if (availableStock <= 0) {
@@ -258,5 +306,88 @@ export async function listStockMovementsForStore(
     })),
     totalCount,
     totalPages: getTotalPages(totalCount, pagination.pageSize)
+  };
+}
+
+export async function adjustInventoryForStore(
+  supabase: InventorySupabaseClient,
+  storeId: string,
+  values: InventoryAdjustmentValues
+) {
+  const { data: variant, error: variantError } = await supabase
+    .from("product_variants")
+    .select("id, product_id, current_stock")
+    .eq("id", values.variantId)
+    .maybeSingle();
+
+  if (variantError) {
+    throw new InventoryMutationError(variantError);
+  }
+
+  if (!variant) {
+    throw new InventoryNotFoundError();
+  }
+
+  const { data: product, error: productError } = await supabase
+    .from("products")
+    .select("id, store_id")
+    .eq("id", variant.product_id)
+    .eq("store_id", storeId)
+    .maybeSingle();
+
+  if (productError) {
+    throw new InventoryMutationError(productError);
+  }
+
+  if (!product) {
+    throw new InventoryNotFoundError();
+  }
+
+  const beforeStock = variant.current_stock;
+  const afterStock = values.targetStock;
+
+  if (beforeStock === afterStock) {
+    throw new InventoryValidationError("현재 재고와 같은 수량입니다.");
+  }
+
+  const { data: updatedVariant, error: updateError } = await supabase
+    .from("product_variants")
+    .update({
+      current_stock: afterStock
+    })
+    .eq("id", variant.id)
+    .eq("current_stock", beforeStock)
+    .select("id")
+    .maybeSingle();
+
+  if (updateError) {
+    throw new InventoryMutationError(updateError);
+  }
+
+  if (!updatedVariant) {
+    throw new InventoryConflictError();
+  }
+
+  const { error: movementError } = await supabase.from("stock_movements").insert({
+    after_stock: afterStock,
+    before_stock: beforeStock,
+    memo: values.memo.trim(),
+    order_id: null,
+    product_id: product.id,
+    quantity: afterStock - beforeStock,
+    store_id: storeId,
+    type: "manual_adjust",
+    variant_id: variant.id
+  });
+
+  if (movementError) {
+    throw new InventoryMutationError(movementError);
+  }
+
+  return {
+    afterStock,
+    beforeStock,
+    productId: product.id,
+    variantId: variant.id
   };
 }

@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { InventoryAdjustmentDialog } from "@/features/inventory/components/inventory-adjustment-dialog";
 import { InventoryFilters } from "@/features/inventory/components/inventory-filters";
+import { requireDashboardAccess } from "@/server/auth/session";
 import { listInventoryItemsForStore, type InventoryStatus } from "@/server/inventory/service";
 import { normalizePaginationParams } from "@/server/shared/pagination";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { routes } from "@/shared/constants/routes";
-import { requireDashboardAccess } from "@/server/auth/session";
 import { formatNumber } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
@@ -78,12 +79,13 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
               <th>예약 수량</th>
               <th>가용 재고</th>
               <th>상태</th>
+              <th>작업</th>
             </tr>
           </thead>
           <tbody>
             {inventoryPage.items.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-sm text-slate-500">
+                <td colSpan={7} className="text-sm text-slate-500">
                   조건에 맞는 재고 데이터가 없습니다.
                 </td>
               </tr>
@@ -101,6 +103,9 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
                   <td data-label="가용 재고">{formatNumber(item.availableStock)}개</td>
                   <td data-label="상태">
                     <StatusBadge tone={getInventoryStatusTone(item.status)}>{inventoryStatusLabel[item.status]}</StatusBadge>
+                  </td>
+                  <td data-label="작업">
+                    <InventoryAdjustmentDialog item={item} />
                   </td>
                 </tr>
               ))

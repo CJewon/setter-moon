@@ -142,5 +142,39 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(productRow).toContainText("2개");
     await expect(productRow).toContainText("10개");
     await expect(productRow).toContainText("29,000원");
+
+    await page.goto("/inventory");
+    await page.getByPlaceholder("상품명 또는 옵션 조합 검색").fill(productName);
+    await page.getByRole("button", { name: "검색" }).click();
+
+    const inventoryRow = page.getByRole("row").filter({ hasText: productName }).first();
+
+    await expect(inventoryRow).toBeVisible();
+    await inventoryRow.getByRole("button", { name: "재고 조정" }).click();
+    await expect(page.getByRole("dialog", { name: "재고 조정" })).toBeVisible();
+    await page.getByLabel("목표 재고").fill("8");
+    await page.getByLabel("조정 사유").fill(`실사 재고 반영 ${suffix}`);
+
+    const adjustmentResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/inventory/adjustments") && response.request().method() === "POST"
+    );
+    await page.getByRole("dialog", { name: "재고 조정" }).getByRole("button", { name: "재고 조정" }).click();
+
+    const adjustmentResponse = await adjustmentResponsePromise;
+    const adjustmentPayload = (await adjustmentResponse.json()) as {
+      code: number;
+      message: string;
+    };
+
+    expect(adjustmentResponse.ok(), JSON.stringify(adjustmentPayload)).toBe(true);
+    expect(adjustmentPayload).toMatchObject({
+      code: 200,
+      message: "재고를 조정했습니다."
+    });
+    await expect(page.getByText("재고를 조정했습니다.").first()).toBeVisible();
+    await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "8개" }).first()).toBeVisible();
+
+    await page.getByRole("link", { name: "재고 이력 보기" }).click();
+    await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "수동 조정" }).first()).toBeVisible();
   });
 });
