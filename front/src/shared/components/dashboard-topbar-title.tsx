@@ -63,6 +63,13 @@ function getTopbarPageTitle(pathname: string) {
     };
   }
 
+  if (/^\/orders\/[^/]+\/edit$/.test(pathname)) {
+    return {
+      title: "주문 수정",
+      description: "고객 정보, 주문일, 메모를 수정합니다."
+    };
+  }
+
   if (/^\/products\/[^/]+\/edit$/.test(pathname)) {
     return {
       title: "상품 수정",

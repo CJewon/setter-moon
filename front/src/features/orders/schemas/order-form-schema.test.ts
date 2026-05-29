@@ -1,5 +1,10 @@
 import { describe, expect, it } from "@jest/globals";
-import { orderBulkStatusUpdateSchema, orderFormSchema, orderStatusUpdateSchema } from "@/features/orders/schemas/order-form-schema";
+import {
+  orderBulkStatusUpdateSchema,
+  orderEditSchema,
+  orderFormSchema,
+  orderStatusUpdateSchema
+} from "@/features/orders/schemas/order-form-schema";
 
 describe("order form schema", () => {
   it("accepts a valid received order payload", () => {
@@ -20,6 +25,39 @@ describe("order form schema", () => {
     const parsed = orderFormSchema.safeParse({
       customerName: "",
       items: [{ quantity: 0, unitPrice: 19000, variantId: "" }]
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("accepts an order edit payload without product changes", () => {
+    expect(
+      orderEditSchema.parse({
+        customerName: "수정 고객",
+        customerPhone: "010-1111-2222",
+        memo: "주소 확인",
+        orderedAt: "2026-05-29T12:30"
+      })
+    ).toMatchObject({
+      customerName: "수정 고객",
+      customerPhone: "010-1111-2222",
+      memo: "주소 확인"
+    });
+  });
+
+  it("rejects an order edit payload without customer name", () => {
+    const parsed = orderEditSchema.safeParse({
+      customerName: "",
+      memo: "확인"
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects an order edit payload without ordered date", () => {
+    const parsed = orderEditSchema.safeParse({
+      customerName: "수정 고객",
+      orderedAt: ""
     });
 
     expect(parsed.success).toBe(false);

@@ -1,7 +1,12 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import type { OrderBulkStatusUpdateValues, OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
+import type {
+  OrderBulkStatusUpdateValues,
+  OrderEditValues,
+  OrderFormValues,
+  OrderStatusUpdateValues
+} from "@/features/orders/schemas/order-form-schema";
 import { requestJson } from "@/shared/api/http";
 
 type CreateOrderData = {
@@ -11,6 +16,11 @@ type CreateOrderData = {
 };
 
 type UpdateOrderStatusData = {
+  orderId: string;
+  status: string;
+};
+
+type UpdateOrderData = {
   orderId: string;
   status: string;
 };
@@ -39,6 +49,16 @@ export function useUpdateOrderStatusMutation(orderId: string) {
   return useMutation({
     mutationFn: (values: OrderStatusUpdateValues) =>
       requestJson<UpdateOrderStatusData>(`/api/orders/${orderId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify(values)
+      })
+  });
+}
+
+export function useUpdateOrderMutation(orderId: string) {
+  return useMutation({
+    mutationFn: (values: OrderEditValues) =>
+      requestJson<UpdateOrderData>(`/api/orders/${orderId}`, {
         method: "PATCH",
         body: JSON.stringify(values)
       })

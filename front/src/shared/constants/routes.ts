@@ -16,6 +16,7 @@ export const routes = {
   orders: "/orders",
   newOrder: "/orders/new",
   orderDetail: (orderId: string) => `/orders/${orderId}` as Route,
+  orderEdit: (orderId: string) => `/orders/${orderId}/edit` as Route,
   settings: "/settings",
   myPage: "/my-page"
 } as const;

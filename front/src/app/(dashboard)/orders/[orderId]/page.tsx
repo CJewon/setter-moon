@@ -5,7 +5,6 @@ import { getOrderDetailForStore, isOrderNotFoundError } from "@/server/orders/se
 import { requireDashboardAccess } from "@/server/auth/session";
 import { PageActionBar } from "@/shared/components/page-action-bar";
 import { routes } from "@/shared/constants/routes";
-import { orderStatusLabel } from "@/shared/constants/status-labels";
 import { formatNumber, formatWon } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
@@ -34,6 +33,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   return (
     <>
       <PageActionBar
+        actions={[
+          {
+            href: routes.orderEdit(order.id),
+            label: "주문 수정"
+          }
+        ]}
         backLink={{
           href: routes.orders,
           label: "주문 목록으로"
@@ -102,12 +107,26 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                 <p className="text-sm text-slate-500">아직 상태 변경 이력이 없습니다.</p>
               ) : (
                 order.statusLogs.map((log) => (
-                  <div key={log.id} className="rounded-md bg-slate-50 p-3 text-sm">
-                    <p className="font-medium text-slate-950">
-                      {log.from_status ? orderStatusLabel[log.from_status] : "시작"} → {orderStatusLabel[log.to_status]}
-                    </p>
-                    <p className="mt-1 text-slate-500">{new Date(log.created_at).toLocaleString("ko-KR")}</p>
-                    {log.memo ? <p className="mt-2 text-slate-600">{log.memo}</p> : null}
+                  <div key={log.id} className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {log.from_status ? (
+                          <OrderStatusBadge status={log.from_status} />
+                        ) : (
+                          <span className="inline-flex rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">
+                            시작
+                          </span>
+                        )}
+                        <span className="text-slate-400" aria-hidden="true">
+                          →
+                        </span>
+                        <OrderStatusBadge status={log.to_status} />
+                      </div>
+                      <time className="text-xs font-medium text-slate-500" dateTime={log.created_at}>
+                        {new Date(log.created_at).toLocaleString("ko-KR")}
+                      </time>
+                    </div>
+                    {log.memo ? <p className="mt-3 leading-6 text-slate-600">{log.memo}</p> : null}
                   </div>
                 ))
               )}
@@ -122,6 +141,9 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </div>
           <p className="mt-3 text-sm text-slate-600">
             배송대기로 변경하면 현재 재고를 확인한 뒤 실제 재고를 차감합니다.
+          </p>
+          <p className="mt-2 text-sm text-slate-500">
+            취소는 SellerRoom 안에서 주문 상태만 바꾸는 기능입니다. 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요.
           </p>
           <div className="mt-5">
             <OrderStatusActions orderId={order.id} status={order.status} />

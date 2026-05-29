@@ -82,16 +82,45 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page).toHaveURL(new RegExp(`/orders/${createPayload.data?.orderId}`));
     await expect(page.getByRole("heading", { name: "주문 상세" })).toBeVisible();
     await expect(page.getByRole("link", { name: "주문 목록으로" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "주문 수정" })).toBeVisible();
     await expect(page.getByText("주문접수").first()).toBeVisible();
+
+    const editedCustomerName = `수정 주문 ${suffix}`;
+
+    await page.getByRole("link", { name: "주문 수정" }).click();
+    await expect(page.getByRole("heading", { name: "주문 수정" })).toBeVisible();
+    await page.getByLabel("고객명").fill(editedCustomerName);
+    await page.getByLabel("메모").fill(`주문 수정 E2E ${suffix}`);
+
+    const updateResponsePromise = page.waitForResponse((response) =>
+      response.url().includes(`/api/orders/${createPayload.data?.orderId}`) && response.request().method() === "PATCH"
+    );
+    await page.getByRole("button", { name: "주문 정보 저장" }).click();
+
+    const updateResponse = await updateResponsePromise;
+    const updatePayload = (await updateResponse.json()) as {
+      code: number;
+      data?: { orderId: string };
+      message: string;
+    };
+
+    expect(updateResponse.ok(), JSON.stringify(updatePayload)).toBe(true);
+    expect(updatePayload).toMatchObject({
+      code: 200,
+      message: "주문 정보를 저장했습니다."
+    });
+    await expect(page.getByText(updatePayload.message).first()).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/orders/${createPayload.data?.orderId}`));
+    await expect(page.getByText(editedCustomerName)).toBeVisible();
 
     await page.getByRole("link", { name: "주문 목록으로" }).click();
     await expect(page).toHaveURL(/\/orders$/);
 
-    await page.getByPlaceholder("고객명 또는 주문번호").fill(`주문 테스트 ${suffix}`);
+    await page.getByPlaceholder("고객명 또는 주문번호").fill(editedCustomerName);
     await page.getByRole("button", { name: "검색" }).click();
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL(/customerKeyword=/);
-    await expect(page.getByText(`주문 테스트 ${suffix}`)).toBeVisible();
+    await expect(page.getByText(editedCustomerName)).toBeVisible();
 
     await page.getByLabel(`${createPayload.data?.orderNo ?? ""} 선택`).click();
     await expect(page.getByText("선택 1건")).toBeVisible();
@@ -112,6 +141,13 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     expect(statusResponse.ok(), JSON.stringify(statusPayload)).toBe(true);
     expect(statusPayload.code).toBe(200);
     await expect(page.getByText(statusPayload.message)).toBeVisible();
+    await expect(page.getByText("배송대기").first()).toBeVisible();
+
+    await page.getByRole("link", { name: createPayload.data?.orderNo ?? "" }).click();
+    await expect(page.getByRole("heading", { name: "주문 상세" })).toBeVisible();
+    await expect(page.getByText("취소는 SellerRoom 안에서 주문 상태만 바꾸는 기능입니다.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "상태 변경 이력" })).toBeVisible();
+    await expect(page.getByText("주문접수").first()).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
   });
 });

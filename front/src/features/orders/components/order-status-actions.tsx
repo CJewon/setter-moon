@@ -76,7 +76,7 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
             onClick={() =>
               submitStatusChange(
                 { toStatus: "cancelled" },
-                "주문을 취소 상태로 변경할까요? 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요."
+                "취소 상태로 변경할까요? 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요."
               )
             }
           >
@@ -101,7 +101,7 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
             onClick={() =>
               submitStatusChange(
                 { restoreStock: true, toStatus: "cancelled" },
-                "주문을 취소 상태로 변경할까요? 배송대기 주문은 차감된 재고를 다시 더합니다."
+                "취소 상태로 변경할까요? 배송대기 주문은 차감된 재고를 다시 더합니다."
               )
             }
           >

@@ -1,4 +1,9 @@
-import type { OrderBulkStatusUpdateValues, OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
+import type {
+  OrderBulkStatusUpdateValues,
+  OrderEditValues,
+  OrderFormValues,
+  OrderStatusUpdateValues
+} from "@/features/orders/schemas/order-form-schema";
 import {
   InsufficientStockError,
   InvalidOrderStatusTransitionError,
@@ -704,6 +709,46 @@ export async function updateOrderStatusForStore(
   return {
     orderId: order.id,
     status: values.toStatus
+  };
+}
+
+export async function updateOrderBasicForStore(
+  supabase: OrdersSupabaseClient,
+  storeId: string,
+  orderId: string,
+  values: OrderEditValues
+) {
+  const order = await getOrderDetailForStore(supabase, storeId, orderId);
+
+  if (!["received", "hold"].includes(order.status)) {
+    throw new InvalidOrderStatusTransitionError("주문접수 또는 보류 상태에서만 주문 정보를 수정할 수 있습니다.");
+  }
+
+  const { data: updatedOrder, error: updateError } = await supabase
+    .from("orders")
+    .update({
+      customer_name: values.customerName.trim(),
+      customer_phone: values.customerPhone?.trim() || null,
+      memo: values.memo?.trim() || null,
+      ordered_at: getOrderedAt(values.orderedAt),
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", order.id)
+    .eq("store_id", storeId)
+    .select("id, status")
+    .maybeSingle();
+
+  if (updateError) {
+    throw new OrderMutationError(updateError);
+  }
+
+  if (!updatedOrder) {
+    throw new OrderNotFoundError();
+  }
+
+  return {
+    orderId: updatedOrder.id,
+    status: updatedOrder.status
   };
 }
 

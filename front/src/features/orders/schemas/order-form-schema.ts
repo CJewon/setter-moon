@@ -16,6 +16,20 @@ export const orderFormSchema = z.object({
 
 export type OrderFormValues = z.infer<typeof orderFormSchema>;
 
+export const orderEditSchema = z.object({
+  customerName: z.string().trim().min(1, "고객명을 입력해 주세요.").max(40, "고객명은 40자 이하로 입력해 주세요."),
+  customerPhone: z.string().trim().max(30, "연락처는 30자 이하로 입력해 주세요.").optional(),
+  memo: z.string().trim().max(500, "메모는 500자 이하로 입력해 주세요.").optional(),
+  orderedAt: z
+    .string()
+    .trim()
+    .min(1, "주문일을 입력해 주세요.")
+    .refine((value) => !Number.isNaN(new Date(value).getTime()), "주문일을 다시 확인해 주세요.")
+    .optional()
+});
+
+export type OrderEditValues = z.infer<typeof orderEditSchema>;
+
 export const orderStatusUpdateSchema = z.object({
   holdReservationPolicy: z.enum(["keep", "release"]).optional(),
   memo: z.string().trim().max(300, "상태 변경 메모는 300자 이하로 입력해 주세요.").optional(),
