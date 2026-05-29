@@ -55,7 +55,7 @@ export function StockMovementsPageClient({ searchParams }: StockMovementsPageCli
                 {movementPageQuery.data.items.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-sm text-slate-500">
-                      아직 재고 변경 이력이 없습니다. 입고, 판매 차감, 취소 복구, 수동 조정 내역이 생기면 이곳에 표시됩니다.
+                      아직 재고 변경 이력이 없습니다. 재고 조정이나 주문 상태 변경 내역이 생기면 이곳에 표시됩니다.
                     </td>
                   </tr>
                 ) : (

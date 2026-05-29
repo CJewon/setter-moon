@@ -48,7 +48,7 @@ export function LowStockPageClient({ searchParams }: LowStockPageClientProps) {
                 {lowStockPageQuery.data.items.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="text-sm text-slate-500">
-                      현재 재고 부족 옵션 조합이 없습니다.
+                      현재 부족하거나 품절된 옵션 조합이 없습니다. 안전 재고 이하가 되면 이곳에 표시됩니다.
                     </td>
                   </tr>
                 ) : (

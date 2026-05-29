@@ -191,7 +191,7 @@ export function OrderListTable({ items }: OrderListTableProps) {
             {items.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-sm text-slate-500">
-                  조건에 맞는 주문이 없습니다.
+                  조건에 맞는 주문이 없습니다. 검색어나 상태, 기간 필터를 다시 확인해 주세요.
                 </td>
               </tr>
             ) : (

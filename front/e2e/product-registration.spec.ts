@@ -1,7 +1,12 @@
 import { expect, test } from "@playwright/test";
 import { signInAndEnsureStore } from "./helpers/auth";
+import { cleanupUnorderedE2EProducts } from "./helpers/test-data";
 
 test.describe.serial("상품 등록 화면", () => {
+  test.beforeAll(async () => {
+    await cleanupUnorderedE2EProducts();
+  });
+
   test("작성 중인 상품 등록을 취소하면 목록으로 돌아간다", async ({ page }) => {
     await signInAndEnsureStore(page);
     await page.goto("/products/new");
@@ -55,8 +60,8 @@ test.describe.serial("상품 등록 화면", () => {
 
     await page.getByLabel("현재 재고").nth(0).fill("7");
     await page.getByLabel("안전 재고").nth(0).fill("2");
-    await page.getByLabel("현재 재고").nth(1).fill("3");
-    await page.getByLabel("안전 재고").nth(1).fill("1");
+    await page.getByLabel("현재 재고").nth(1).fill("1");
+    await page.getByLabel("안전 재고").nth(1).fill("2");
 
     const submitButton = page.getByRole("button", { name: "상품 등록" });
 
@@ -94,7 +99,7 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(page.getByRole("cell", { name: "블랙" })).toBeVisible();
     await expect(page.getByRole("cell", { name: "아이보리" })).toBeVisible();
     await expect(page.getByRole("row", { name: /블랙.*29,000원.*7개.*0개.*7개.*2개/ })).toBeVisible();
-    await expect(page.getByRole("row", { name: /아이보리.*29,000원.*3개.*0개.*3개.*1개/ })).toBeVisible();
+    await expect(page.getByRole("row", { name: /아이보리.*29,000원.*1개.*0개.*1개.*2개/ })).toBeVisible();
 
     await page.getByLabel("판매상태").selectOption("sold_out");
     const statusResponsePromise = page.waitForResponse((response) =>
@@ -144,25 +149,31 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(productRow.getByRole("link", { name: productName })).toBeVisible();
     await expect(productRow).toContainText("숨김");
     await expect(productRow).toContainText("2개");
-    await expect(productRow).toContainText("10개");
+    await expect(productRow).toContainText("8개");
     await expect(productRow).toContainText("29,000원");
+
+    await page.goto("/inventory/low-stock");
+    const lowStockRow = page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "아이보리" });
+
+    await expect(lowStockRow).toBeVisible();
+    await expect(lowStockRow).toContainText("부족");
 
     await page.goto("/inventory");
     await page.getByPlaceholder("상품명 또는 옵션 조합 검색").fill(productName);
     await page.getByRole("button", { name: "검색" }).click();
 
-    const inventoryRow = page.getByRole("row").filter({ hasText: productName }).first();
+    const inventoryRow = page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "아이보리" });
 
     await expect(inventoryRow).toBeVisible();
     await inventoryRow.getByRole("button", { name: "재고 조정" }).click();
     await expect(page.getByRole("dialog", { name: "재고 조정" })).toBeVisible();
-    await page.getByLabel("목표 재고").fill("8");
+    await page.getByLabel("목표 재고").fill("4");
     await page.getByLabel("조정 사유").fill(`실사 재고 반영 ${suffix}`);
 
     const adjustmentResponsePromise = page.waitForResponse((response) =>
       response.url().includes("/api/inventory/adjustments") && response.request().method() === "POST"
     );
-    await page.getByRole("dialog", { name: "재고 조정" }).getByRole("button", { name: "재고 조정" }).click();
+    await page.getByRole("dialog", { name: "재고 조정" }).getByRole("button", { name: "재고 조정", exact: true }).click();
 
     const adjustmentResponse = await adjustmentResponsePromise;
     const adjustmentPayload = (await adjustmentResponse.json()) as {
@@ -176,9 +187,12 @@ test.describe.serial("상품 등록 화면", () => {
       message: "재고를 조정했습니다."
     });
     await expect(page.getByText("재고를 조정했습니다.").first()).toBeVisible();
-    await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "8개" }).first()).toBeVisible();
+    await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "4개" }).first()).toBeVisible();
 
-    await page.getByRole("link", { name: "재고 이력 보기" }).click();
+    await page.goto("/inventory/low-stock");
+    await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "아이보리" })).toHaveCount(0);
+
+    await page.goto("/inventory/movements");
     await expect(page.getByRole("row").filter({ hasText: productName }).filter({ hasText: "수동 조정" }).first()).toBeVisible();
   });
 });

@@ -102,7 +102,7 @@ export function InventoryListPageClient({ searchParams }: InventoryListPageClien
                 {inventoryPageQuery.data.items.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-sm text-slate-500">
-                      조건에 맞는 재고 데이터가 없습니다.
+                      조건에 맞는 재고가 없습니다. 검색어나 재고상태 필터를 다시 확인해 주세요.
                     </td>
                   </tr>
                 ) : (
