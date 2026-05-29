@@ -9,6 +9,11 @@ const breakpoints = [
 ];
 
 const dashboardScreens = ["/dashboard", "/products", "/inventory", "/orders"] as const;
+const filterTestIds: Partial<Record<(typeof dashboardScreens)[number], string>> = {
+  "/inventory": "inventory-list-filters",
+  "/orders": "order-list-filters",
+  "/products": "product-list-filters"
+};
 
 test.describe("dashboard responsive layout", () => {
   test("keeps dashboard, products, inventory, and orders usable across core breakpoints", async ({ page }) => {
@@ -38,6 +43,35 @@ test.describe("dashboard responsive layout", () => {
         expect(layout.mainWidth, `${breakpoint.name} ${screen} should use enough usable width`).toBeGreaterThanOrEqual(
           breakpoint.minMainWidth
         );
+
+        const filterTestId = filterTestIds[screen];
+
+        if (filterTestId) {
+          const filter = page.getByTestId(filterTestId);
+          await expect(filter).toBeVisible();
+
+          const filterBox = await filter.boundingBox();
+          expect(filterBox, `${breakpoint.name} ${screen} filter box should be measurable`).not.toBeNull();
+
+          const controls = filter.locator("input, select, button, a");
+          const controlCount = await controls.count();
+
+          for (let index = 0; index < controlCount; index += 1) {
+            const controlBox = await controls.nth(index).boundingBox();
+
+            if (!controlBox || !filterBox) {
+              continue;
+            }
+
+            expect(controlBox.x, `${breakpoint.name} ${screen} filter control should stay inside the left edge`).toBeGreaterThanOrEqual(
+              filterBox.x - 1
+            );
+            expect(
+              controlBox.x + controlBox.width,
+              `${breakpoint.name} ${screen} filter control should stay inside the right edge`
+            ).toBeLessThanOrEqual(filterBox.x + filterBox.width + 1);
+          }
+        }
       }
     }
   });

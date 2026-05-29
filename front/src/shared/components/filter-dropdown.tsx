@@ -50,7 +50,7 @@ export function FilterDropdown({ ariaLabel, defaultValue = "", getOptionHref, op
   }, []);
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative min-w-0">
       <button
         type="button"
         className={cn(

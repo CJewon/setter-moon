@@ -37,8 +37,11 @@ export function ProductListFilters({ keyword, pageSize, selectedStatus = "" }: P
   }
 
   return (
-    <div className="mb-3 grid gap-2.5 rounded-md border border-slate-200 bg-white/80 p-2.5 shadow-sm sm:mb-4 sm:p-3 md:grid-cols-[1fr_190px]">
-      <form action={routes.products} className="grid gap-2 sm:grid-cols-[1fr_auto]">
+    <div
+      className="mb-3 grid min-w-0 gap-2.5 rounded-md border border-slate-200 bg-white/80 p-2.5 shadow-sm sm:mb-4 sm:p-3 md:grid-cols-[minmax(0,1fr)_minmax(0,190px)]"
+      data-testid="product-list-filters"
+    >
+      <form action={routes.products} className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
         <input type="hidden" name="page" value="1" />
         <input type="hidden" name="pageSize" value={pageSize} />
         {selectedStatus ? <input type="hidden" name="status" value={selectedStatus} /> : null}
@@ -54,7 +57,7 @@ export function ProductListFilters({ keyword, pageSize, selectedStatus = "" }: P
         </label>
         <button
           type="submit"
-          className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
+          className="inline-flex min-h-10 min-w-0 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
           검색
         </button>
