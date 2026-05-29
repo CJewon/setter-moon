@@ -27,7 +27,7 @@ export function LowStockPageClient({ searchParams }: LowStockPageClientProps) {
           label: "전체 재고로"
         }}
       />
-      {lowStockPageQuery.isLoading ? <QueryLoadingState title="재고 부족 목록을 불러오고 있습니다." /> : null}
+      {lowStockPageQuery.isLoading ? <QueryLoadingState title="재고 부족 목록을 불러오고 있습니다." variant="table" /> : null}
       {lowStockPageQuery.isError ? <QueryErrorState title="재고 부족 목록을 불러오지 못했습니다." /> : null}
 
       {lowStockPageQuery.data ? (

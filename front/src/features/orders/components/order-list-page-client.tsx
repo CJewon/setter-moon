@@ -146,7 +146,7 @@ export function OrderListPageClient({ searchParams }: OrderListPageClientProps) 
         </Link>
       </div>
 
-      {orderPageQuery.isLoading ? <QueryLoadingState title="주문 목록을 불러오고 있습니다." /> : null}
+      {orderPageQuery.isLoading ? <QueryLoadingState title="주문 목록을 불러오고 있습니다." variant="table" /> : null}
       {orderPageQuery.isError ? <QueryErrorState title="주문 목록을 불러오지 못했습니다." /> : null}
       {orderPageQuery.data ? (
         <>

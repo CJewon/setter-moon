@@ -54,7 +54,7 @@ export function ProductListPageClient({ searchParams }: ProductListPageClientPro
       <ProductListFilters keyword={keyword} pageSize={pageSize} selectedStatus={selectedStatus} />
       <PageActionBar actions={[{ href: routes.newProduct, label: "상품 등록" }]} />
 
-      {productPageQuery.isLoading ? <QueryLoadingState title="상품 목록을 불러오고 있습니다." /> : null}
+      {productPageQuery.isLoading ? <QueryLoadingState title="상품 목록을 불러오고 있습니다." variant="table" /> : null}
 
       {productPageQuery.isError ? <QueryErrorState title="상품 목록을 불러오지 못했습니다." /> : null}
 

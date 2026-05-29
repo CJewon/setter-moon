@@ -17,7 +17,7 @@ export function OrderCreatePageClient() {
           label: "주문 목록으로"
         }}
       />
-      {productsQuery.isLoading ? <QueryLoadingState title="주문 등록 정보를 불러오고 있습니다." /> : null}
+      {productsQuery.isLoading ? <QueryLoadingState title="주문 등록 정보를 불러오고 있습니다." variant="form" /> : null}
       {productsQuery.isError ? <QueryErrorState title="주문 등록 정보를 불러오지 못했습니다." /> : null}
       {productsQuery.data ? <OrderCreateForm products={productsQuery.data} /> : null}
     </>

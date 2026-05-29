@@ -14,7 +14,7 @@ export function OrderEditPageClient({ orderId }: OrderEditPageClientProps) {
   const orderQuery = useOrderQuery(orderId);
 
   if (orderQuery.isLoading) {
-    return <QueryLoadingState title="주문 수정 정보를 불러오고 있습니다." />;
+    return <QueryLoadingState title="주문 수정 정보를 불러오고 있습니다." variant="form" />;
   }
 
   if (orderQuery.isError || !orderQuery.data) {

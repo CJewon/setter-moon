@@ -11,7 +11,7 @@ export function DashboardPageClient() {
   const dashboardQuery = useDashboardQuery();
 
   if (dashboardQuery.isLoading) {
-    return <QueryLoadingState title="대시보드를 불러오고 있습니다." />;
+    return <QueryLoadingState title="대시보드를 불러오고 있습니다." variant="dashboard" />;
   }
 
   if (dashboardQuery.isError || !dashboardQuery.data) {

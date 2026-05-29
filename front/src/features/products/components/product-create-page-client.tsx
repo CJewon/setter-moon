@@ -26,7 +26,7 @@ export function ProductCreatePageClient() {
           label: "상품 목록으로"
         }}
       />
-      {usageSummaryQuery.isLoading ? <QueryLoadingState title="상품 등록 정보를 불러오고 있습니다." /> : null}
+      {usageSummaryQuery.isLoading ? <QueryLoadingState title="상품 등록 정보를 불러오고 있습니다." variant="form" /> : null}
       {usageSummaryQuery.isError ? <QueryErrorState title="상품 등록 정보를 불러오지 못했습니다." /> : null}
       {usageSummaryQuery.data ? <ProductCreateForm usageSummary={usageSummaryQuery.data} /> : null}
     </>

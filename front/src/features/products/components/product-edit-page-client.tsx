@@ -14,7 +14,7 @@ export function ProductEditPageClient({ productId }: ProductEditPageClientProps)
   const productQuery = useProductQuery(productId);
 
   if (productQuery.isLoading) {
-    return <QueryLoadingState title="상품 수정 정보를 불러오고 있습니다." />;
+    return <QueryLoadingState title="상품 수정 정보를 불러오고 있습니다." variant="form" />;
   }
 
   if (productQuery.isError || !productQuery.data) {

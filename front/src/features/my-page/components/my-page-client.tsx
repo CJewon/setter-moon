@@ -10,7 +10,7 @@ export function MyPageClient() {
   const myPageQuery = useMyPageQuery();
 
   if (myPageQuery.isLoading) {
-    return <QueryLoadingState title="마이페이지 정보를 불러오고 있습니다." />;
+    return <QueryLoadingState title="마이페이지 정보를 불러오고 있습니다." variant="form" />;
   }
 
   if (myPageQuery.isError || !myPageQuery.data) {

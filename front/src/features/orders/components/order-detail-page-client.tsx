@@ -16,7 +16,7 @@ export function OrderDetailPageClient({ orderId }: OrderDetailPageClientProps) {
   const orderQuery = useOrderQuery(orderId);
 
   if (orderQuery.isLoading) {
-    return <QueryLoadingState title="주문 정보를 불러오고 있습니다." />;
+    return <QueryLoadingState title="주문 정보를 불러오고 있습니다." variant="detail" />;
   }
 
   if (orderQuery.isError || !orderQuery.data) {

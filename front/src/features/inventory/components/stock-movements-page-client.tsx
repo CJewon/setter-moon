@@ -33,7 +33,7 @@ export function StockMovementsPageClient({ searchParams }: StockMovementsPageCli
           label: "전체 재고로"
         }}
       />
-      {movementPageQuery.isLoading ? <QueryLoadingState title="재고 이력을 불러오고 있습니다." /> : null}
+      {movementPageQuery.isLoading ? <QueryLoadingState title="재고 이력을 불러오고 있습니다." variant="table" /> : null}
       {movementPageQuery.isError ? <QueryErrorState title="재고 이력을 불러오지 못했습니다." /> : null}
 
       {movementPageQuery.data ? (
