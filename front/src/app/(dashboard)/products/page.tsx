@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ProductListFilters } from "@/features/products/components/product-list-filters";
 import { EmptyState } from "@/shared/components/empty-state";
-import { PageHeader } from "@/shared/components/page-header";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { routes } from "@/shared/constants/routes";
@@ -40,11 +39,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <>
-      <PageHeader
-        title="상품"
-        description="등록된 상품을 검색하고 옵션별 재고 상태를 확인합니다."
-        action={{ href: routes.newProduct, label: "상품 등록" }}
-      />
       <ProductListFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
 
       {productPage.items.length === 0 ? (
