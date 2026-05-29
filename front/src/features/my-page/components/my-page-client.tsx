@@ -1,8 +1,7 @@
 "use client";
 
 import { MyPageForm } from "@/features/my-page/components/my-page-form";
-import { MyPageOverview, MyPageUsageGrid } from "@/features/my-page/components/my-page-overview";
-import { MyPagePlanPanel } from "@/features/my-page/components/my-page-plan-panel";
+import { MyPageOverview } from "@/features/my-page/components/my-page-overview";
 import { useMyPageQuery } from "@/features/my-page/hooks/use-my-page-query";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
 
@@ -17,33 +16,12 @@ export function MyPageClient() {
     return <QueryErrorState title="마이페이지 정보를 불러오지 못했습니다." />;
   }
 
-  const { displayName, email, plan, store, usageSummary } = myPageQuery.data;
-  const planId = plan.id;
-  const isPaidPlan = planId === "paid_full";
-  const isPlanHealthy = plan.status !== "past_due" && plan.status !== "cancelled";
+  const { displayName, email } = myPageQuery.data;
 
   return (
     <>
-      <MyPageOverview
-        businessType={store.business_type}
-        displayName={displayName}
-        email={email}
-        isPaidPlan={isPaidPlan}
-        storeName={store.name}
-      />
-      <MyPageUsageGrid metrics={usageSummary.metrics} />
-      <MyPagePlanPanel
-        isPaidPlan={isPaidPlan}
-        isPlanHealthy={isPlanHealthy}
-        planCurrentPeriodEnd={plan.currentPeriodEnd}
-      />
-      <MyPageForm
-        displayName={displayName}
-        email={email}
-        storeName={store.name}
-        businessType={store.business_type}
-        memo={store.memo}
-      />
+      <MyPageOverview displayName={displayName} email={email} />
+      <MyPageForm displayName={displayName} email={email} />
     </>
   );
 }

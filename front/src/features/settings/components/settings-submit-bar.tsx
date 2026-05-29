@@ -1,13 +1,13 @@
 import { cn } from "@/shared/utils/cn";
 
-type MyPageSubmitBarProps = {
+type SettingsSubmitBarProps = {
   formStatusLabel: string;
   isDirty: boolean;
   pending: boolean;
   stateStatus: "idle" | "success" | "error";
 };
 
-export function MyPageSubmitBar({ formStatusLabel, isDirty, pending, stateStatus }: MyPageSubmitBarProps) {
+export function SettingsSubmitBar({ formStatusLabel, isDirty, pending, stateStatus }: SettingsSubmitBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
       <p

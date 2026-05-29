@@ -1,7 +1,7 @@
 import { salesChannels } from "@/features/stores/schemas/store-form-schema";
 import { cn } from "@/shared/utils/cn";
 
-type MyPageStoreSectionProps = {
+type SettingsStoreSectionProps = {
   businessType: string | null;
   memo: string | null;
   memoError?: string;
@@ -9,12 +9,12 @@ type MyPageStoreSectionProps = {
   storeNameError?: string;
 };
 
-export function MyPageStoreSection({ businessType, memo, memoError, storeName, storeNameError }: MyPageStoreSectionProps) {
+export function SettingsStoreSection({ businessType, memo, memoError, storeName, storeNameError }: SettingsStoreSectionProps) {
   return (
     <section className="rounded-md border border-slate-200 bg-white p-5">
       <div>
         <h2 className="text-base font-semibold text-slate-950">스토어 정보</h2>
-        <p className="mt-1 text-sm text-slate-500">운영 화면에서 기본으로 사용할 스토어 정보를 관리합니다.</p>
+        <p className="mt-1 text-sm text-slate-500">주문, 상품, 재고 화면에서 기준으로 사용할 운영 정보를 관리합니다.</p>
       </div>
       <div className="mt-5 grid gap-4">
         <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="store-name">
@@ -54,7 +54,7 @@ export function MyPageStoreSection({ businessType, memo, memoError, storeName, s
           </select>
         </label>
         <label className="grid gap-2 text-sm font-medium text-slate-800" htmlFor="memo">
-          메모
+          운영 메모
           <textarea
             id="memo"
             name="memo"

@@ -2,40 +2,28 @@
 
 import { useState, type FormEvent } from "react";
 import { useUpdateMyPageMutation } from "@/features/my-page/hooks/use-my-page-mutation";
-import { myPageFormSchema } from "@/features/my-page/schemas/my-page-schema";
+import { myPageAccountSchema } from "@/features/my-page/schemas/my-page-schema";
 import { getApiErrorState } from "@/shared/api/http";
 import { useToast } from "@/shared/components/toast-provider";
 import { initialActionState, type ActionState } from "@/shared/types/action-state";
 
 export type MyPageFormValuesSnapshot = {
-  businessType: string;
   displayName: string;
-  memo: string;
-  storeName: string;
 };
 
 export type MyPageFormInitialValues = {
-  businessType: string | null;
   displayName: string;
-  memo: string | null;
-  storeName: string;
 };
 
 function normalizeSnapshot(values: MyPageFormValuesSnapshot): MyPageFormValuesSnapshot {
   return {
-    displayName: values.displayName.trim(),
-    storeName: values.storeName.trim(),
-    businessType: values.businessType,
-    memo: values.memo.trim()
+    displayName: values.displayName.trim()
   };
 }
 
-function createInitialSnapshot({ displayName, storeName, businessType, memo }: MyPageFormInitialValues) {
+function createInitialSnapshot({ displayName }: MyPageFormInitialValues) {
   return normalizeSnapshot({
-    displayName,
-    storeName,
-    businessType: businessType ?? "",
-    memo: memo ?? ""
+    displayName
   });
 }
 
@@ -43,20 +31,12 @@ function readFormSnapshot(form: HTMLFormElement) {
   const formData = new FormData(form);
 
   return normalizeSnapshot({
-    displayName: String(formData.get("displayName") ?? ""),
-    storeName: String(formData.get("storeName") ?? ""),
-    businessType: String(formData.get("businessType") ?? ""),
-    memo: String(formData.get("memo") ?? "")
+    displayName: String(formData.get("displayName") ?? "")
   });
 }
 
 function isSameSnapshot(first: MyPageFormValuesSnapshot, second: MyPageFormValuesSnapshot) {
-  return (
-    first.displayName === second.displayName &&
-    first.storeName === second.storeName &&
-    first.businessType === second.businessType &&
-    first.memo === second.memo
-  );
+  return first.displayName === second.displayName;
 }
 
 function getFormStatusLabel({ isDirty, pending, state }: { isDirty: boolean; pending: boolean; state: ActionState }) {
@@ -87,11 +67,8 @@ export function useMyPageForm(initialValues: MyPageFormInitialValues) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const parsed = myPageFormSchema.safeParse({
-      displayName: formData.get("displayName"),
-      storeName: formData.get("storeName"),
-      businessType: formData.get("businessType"),
-      memo: formData.get("memo")
+    const parsed = myPageAccountSchema.safeParse({
+      displayName: formData.get("displayName")
     });
 
     if (!parsed.success) {
@@ -108,21 +85,18 @@ export function useMyPageForm(initialValues: MyPageFormInitialValues) {
       onSuccess: ({ message }) => {
         setSavedSnapshot(
           normalizeSnapshot({
-            displayName: parsed.data.displayName ?? "",
-            storeName: parsed.data.storeName,
-            businessType: parsed.data.businessType ?? "",
-            memo: parsed.data.memo ?? ""
+            displayName: parsed.data.displayName ?? ""
           })
         );
         setIsDirty(false);
         setState({
           status: "success",
-          message: message ?? "마이페이지 정보를 저장했습니다."
+          message: message ?? "계정 정보를 저장했습니다."
         });
         showToast({
           tone: "success",
           title: "저장 완료",
-          message: message ?? "마이페이지 정보를 저장했습니다."
+          message: message ?? "계정 정보를 저장했습니다."
         });
       },
       onError: (error) => {

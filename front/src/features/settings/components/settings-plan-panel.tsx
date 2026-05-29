@@ -1,18 +1,18 @@
 import { StatusBadge } from "@/shared/components/status-badge";
 
-type MyPagePlanPanelProps = {
+type SettingsPlanPanelProps = {
   isPaidPlan: boolean;
   isPlanHealthy: boolean;
   planCurrentPeriodEnd: string | null | undefined;
 };
 
-export function MyPagePlanPanel({ isPaidPlan, isPlanHealthy, planCurrentPeriodEnd }: MyPagePlanPanelProps) {
+export function SettingsPlanPanel({ isPaidPlan, isPlanHealthy, planCurrentPeriodEnd }: SettingsPlanPanelProps) {
   return (
-    <section className="mb-5 rounded-md border border-slate-200 bg-white p-5">
+    <section className="rounded-md border border-slate-200 bg-white p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h2 className="text-base font-semibold text-slate-950">현재 플랜</h2>
-          <p className="mt-1 text-sm text-slate-500">현재 플랜과 사용량을 확인합니다.</p>
+          <h2 className="text-base font-semibold text-slate-950">플랜 설정</h2>
+          <p className="mt-1 text-sm text-slate-500">현재 플랜과 운영 한도 기준을 확인합니다.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 풀버전" : "무료 플랜"}</StatusBadge>
@@ -20,10 +20,13 @@ export function MyPagePlanPanel({ isPaidPlan, isPlanHealthy, planCurrentPeriodEn
         </div>
       </div>
       <div className="mt-4 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
-        <PlanInfoItem title="플랜 기준" description={isPaidPlan ? "한도 없이 운영" : "초기 1인 셀러 무료 한도"} />
-        <PlanInfoItem title="다음 결제일" description={isPaidPlan ? formatDate(planCurrentPeriodEnd) : "무료 플랜은 결제일이 없습니다."} />
-        <PlanInfoItem title="플랜 전환" description={isPaidPlan ? "풀버전 사용 중" : "필요할 때 풀버전 전환 안내를 확인할 수 있습니다."} />
+        <PlanInfoItem title="상품" description={isPaidPlan ? "한도 없음" : "10개까지"} />
+        <PlanInfoItem title="옵션 조합" description={isPaidPlan ? "한도 없음" : "100개까지"} />
+        <PlanInfoItem title="월 신규 주문" description={isPaidPlan ? "한도 없음" : "300건까지"} />
       </div>
+      {isPaidPlan ? (
+        <p className="mt-3 text-sm text-slate-500">다음 결제일: {formatDate(planCurrentPeriodEnd)}</p>
+      ) : null}
     </section>
   );
 }

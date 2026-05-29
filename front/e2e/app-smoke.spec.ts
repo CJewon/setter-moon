@@ -11,7 +11,7 @@ const protectedScreens = [
   { path: "/orders", heading: "주문", visibleText: "주문 등록" },
   { path: "/orders/new", heading: "주문 등록", visibleText: "고객명" },
   { path: "/categories", heading: "카테고리", visibleText: "카테고리는 상품이 더 많아진 뒤 정리해도 괜찮아요." },
-  { path: "/settings", heading: "설정", visibleText: "계정과 스토어 정보는 마이페이지에서 관리합니다." },
+  { path: "/settings", heading: "설정", visibleText: "스토어 정보" },
   { path: "/my-page", heading: "마이페이지", visibleText: "현재 접속 계정" }
 ];
 
@@ -158,6 +158,7 @@ test.describe("현재 구현 화면 E2E", () => {
         "/api/stores",
         "/api/stores/current",
         "/api/my-page",
+        "/api/settings",
         "/api/usage/summary"
       ];
 
