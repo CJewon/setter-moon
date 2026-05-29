@@ -1,14 +1,37 @@
 import { expect, test, type Page } from "@playwright/test";
 import { signInAndEnsureStore } from "./helpers/auth";
+import { ensureOrderableE2EProduct, type E2EProductFixture } from "./helpers/test-data";
 
-async function selectFirstAvailableVariant(page: Page) {
+async function selectFirstAvailableVariant(page: Page, preferredProduct?: E2EProductFixture | null) {
   const productSelect = page.locator("#product-select");
+
+  if (preferredProduct) {
+    await productSelect.selectOption(preferredProduct.productId);
+    await expect(page.locator(`#variant-select option[value="${preferredProduct.variantId}"]`)).toHaveCount(1);
+    await page.locator("#variant-select").selectOption(preferredProduct.variantId);
+    return;
+  }
+
   const productValues = await productSelect.locator("option").evaluateAll((options) =>
     options.map((option) => (option as HTMLOptionElement).value).filter(Boolean)
   );
 
   for (const productValue of productValues) {
+    const beforeVariantValues = await page
+      .locator("#variant-select option")
+      .evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value).join("|"));
+
     await productSelect.selectOption(productValue);
+    await page
+      .waitForFunction(
+        (previousValues) =>
+          Array.from(document.querySelectorAll("#variant-select option"))
+            .map((option) => (option as HTMLOptionElement).value)
+            .join("|") !== previousValues,
+        beforeVariantValues,
+        { timeout: 1000 }
+      )
+      .catch(() => undefined);
 
     const variantOption = await page.locator("#variant-select option").evaluateAll((options) => {
       const match = options
@@ -29,6 +52,12 @@ async function selectFirstAvailableVariant(page: Page) {
 }
 
 test.describe.serial("주문 등록과 상태 변경", () => {
+  let orderableProduct: E2EProductFixture | null = null;
+
+  test.beforeAll(async () => {
+    orderableProduct = await ensureOrderableE2EProduct();
+  });
+
   test("작성 중인 주문 등록을 취소하면 목록으로 돌아간다", async ({ page }) => {
     await signInAndEnsureStore(page);
     await page.goto("/orders/new");
@@ -51,7 +80,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     test.skip(await page.getByText("주문할 상품이 없습니다").isVisible(), "주문 E2E에 사용할 상품이 없습니다.");
 
-    await selectFirstAvailableVariant(page);
+    await selectFirstAvailableVariant(page, orderableProduct);
     test.skip((await page.locator("#variant-select").inputValue()) === "", "가용 재고가 있는 옵션 조합이 없습니다.");
 
     const suffix = Date.now().toString().slice(-6);
@@ -89,6 +118,11 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     await page.getByRole("link", { name: "주문 수정" }).click();
     await expect(page.getByRole("heading", { name: "주문 수정" })).toBeVisible();
+    await page.getByLabel("고객명").fill("   ");
+    await page.getByRole("button", { name: "주문 정보 저장" }).click();
+    await expect(page.getByRole("main").getByText("주문 정보를 다시 확인해 주세요.")).toBeVisible();
+    await expect(page.getByText("고객명을 입력해 주세요.")).toBeVisible();
+
     await page.getByLabel("고객명").fill(editedCustomerName);
     await page.getByLabel("메모").fill(`주문 수정 E2E ${suffix}`);
 
