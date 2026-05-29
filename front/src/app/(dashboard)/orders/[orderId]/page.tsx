@@ -3,7 +3,7 @@ import { OrderStatusActions } from "@/features/orders/components/order-status-ac
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
 import { getOrderDetailForStore, isOrderNotFoundError } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
-import { PageHeader } from "@/shared/components/page-header";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
 import { formatNumber, formatWon } from "@/shared/lib/format";
@@ -33,13 +33,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
 
   return (
     <>
-      <PageHeader
+      <PageActionBar
         backLink={{
           href: routes.orders,
           label: "주문 목록으로"
         }}
-        title="주문 상세"
-        description={`주문번호: ${order.order_no}`}
       />
       <section className="grid gap-3 xl:grid-cols-[1fr_340px]">
         <div className="grid gap-3">
@@ -47,7 +45,8 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h2 className="text-base font-semibold text-slate-950">주문 정보</h2>
-                <p className="mt-1 text-sm text-slate-500">{order.customer_name}</p>
+                <p className="mt-1 text-sm text-slate-500">주문번호 {order.order_no}</p>
+                <p className="mt-1 text-sm font-medium text-slate-700">{order.customer_name}</p>
               </div>
               <OrderStatusBadge status={order.status} />
             </div>

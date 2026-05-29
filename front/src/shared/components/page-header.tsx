@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { ArrowLeft } from "lucide-react";
+import { primaryActionClassName } from "@/shared/components/action-styles";
 
 type PageHeaderProps = {
   action?: {
@@ -32,7 +33,7 @@ export function PageHeader({ title, description, action, backLink }: PageHeaderP
         {action ? (
           <Link
             href={action.href}
-            className="inline-flex min-h-9 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto"
+            className={`${primaryActionClassName} w-full sm:w-auto`}
           >
             {action.label}
           </Link>

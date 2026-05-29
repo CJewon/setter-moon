@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ProductListFilters } from "@/features/products/components/product-list-filters";
 import { EmptyState } from "@/shared/components/empty-state";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { StatusBadge } from "@/shared/components/status-badge";
+import { primaryActionClassName } from "@/shared/components/action-styles";
 import { routes } from "@/shared/constants/routes";
 import { productStatusLabel } from "@/shared/constants/status-labels";
 import { requireDashboardAccess } from "@/server/auth/session";
@@ -39,6 +41,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <>
+      <PageActionBar actions={[{ href: routes.newProduct, label: "상품 등록" }]} />
       <ProductListFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
 
       {productPage.items.length === 0 ? (
@@ -56,7 +59,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             ) : (
               <Link
                 href="/products/new"
-                className="inline-flex min-h-10 items-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700"
+                className={primaryActionClassName}
               >
                 상품 등록하기
               </Link>

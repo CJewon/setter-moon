@@ -6,6 +6,7 @@ import { OrderListTable } from "@/features/orders/components/order-list-table";
 import { listOrdersForStore } from "@/server/orders/service";
 import type { OrderSort } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
@@ -104,6 +105,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   return (
     <>
+      <PageActionBar actions={[{ href: routes.newOrder, label: "주문 등록" }]} />
       <OrderListFilters
         customerKeyword={customerKeyword}
         fromDate={fromDate}

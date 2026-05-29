@@ -96,12 +96,31 @@ test.describe.serial("상품 등록 화면", () => {
     await expect(page.getByRole("row", { name: /블랙.*29,000원.*7개.*0개.*7개.*2개/ })).toBeVisible();
     await expect(page.getByRole("row", { name: /아이보리.*29,000원.*3개.*0개.*3개.*1개/ })).toBeVisible();
 
+    await page.getByLabel("판매상태").selectOption("sold_out");
+    const statusResponsePromise = page.waitForResponse((response) =>
+      response.url().includes(`/api/products/${createPayload.data?.productId}`) && response.request().method() === "PATCH"
+    );
+    await page.getByRole("button", { name: "판매상태 변경" }).click();
+    const statusResponse = await statusResponsePromise;
+    const statusPayload = (await statusResponse.json()) as {
+      code: number;
+      message: string;
+    };
+
+    expect(statusResponse.ok(), JSON.stringify(statusPayload)).toBe(true);
+    expect(statusPayload).toMatchObject({
+      code: 200,
+      message: "상품 정보를 저장했습니다."
+    });
+    await expect(page.getByText("품절").first()).toBeVisible();
+
     await page.getByRole("link", { name: "상품 목록으로" }).click();
     await expect(page).toHaveURL(/\/products$/);
 
     const productRow = page.getByRole("row").filter({ hasText: productName });
 
     await expect(productRow.getByRole("link", { name: productName })).toBeVisible();
+    await expect(productRow).toContainText("품절");
     await expect(productRow).toContainText("2개");
     await expect(productRow).toContainText("10개");
     await expect(productRow).toContainText("29,000원");

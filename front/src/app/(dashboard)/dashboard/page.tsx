@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getDashboardPageData } from "@/server/dashboard/summary";
 import { requireDashboardAccess } from "@/server/auth/session";
-import { PageHeader } from "@/shared/components/page-header";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { routes } from "@/shared/constants/routes";
 import { formatNumber, formatWon } from "@/shared/lib/format";
@@ -21,7 +20,6 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <PageHeader title="대시보드" description="오늘 기준 주문, 판매금액, 재고 부족 흐름을 확인합니다." />
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {summaryCards.map((card) => (
           <div key={card.label} className="rounded-md border border-slate-200 bg-white p-3 sm:p-4">

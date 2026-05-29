@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/shared/components/page-header";
+import { ProductStatusQuickUpdate } from "@/features/products/components/product-status-quick-update";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { routes } from "@/shared/constants/routes";
 import { productStatusLabel } from "@/shared/constants/status-labels";
@@ -32,18 +33,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <>
-      <PageHeader
-        action={{
-          href: routes.productEdit(product.id),
-          label: "상품 수정"
-        }}
+      <PageActionBar
+        actions={[{ href: routes.productEdit(product.id), label: "상품 수정" }]}
         backLink={{
           href: routes.products,
           label: "상품 목록으로"
         }}
-        title={product.name}
-        description="상품 기본 정보와 옵션별 재고를 확인합니다."
       />
+      <section className="mb-4 rounded-md border border-slate-200 bg-white p-4 sm:mb-5 sm:p-5">
+        <p className="text-sm font-semibold text-slate-500">상품명</p>
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-xl font-bold text-slate-950">{product.name}</h2>
+          <StatusBadge tone={product.status === "active" ? "success" : product.status === "sold_out" ? "warning" : "neutral"}>
+            {productStatusLabel[product.status]}
+          </StatusBadge>
+        </div>
+      </section>
       <section className="mb-4 grid gap-3 sm:mb-5 sm:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-md border border-slate-200 bg-white p-3 sm:p-4">
           <p className="text-sm font-semibold text-slate-500">판매 상태</p>
@@ -105,6 +110,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         <aside className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
           <h2 className="text-base font-semibold">재고 작업</h2>
           <p className="mt-3 text-sm text-slate-600">현재는 상품별 재고 현황을 확인할 수 있습니다. 재고 변경은 이력으로 함께 관리합니다.</p>
+          <div className="mt-5 rounded-md border border-slate-100 bg-slate-50 p-4">
+            <h3 className="text-sm font-bold text-slate-950">판매상태 변경</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">목록과 주문 등록 화면에 노출할 판매상태를 바꿉니다.</p>
+            <div className="mt-4">
+              <ProductStatusQuickUpdate
+                product={{
+                  basePrice: product.base_price,
+                  id: product.id,
+                  memo: product.memo ?? undefined,
+                  name: product.name,
+                  status: product.status
+                }}
+              />
+            </div>
+          </div>
           {product.memo ? (
             <div className="mt-5 rounded-md bg-slate-50 p-4 text-sm text-slate-700">
               <p className="font-semibold text-slate-950">상품 메모</p>

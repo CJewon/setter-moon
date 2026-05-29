@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProductEditForm } from "@/features/products/components/product-edit-form";
-import { PageHeader } from "@/shared/components/page-header";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { routes } from "@/shared/constants/routes";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { getProductDetailForStore, isProductNotFoundError } from "@/server/products/service";
@@ -30,13 +30,11 @@ export default async function ProductEditPage({ params }: ProductEditPageProps) 
 
   return (
     <>
-      <PageHeader
+      <PageActionBar
         backLink={{
           href: routes.productDetail(productId),
           label: "상품 상세로"
         }}
-        title="상품 수정"
-        description="상품명, 판매가, 판매 상태를 수정합니다."
       />
       <ProductEditForm
         product={{

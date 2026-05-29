@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PageHeader } from "@/shared/components/page-header";
+import { PageActionBar } from "@/shared/components/page-action-bar";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { requireDashboardAccess } from "@/server/auth/session";
@@ -34,13 +34,11 @@ export default async function StockMovementsPage({ searchParams }: StockMovement
 
   return (
     <>
-      <PageHeader
+      <PageActionBar
         backLink={{
           href: routes.inventory,
           label: "전체 재고로"
         }}
-        title="재고 이력"
-        description="입고, 판매 차감, 취소 복구, 수동 조정 이력을 확인합니다."
       />
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
         <table className="app-table responsive-card-table">

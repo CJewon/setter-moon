@@ -2,7 +2,6 @@ import Link from "next/link";
 import { InventoryFilters } from "@/features/inventory/components/inventory-filters";
 import { listInventoryItemsForStore, type InventoryStatus } from "@/server/inventory/service";
 import { normalizePaginationParams } from "@/server/shared/pagination";
-import { PageHeader } from "@/shared/components/page-header";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { routes } from "@/shared/constants/routes";
@@ -54,7 +53,6 @@ export default async function InventoryPage({ searchParams }: InventoryPageProps
 
   return (
     <>
-      <PageHeader title="재고" description="전체 옵션 조합의 현재 재고, 예약 수량, 가용 재고를 확인합니다." />
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:mb-4 sm:flex-wrap sm:overflow-visible sm:pb-0">
         <Link
           href={routes.inventoryLowStock}

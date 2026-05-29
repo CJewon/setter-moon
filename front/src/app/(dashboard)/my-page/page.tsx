@@ -4,7 +4,6 @@ import { MyPagePlanPanel } from "@/features/my-page/components/my-page-plan-pane
 import { getAppAccessPlanId, requireDashboardAccess } from "@/server/auth/session";
 import { getUserDisplayName } from "@/server/profiles/service";
 import { getStoreUsageSummary } from "@/server/usage/service";
-import { PageHeader } from "@/shared/components/page-header";
 import { createClient } from "@/shared/lib/supabase/server";
 
 export default async function MyPage() {
@@ -19,8 +18,6 @@ export default async function MyPage() {
 
   return (
     <>
-      <PageHeader title="마이페이지" description="계정, 스토어, 플랜 사용 상태를 확인합니다." />
-
       <MyPageOverview
         businessType={access.store.business_type}
         displayName={displayName}
