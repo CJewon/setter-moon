@@ -41,8 +41,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
   return (
     <>
-      <PageActionBar actions={[{ href: routes.newProduct, label: "상품 등록" }]} />
       <ProductListFilters keyword={keyword} pageSize={pagination.pageSize} selectedStatus={selectedStatus} />
+      <PageActionBar actions={[{ href: routes.newProduct, label: "상품 등록" }]} />
 
       {productPage.items.length === 0 ? (
         <EmptyState

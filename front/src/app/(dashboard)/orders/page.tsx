@@ -6,7 +6,7 @@ import { OrderListTable } from "@/features/orders/components/order-list-table";
 import { listOrdersForStore } from "@/server/orders/service";
 import type { OrderSort } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
-import { PageActionBar } from "@/shared/components/page-action-bar";
+import { primaryActionClassName } from "@/shared/components/action-styles";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
@@ -105,7 +105,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   return (
     <>
-      <PageActionBar actions={[{ href: routes.newOrder, label: "주문 등록" }]} />
       <OrderListFilters
         customerKeyword={customerKeyword}
         fromDate={fromDate}
@@ -115,24 +114,29 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         sort={sort}
         toDate={toDate}
       />
-      <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:mb-4 sm:flex-wrap sm:overflow-visible sm:pb-0">
-        {orderTabs.map((tab) => {
-          const active = tab.status === selectedStatus || (!tab.status && !selectedStatus);
+      <div className="mb-3 flex flex-col gap-2 sm:mb-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
+          {orderTabs.map((tab) => {
+            const active = tab.status === selectedStatus || (!tab.status && !selectedStatus);
 
-          return (
-            <Link
-              key={tab.label}
-              href={getOrderTabHref(tab.status)}
-              className={
-                active
-                  ? "min-h-9 shrink-0 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white"
-                  : "min-h-9 shrink-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              }
-            >
-              {tab.label}
-            </Link>
-          );
-        })}
+            return (
+              <Link
+                key={tab.label}
+                href={getOrderTabHref(tab.status)}
+                className={
+                  active
+                    ? "min-h-9 shrink-0 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white"
+                    : "min-h-9 shrink-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                }
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
+        </div>
+        <Link href={routes.newOrder} className={`${primaryActionClassName} w-full shrink-0 sm:w-auto`}>
+          주문 등록
+        </Link>
       </div>
       <OrderListTable items={orderPage.items} />
       <PaginationControls
