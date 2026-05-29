@@ -54,7 +54,7 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
               )
             }
           >
-            배송대기로 변경
+            배송대기
           </button>
           <button
             className="min-h-10 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:text-slate-400"
@@ -67,15 +67,20 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
               )
             }
           >
-            보류 처리
+            보류
           </button>
           <button
             className="min-h-10 rounded-md border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:text-slate-400"
             disabled={mutation.isPending}
             type="button"
-            onClick={() => submitStatusChange({ toStatus: "cancelled" }, "주문을 취소할까요? 주문접수 상태라 복구할 재고는 없습니다.")}
+            onClick={() =>
+              submitStatusChange(
+                { toStatus: "cancelled" },
+                "주문을 취소 상태로 변경할까요? 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요."
+              )
+            }
           >
-            취소 처리
+            취소
           </button>
         </>
       ) : null}
@@ -87,7 +92,7 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
             type="button"
             onClick={() => submitStatusChange({ toStatus: "shipping" })}
           >
-            배송중으로 변경
+            배송중
           </button>
           <button
             className="min-h-10 rounded-md border border-red-200 bg-white px-4 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:text-slate-400"
@@ -96,19 +101,11 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
             onClick={() =>
               submitStatusChange(
                 { restoreStock: true, toStatus: "cancelled" },
-                "이 주문은 배송대기 상태에서 재고가 차감되었습니다. 취소 처리하며 재고를 복구할까요?"
+                "주문을 취소 상태로 변경할까요? 배송대기 주문은 차감된 재고를 다시 더합니다."
               )
             }
           >
-            취소하고 재고 복구
-          </button>
-          <button
-            className="min-h-10 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:text-slate-400"
-            disabled={mutation.isPending}
-            type="button"
-            onClick={() => submitStatusChange({ restoreStock: false, toStatus: "cancelled" }, "재고 복구 없이 주문만 취소할까요?")}
-          >
-            재고 복구 없이 취소
+            취소
           </button>
         </>
       ) : null}
@@ -119,7 +116,7 @@ export function OrderStatusActions({ orderId, status }: OrderStatusActionsProps)
           type="button"
           onClick={() => submitStatusChange({ toStatus: "delivered" })}
         >
-          배송완료로 변경
+          배송완료
         </button>
       ) : null}
     </div>

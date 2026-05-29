@@ -207,7 +207,7 @@ export async function getDashboardPageData(supabase: DashboardSupabaseClient, st
 
   const [summary, recentOrders, trend] = await Promise.all([
     getDashboardSummary(supabase, store),
-    listOrdersForStore(supabase, store.id, undefined, { page: 1, pageSize: 5 }),
+    listOrdersForStore(supabase, store.id, {}, { page: 1, pageSize: 5 }),
     getSevenDayTrend(supabase, store.id)
   ]);
 

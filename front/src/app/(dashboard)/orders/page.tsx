@@ -1,15 +1,16 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { OrderStatus } from "@/server/orders/types";
-import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
+import { OrderListFilters } from "@/features/orders/components/order-list-filters";
+import { OrderListTable } from "@/features/orders/components/order-list-table";
 import { listOrdersForStore } from "@/server/orders/service";
+import type { OrderSort } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
 import { PageHeader } from "@/shared/components/page-header";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
 import { normalizePaginationParams } from "@/server/shared/pagination";
-import { formatNumber, formatWon } from "@/shared/lib/format";
 import { createClient } from "@/shared/lib/supabase/server";
 
 const orderTabs: Array<{ label: string; status?: OrderStatus }> = [
@@ -24,12 +25,19 @@ const orderTabs: Array<{ label: string; status?: OrderStatus }> = [
 
 const orderPageSizeOptions = [10, 20, 50, 100];
 const defaultOrderPageSize = 10;
+const orderSortOptions: OrderSort[] = ["latest", "oldest"];
 
 type OrdersPageProps = {
   searchParams: Promise<{
+    customerKeyword?: string;
+    fromDate?: string;
+    keyword?: string;
     page?: string;
     pageSize?: string;
+    productKeyword?: string;
+    sort?: string;
     status?: OrderStatus;
+    toDate?: string;
   }>;
 };
 
@@ -39,11 +47,50 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const resolvedSearchParams = await searchParams;
   const { status } = resolvedSearchParams;
   const selectedStatus = orderTabs.some((tab) => tab.status === status) ? status : undefined;
+  const keyword = resolvedSearchParams.keyword?.trim() ?? "";
+  const customerKeyword = resolvedSearchParams.customerKeyword?.trim() ?? "";
+  const productKeyword = resolvedSearchParams.productKeyword?.trim() ?? "";
+  const fromDate = resolvedSearchParams.fromDate?.trim() ?? "";
+  const toDate = resolvedSearchParams.toDate?.trim() ?? "";
+  const sort = orderSortOptions.find((option) => option === resolvedSearchParams.sort) ?? "latest";
   const pagination = normalizePaginationParams(resolvedSearchParams, orderPageSizeOptions, defaultOrderPageSize);
-  const orderPage = await listOrdersForStore(supabase, access.store.id, selectedStatus, pagination);
+  const orderPage = await listOrdersForStore(
+    supabase,
+    access.store.id,
+    {
+      customerKeyword,
+      fromDate,
+      keyword,
+      productKeyword,
+      sort,
+      status: selectedStatus,
+      toDate
+    },
+    pagination
+  );
 
   function getOrderTabHref(nextStatus?: OrderStatus) {
     const params = new URLSearchParams();
+
+    if (keyword) {
+      params.set("keyword", keyword);
+    }
+
+    if (customerKeyword) {
+      params.set("customerKeyword", customerKeyword);
+    }
+
+    if (productKeyword) {
+      params.set("productKeyword", productKeyword);
+    }
+
+    if (fromDate) {
+      params.set("fromDate", fromDate);
+    }
+
+    if (toDate) {
+      params.set("toDate", toDate);
+    }
 
     if (nextStatus) {
       params.set("status", nextStatus);
@@ -51,6 +98,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
     params.set("page", "1");
     params.set("pageSize", String(pagination.pageSize));
+    params.set("sort", sort);
 
     return `/orders?${params.toString()}` as Route;
   }
@@ -61,6 +109,15 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         title="주문"
         description="수동 등록한 주문과 배송 상태를 관리합니다."
         action={{ href: routes.newOrder, label: "주문 등록" }}
+      />
+      <OrderListFilters
+        customerKeyword={customerKeyword}
+        fromDate={fromDate}
+        pageSize={pagination.pageSize}
+        productKeyword={productKeyword}
+        selectedStatus={selectedStatus}
+        sort={sort}
+        toDate={toDate}
       />
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:mb-4 sm:flex-wrap sm:overflow-visible sm:pb-0">
         {orderTabs.map((tab) => {
@@ -81,54 +138,21 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
           );
         })}
       </div>
-      <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
-        <table className="app-table responsive-card-table">
-          <thead>
-            <tr>
-              <th>주문번호</th>
-              <th>고객명</th>
-              <th>상품/옵션</th>
-              <th>수량</th>
-              <th>주문금액</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orderPage.items.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="text-sm text-slate-500">
-                  아직 등록한 주문이 없습니다.
-                </td>
-              </tr>
-            ) : (
-              orderPage.items.map((order) => (
-                <tr key={order.id}>
-                  <td data-label="주문번호">
-                    <Link href={`/orders/${order.id}`} className="font-semibold text-slate-950 hover:text-blue-700">
-                      {order.order_no}
-                    </Link>
-                  </td>
-                  <td data-label="고객명">{order.customer_name}</td>
-                  <td data-label="상품/옵션">{order.itemSummary}</td>
-                  <td data-label="수량">{formatNumber(order.totalQuantity)}개</td>
-                  <td data-label="주문금액">{formatWon(order.total_amount)}</td>
-                  <td data-label="상태">
-                    <OrderStatusBadge status={order.status} />
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OrderListTable items={orderPage.items} />
       <PaginationControls
         basePath={routes.orders}
         page={orderPage.page}
         pageSize={orderPage.pageSize}
         searchParams={{
+          customerKeyword,
           page: resolvedSearchParams.page,
           pageSize: resolvedSearchParams.pageSize,
-          status: selectedStatus
+          fromDate,
+          keyword,
+          productKeyword,
+          sort,
+          status: selectedStatus,
+          toDate
         }}
         totalCount={orderPage.totalCount}
         totalPages={orderPage.totalPages}

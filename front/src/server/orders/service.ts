@@ -1,4 +1,4 @@
-import type { OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
+import type { OrderBulkStatusUpdateValues, OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
 import {
   InsufficientStockError,
   InvalidOrderStatusTransitionError,
@@ -41,6 +41,27 @@ export {
 export type { OrderDetail, OrderListItem, OrderProductChoice } from "@/server/orders/types";
 
 const FREE_MONTHLY_ORDER_LIMIT = 300;
+export type OrderSort = "latest" | "oldest";
+
+export type OrderListFilters = {
+  customerKeyword?: string;
+  fromDate?: string;
+  keyword?: string;
+  productKeyword?: string;
+  sort?: OrderSort;
+  status?: OrderStatus;
+  toDate?: string;
+};
+
+export type BulkOrderStatusUpdateResult = {
+  failedCount: number;
+  results: Array<{
+    message?: string;
+    orderId: string;
+    status: "failed" | "updated";
+  }>;
+  updatedCount: number;
+};
 
 function isSchemaMissingError(error: { code?: string; message?: string }) {
   const message = error.message?.toLowerCase() ?? "";
@@ -74,6 +95,17 @@ function getOrderedAt(value?: string) {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
+
+function getDateBoundary(value: string | undefined, edge: "end" | "start") {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null;
+  }
+
+  const time = edge === "start" ? "00:00:00.000" : "23:59:59.999";
+  const date = new Date(`${value}T${time}+09:00`);
+
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
 function isDbLimitError(error: OrderMutationError) {
@@ -203,6 +235,81 @@ async function getProductsById(supabase: OrdersSupabaseClient, storeId: string, 
   return new Map((products ?? []).map((product) => [product.id, product as Pick<ProductRow, "id" | "name" | "status" | "store_id">]));
 }
 
+async function getOrderIdsMatchingCustomerKeyword(supabase: OrdersSupabaseClient, storeId: string, keyword: string) {
+  const trimmedKeyword = keyword.trim();
+
+  if (!trimmedKeyword) {
+    return null;
+  }
+
+  const likeKeyword = `%${trimmedKeyword.replace(/[%_]/g, " ")}%`;
+  const [orderNoMatches, customerMatches] = await Promise.all([
+    supabase.from("orders").select("id").eq("store_id", storeId).ilike("order_no", likeKeyword),
+    supabase.from("orders").select("id").eq("store_id", storeId).ilike("customer_name", likeKeyword)
+  ]);
+
+  for (const result of [orderNoMatches, customerMatches]) {
+    if (result.error) {
+      throw new OrderMutationError(result.error);
+    }
+  }
+
+  const ids = new Set<string>();
+
+  (orderNoMatches.data ?? []).forEach((order) => ids.add(order.id));
+  (customerMatches.data ?? []).forEach((order) => ids.add(order.id));
+
+  return [...ids];
+}
+
+async function getOrderIdsMatchingProductKeyword(supabase: OrdersSupabaseClient, keyword: string) {
+  const trimmedKeyword = keyword.trim();
+
+  if (!trimmedKeyword) {
+    return null;
+  }
+
+  const likeKeyword = `%${trimmedKeyword.replace(/[%_]/g, " ")}%`;
+  const [productMatches, variantMatches] = await Promise.all([
+    supabase.from("order_items").select("order_id").ilike("product_name_snapshot", likeKeyword),
+    supabase.from("order_items").select("order_id").ilike("variant_name_snapshot", likeKeyword)
+  ]);
+
+  for (const result of [productMatches, variantMatches]) {
+    if (result.error) {
+      throw new OrderMutationError(result.error);
+    }
+  }
+
+  const ids = new Set<string>();
+
+  (productMatches.data ?? []).forEach((item) => ids.add(item.order_id));
+  (variantMatches.data ?? []).forEach((item) => ids.add(item.order_id));
+
+  return [...ids];
+}
+
+async function getOrderIdsMatchingAnyKeyword(supabase: OrdersSupabaseClient, storeId: string, keyword: string) {
+  const [customerIds, productIds] = await Promise.all([
+    getOrderIdsMatchingCustomerKeyword(supabase, storeId, keyword),
+    getOrderIdsMatchingProductKeyword(supabase, keyword)
+  ]);
+
+  return [...new Set([...(customerIds ?? []), ...(productIds ?? [])])];
+}
+
+function intersectOrderIds(orderIdGroups: string[][]) {
+  if (orderIdGroups.length === 0) {
+    return null;
+  }
+
+  return orderIdGroups.reduce((currentIds, nextIds) => {
+    const nextIdSet = new Set(nextIds);
+
+    return currentIds.filter((orderId) => nextIdSet.has(orderId));
+  });
+}
+
 async function getVariantsById(supabase: OrdersSupabaseClient, variantIds: string[]) {
   const { data: variants, error } = await supabase
     .from("product_variants")
@@ -322,19 +429,52 @@ export async function createOrderForStore(
 export async function listOrdersForStore(
   supabase: OrdersSupabaseClient,
   storeId: string,
-  status: OrderStatus | undefined,
+  filters: OrderListFilters,
   pagination: PaginationParams
 ): Promise<PaginatedResult<OrderListItem>> {
   const { from, to } = getPaginationRange(pagination);
+  const keywordGroups = (
+    await Promise.all([
+      filters.keyword ? getOrderIdsMatchingAnyKeyword(supabase, storeId, filters.keyword) : null,
+      filters.customerKeyword ? getOrderIdsMatchingCustomerKeyword(supabase, storeId, filters.customerKeyword) : null,
+      filters.productKeyword ? getOrderIdsMatchingProductKeyword(supabase, filters.productKeyword) : null
+    ])
+  ).filter((ids): ids is string[] => Array.isArray(ids));
+  const keywordOrderIds = intersectOrderIds(keywordGroups);
+
+  if (keywordOrderIds && keywordOrderIds.length === 0) {
+    return {
+      ...pagination,
+      items: [],
+      totalCount: 0,
+      totalPages: 0
+    };
+  }
+
+  const fromDate = getDateBoundary(filters.fromDate, "start");
+  const toDate = getDateBoundary(filters.toDate, "end");
+  const sort = filters.sort === "oldest" ? "oldest" : "latest";
   let query = supabase
     .from("orders")
     .select("id, order_no, customer_name, status, total_amount, ordered_at, created_at", { count: "exact" })
     .eq("store_id", storeId)
-    .order("ordered_at", { ascending: false })
+    .order("ordered_at", { ascending: sort === "oldest" })
     .range(from, to);
 
-  if (status) {
-    query = query.eq("status", status);
+  if (filters.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  if (keywordOrderIds) {
+    query = query.in("id", keywordOrderIds);
+  }
+
+  if (fromDate) {
+    query = query.gte("ordered_at", fromDate);
+  }
+
+  if (toDate) {
+    query = query.lte("ordered_at", toDate);
   }
 
   const { count, data: orders, error } = await query;
@@ -426,6 +566,7 @@ function assertStatusTransition(currentStatus: OrderStatus, values: OrderStatusU
   const nextStatus = values.toStatus;
   const allowed =
     (currentStatus === "received" && ["ready_to_ship", "cancelled", "hold"].includes(nextStatus)) ||
+    (currentStatus === "hold" && ["received", "ready_to_ship", "cancelled"].includes(nextStatus)) ||
     (currentStatus === "ready_to_ship" && ["shipping", "cancelled"].includes(nextStatus)) ||
     (currentStatus === "shipping" && nextStatus === "delivered");
 
@@ -527,7 +668,7 @@ export async function updateOrderStatusForStore(
     await applyStockPlan(supabase, store, order.id, "sale_deduction", "배송대기 전환 재고 차감", plan);
   }
 
-  if (order.status === "ready_to_ship" && values.toStatus === "cancelled" && values.restoreStock) {
+  if (order.status === "ready_to_ship" && values.toStatus === "cancelled" && values.restoreStock !== false) {
     const { items, variants } = await fetchOrderItemsAndVariants(supabase, order.id);
     const plan = getStockRestorePlan(items, variants);
 
@@ -563,6 +704,39 @@ export async function updateOrderStatusForStore(
   return {
     orderId: order.id,
     status: values.toStatus
+  };
+}
+
+export async function updateOrderStatusesForStore(
+  supabase: OrdersSupabaseClient,
+  store: Store,
+  values: OrderBulkStatusUpdateValues
+): Promise<BulkOrderStatusUpdateResult> {
+  const orderIds = [...new Set(values.orderIds)];
+  const results: BulkOrderStatusUpdateResult["results"] = [];
+
+  for (const orderId of orderIds) {
+    try {
+      await updateOrderStatusForStore(supabase, store, orderId, values);
+      results.push({
+        orderId,
+        status: "updated"
+      });
+    } catch (error) {
+      results.push({
+        message: error instanceof Error ? error.message : "주문 상태를 변경하지 못했습니다.",
+        orderId,
+        status: "failed"
+      });
+    }
+  }
+
+  const updatedCount = results.filter((result) => result.status === "updated").length;
+
+  return {
+    failedCount: results.length - updatedCount,
+    results,
+    updatedCount
   };
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { orderFormSchema, orderStatusUpdateSchema } from "@/features/orders/schemas/order-form-schema";
+import { orderBulkStatusUpdateSchema, orderFormSchema, orderStatusUpdateSchema } from "@/features/orders/schemas/order-form-schema";
 
 describe("order form schema", () => {
   it("accepts a valid received order payload", () => {
@@ -30,5 +30,28 @@ describe("order form schema", () => {
       holdReservationPolicy: "keep",
       toStatus: "hold"
     });
+  });
+
+  it("accepts a bulk status update payload", () => {
+    const parsed = orderBulkStatusUpdateSchema.parse({
+      orderIds: ["7e604de0-3b82-4174-a1ef-7c5a5ca9a681"],
+      restoreStock: true,
+      toStatus: "cancelled"
+    });
+
+    expect(parsed).toMatchObject({
+      orderIds: ["7e604de0-3b82-4174-a1ef-7c5a5ca9a681"],
+      restoreStock: true,
+      toStatus: "cancelled"
+    });
+  });
+
+  it("rejects a bulk status update without selected orders", () => {
+    const parsed = orderBulkStatusUpdateSchema.safeParse({
+      orderIds: [],
+      toStatus: "shipping"
+    });
+
+    expect(parsed.success).toBe(false);
   });
 });

@@ -69,7 +69,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     const createResponse = await createResponsePromise;
     const createPayload = (await createResponse.json()) as {
       code: number;
-      data?: { orderId: string };
+      data?: { orderId: string; orderNo: string };
       message: string;
     };
 
@@ -84,12 +84,21 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByRole("link", { name: "주문 목록으로" })).toBeVisible();
     await expect(page.getByText("주문접수").first()).toBeVisible();
 
+    await page.getByRole("link", { name: "주문 목록으로" }).click();
+    await expect(page).toHaveURL(/\/orders$/);
+
+    await page.getByPlaceholder("고객명 또는 주문번호").fill(`주문 테스트 ${suffix}`);
+    await page.getByRole("button", { name: "검색" }).click();
+    await expect(page).toHaveURL(/customerKeyword=/);
+    await expect(page.getByText(`주문 테스트 ${suffix}`)).toBeVisible();
+
+    await page.getByLabel(`${createPayload.data?.orderNo ?? ""} 선택`).check();
     page.once("dialog", (dialog) => dialog.accept());
     const statusResponsePromise = page.waitForResponse(
-      (response) => response.url().includes(`/api/orders/${createPayload.data?.orderId}/status`) && response.request().method() === "PATCH"
+      (response) => response.url().includes("/api/orders/bulk-status") && response.request().method() === "PATCH"
     );
 
-    await page.getByRole("button", { name: "배송대기로 변경" }).click();
+    await page.getByRole("button", { name: "배송대기" }).click();
 
     const statusResponse = await statusResponsePromise;
     const statusPayload = (await statusResponse.json()) as {
@@ -101,9 +110,5 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     expect(statusPayload.code).toBe(200);
     await expect(page.getByText(statusPayload.message)).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
-
-    await page.getByRole("link", { name: "주문 목록으로" }).click();
-    await expect(page).toHaveURL(/\/orders$/);
-    await expect(page.getByText(`주문 테스트 ${suffix}`)).toBeVisible();
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import type { OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
+import type { OrderBulkStatusUpdateValues, OrderFormValues, OrderStatusUpdateValues } from "@/features/orders/schemas/order-form-schema";
 import { requestJson } from "@/shared/api/http";
 
 type CreateOrderData = {
@@ -13,6 +13,16 @@ type CreateOrderData = {
 type UpdateOrderStatusData = {
   orderId: string;
   status: string;
+};
+
+type BulkUpdateOrderStatusData = {
+  failedCount: number;
+  results: Array<{
+    message?: string;
+    orderId: string;
+    status: "failed" | "updated";
+  }>;
+  updatedCount: number;
 };
 
 export function useCreateOrderMutation() {
@@ -29,6 +39,16 @@ export function useUpdateOrderStatusMutation(orderId: string) {
   return useMutation({
     mutationFn: (values: OrderStatusUpdateValues) =>
       requestJson<UpdateOrderStatusData>(`/api/orders/${orderId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify(values)
+      })
+  });
+}
+
+export function useBulkUpdateOrderStatusMutation() {
+  return useMutation({
+    mutationFn: (values: OrderBulkStatusUpdateValues) =>
+      requestJson<BulkUpdateOrderStatusData>("/api/orders/bulk-status", {
         method: "PATCH",
         body: JSON.stringify(values)
       })

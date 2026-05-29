@@ -24,3 +24,12 @@ export const orderStatusUpdateSchema = z.object({
 });
 
 export type OrderStatusUpdateValues = z.infer<typeof orderStatusUpdateSchema>;
+
+export const orderBulkStatusUpdateSchema = orderStatusUpdateSchema.extend({
+  orderIds: z
+    .array(z.string().uuid("주문을 다시 선택해 주세요."))
+    .min(1, "상태를 변경할 주문을 선택해 주세요.")
+    .max(50, "한 번에 변경할 주문은 50건 이하로 선택해 주세요.")
+});
+
+export type OrderBulkStatusUpdateValues = z.infer<typeof orderBulkStatusUpdateSchema>;
