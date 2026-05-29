@@ -118,6 +118,9 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     await page.getByRole("link", { name: "주문 수정" }).click();
     await expect(page.getByRole("heading", { name: "주문 수정" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "주문 상품과 수량은 상태에 따라 관리해요" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "주문 상세로 이동" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "새 주문으로 등록" })).toBeVisible();
     await page.getByLabel("고객명").fill("   ");
     await page.getByRole("button", { name: "주문 정보 저장" }).click();
     await expect(page.getByRole("main").getByText("주문 정보를 다시 확인해 주세요.")).toBeVisible();

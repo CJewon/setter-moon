@@ -160,26 +160,57 @@ export function ProductEditForm({ product }: ProductEditFormProps) {
         </label>
       </section>
 
-      <aside className="h-fit rounded-md border border-slate-200 bg-white p-5">
-        <h2 className="text-base font-semibold text-slate-950">저장 전 확인</h2>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          옵션 조합과 재고 수량은 이 화면에서 바꾸지 않습니다. 재고 변경은 별도 이력과 함께 관리합니다.
-        </p>
-        <div className="mt-5 grid gap-2">
-          <button
-            className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-            disabled={pending}
-            type="submit"
-          >
-            {pending ? "저장 중" : "상품 정보 저장"}
-          </button>
-          <Link
-            href={routes.productDetail(product.id)}
-            className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            취소
-          </Link>
-        </div>
+      <aside className="grid h-fit gap-4">
+        <section className="rounded-md border border-blue-100 bg-blue-50/70 p-5">
+          <p className="text-xs font-semibold text-blue-700">수정 범위 안내</p>
+          <h2 className="mt-2 text-base font-semibold text-slate-950">옵션과 재고는 이력과 함께 관리해요</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            이 화면에서는 상품명, 기본 판매가, 판매 상태, 메모를 수정합니다. 옵션별 재고는 주문과 재고 이력에 연결되어
+            있어 재고 조정 화면에서 따로 관리합니다.
+          </p>
+          <div className="mt-4 grid gap-2">
+            <Link
+              href={routes.productDetail(product.id)}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              상품 상세에서 옵션 확인
+            </Link>
+            <Link
+              href={routes.inventory}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              재고 목록에서 조정
+            </Link>
+            <Link
+              href={routes.newProduct}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              새 상품으로 등록
+            </Link>
+          </div>
+        </section>
+
+        <section className="rounded-md border border-slate-200 bg-white p-5">
+          <h2 className="text-base font-semibold text-slate-950">저장 전 확인</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            판매 상태를 숨김으로 바꾸면 새 주문 등록 선택지에서 제외됩니다. 과거 주문과 재고 이력은 그대로 보존됩니다.
+          </p>
+          <div className="mt-5 grid gap-2">
+            <button
+              className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+              disabled={pending}
+              type="submit"
+            >
+              {pending ? "저장 중" : "상품 정보 저장"}
+            </button>
+            <Link
+              href={routes.productDetail(product.id)}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              취소
+            </Link>
+          </div>
+        </section>
       </aside>
     </form>
   );

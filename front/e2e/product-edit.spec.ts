@@ -23,6 +23,8 @@ test.describe.serial("상품 수정", () => {
     await page.goto(`/products/${fixture.productId}/edit`);
 
     await expect(page.getByRole("heading", { name: "상품 수정" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "옵션과 재고는 이력과 함께 관리해요" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "재고 목록에서 조정" })).toBeVisible();
     await page.getByLabel("상품명").fill("   ");
     await page.getByLabel("기본 판매가").fill("-1");
     await page.getByRole("button", { name: "상품 정보 저장" }).click();
@@ -47,6 +49,8 @@ test.describe.serial("상품 수정", () => {
     await page.getByRole("link", { name: "상품 수정" }).click();
     await expect(page.getByRole("heading", { name: "상품 수정" })).toBeVisible();
     await expect(page.getByLabel("상품명")).toHaveValue(fixture.productName);
+    await expect(page.getByRole("link", { name: "상품 상세에서 옵션 확인" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "새 상품으로 등록" })).toBeVisible();
 
     const updatedName = `${fixture.productName} 완료`;
 

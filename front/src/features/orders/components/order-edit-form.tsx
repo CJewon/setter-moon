@@ -56,6 +56,9 @@ export function OrderEditForm({ order }: OrderEditFormProps) {
   const [state, setState] = useState<OrderEditFormState>(initialState);
   const pending = updateOrderMutation.isPending;
   const isEditableStatus = order.status === "received" || order.status === "hold";
+  const editGuidanceMessage = isEditableStatus
+    ? "주문접수와 보류 상태에서는 고객 정보, 연락처, 주문일, 메모를 수정합니다. 상품과 수량을 바꿔야 한다면 기존 주문을 확인한 뒤 새 주문으로 다시 등록해 주세요."
+    : "배송 준비 이후 주문은 재고 이력이 남아 이 화면에서 정보를 바꾸지 않습니다. 잘못 등록했다면 주문 상세에서 취소한 뒤 새 주문으로 다시 등록해 주세요.";
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -178,34 +181,53 @@ export function OrderEditForm({ order }: OrderEditFormProps) {
         </label>
       </section>
 
-      <aside className="h-fit rounded-md border border-slate-200 bg-white p-5">
-        <h2 className="text-base font-semibold text-slate-950">수정 전 확인</h2>
-        <dl className="mt-3 grid gap-3 text-sm">
-          <div>
-            <dt className="text-slate-500">주문번호</dt>
-            <dd className="mt-1 font-semibold text-slate-950">{order.orderNo}</dd>
+      <aside className="grid h-fit gap-4">
+        <section className="rounded-md border border-blue-100 bg-blue-50/70 p-5">
+          <p className="text-xs font-semibold text-blue-700">수정 범위 안내</p>
+          <h2 className="mt-2 text-base font-semibold text-slate-950">주문 상품과 수량은 상태에 따라 관리해요</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">{editGuidanceMessage}</p>
+          <div className="mt-4 grid gap-2">
+            <Link
+              href={routes.orderDetail(order.id)}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              주문 상세로 이동
+            </Link>
+            <Link
+              href={routes.newOrder}
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-white px-4 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+            >
+              새 주문으로 등록
+            </Link>
           </div>
-          <div>
-            <dt className="text-slate-500">현재 상태</dt>
-            <dd className="mt-1 font-semibold text-slate-950">{orderStatusLabel[order.status]}</dd>
+        </section>
+
+        <section className="rounded-md border border-slate-200 bg-white p-5">
+          <h2 className="text-base font-semibold text-slate-950">수정 전 확인</h2>
+          <dl className="mt-3 grid gap-3 text-sm">
+            <div>
+              <dt className="text-slate-500">주문번호</dt>
+              <dd className="mt-1 font-semibold text-slate-950">{order.orderNo}</dd>
+            </div>
+            <div>
+              <dt className="text-slate-500">현재 상태</dt>
+              <dd className="mt-1 font-semibold text-slate-950">{orderStatusLabel[order.status]}</dd>
+            </div>
+          </dl>
+          {!isEditableStatus ? (
+            <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
+              주문접수 또는 보류 상태에서만 고객 정보를 수정할 수 있습니다.
+            </p>
+          ) : null}
+          <div className="mt-5 grid gap-2">
+            <button className={primaryActionClassName} disabled={!isEditableStatus || pending} type="submit">
+              {pending ? "저장 중" : "주문 정보 저장"}
+            </button>
+            <Link href={routes.orderDetail(order.id)} className={secondaryActionClassName}>
+              취소
+            </Link>
           </div>
-        </dl>
-        <p className="mt-4 text-sm leading-6 text-slate-600">
-          상품, 옵션 조합, 수량은 이 화면에서 바꾸지 않습니다. 재고에 영향을 주는 변경은 별도 흐름에서 다룹니다.
-        </p>
-        {!isEditableStatus ? (
-          <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm font-medium text-amber-800">
-            주문접수 또는 보류 상태에서만 주문 정보를 수정할 수 있습니다.
-          </p>
-        ) : null}
-        <div className="mt-5 grid gap-2">
-          <button className={primaryActionClassName} disabled={!isEditableStatus || pending} type="submit">
-            {pending ? "저장 중" : "주문 정보 저장"}
-          </button>
-          <Link href={routes.orderDetail(order.id)} className={secondaryActionClassName}>
-            취소
-          </Link>
-        </div>
+        </section>
       </aside>
     </form>
   );
