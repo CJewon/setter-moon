@@ -28,12 +28,18 @@ export function MyPageForm({ displayName, email }: MyPageFormProps) {
       noValidate
       onChange={handleChange}
     >
-      <MyPageAccountSection displayName={displayName} displayNameError={fieldErrors?.displayName?.[0]} email={email} />
-      <MyPageSubmitBar
-        formStatusLabel={formStatusLabel}
-        isDirty={isDirty}
-        pending={pending}
-        stateStatus={state.status}
+      <MyPageAccountSection
+        displayName={displayName}
+        displayNameError={fieldErrors?.displayName?.[0]}
+        email={email}
+        footer={
+          <MyPageSubmitBar
+            formStatusLabel={formStatusLabel}
+            isDirty={isDirty}
+            pending={pending}
+            stateStatus={state.status}
+          />
+        }
       />
     </form>
   );

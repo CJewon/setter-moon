@@ -1,12 +1,14 @@
+import type { ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
 
 type MyPageAccountSectionProps = {
   displayName: string;
   displayNameError?: string;
   email: string;
+  footer?: ReactNode;
 };
 
-export function MyPageAccountSection({ displayName, displayNameError, email }: MyPageAccountSectionProps) {
+export function MyPageAccountSection({ displayName, displayNameError, email, footer }: MyPageAccountSectionProps) {
   return (
     <section className="rounded-md border border-slate-200 bg-white p-5">
       <div className="flex items-start justify-between gap-3">
@@ -43,6 +45,7 @@ export function MyPageAccountSection({ displayName, displayNameError, email }: M
           </p>
         </div>
       </div>
+      {footer ? <div className="mt-5 flex justify-end">{footer}</div> : null}
     </section>
   );
 }

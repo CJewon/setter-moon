@@ -14,7 +14,7 @@ test.describe("마이페이지", () => {
 
     const saveButton = page.getByRole("button", { name: "변경사항 저장" });
     await expect(saveButton).toBeDisabled();
-    await expect(page.getByText("변경사항 없음")).toBeVisible();
+    await expect(page.getByText("변경사항 없음")).toHaveCount(0);
 
     const suffix = Date.now().toString().slice(-5);
     const displayName = `테스터 ${suffix}`;
