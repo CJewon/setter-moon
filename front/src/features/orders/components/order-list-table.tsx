@@ -34,14 +34,19 @@ export function OrderListTable({ items }: OrderListTableProps) {
   const { showToast } = useToast();
   const mutation = useBulkUpdateOrderStatusMutation();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const selectedCount = selectedIds.size;
-  const allSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id));
-  const selectedOrderIds = useMemo(() => [...selectedIds], [selectedIds]);
-  const canMoveReadyToShip = isSameStatus(items, selectedIds, "received") || isSameStatus(items, selectedIds, "hold");
-  const canMoveShipping = isSameStatus(items, selectedIds, "ready_to_ship");
-  const canMoveDelivered = isSameStatus(items, selectedIds, "shipping");
-  const canMoveHold = isSameStatus(items, selectedIds, "received");
-  const canMoveCancelled = canCancel(items, selectedIds);
+  const visibleOrderIds = useMemo(() => new Set(items.map((item) => item.id)), [items]);
+  const visibleSelectedIds = useMemo(
+    () => new Set([...selectedIds].filter((orderId) => visibleOrderIds.has(orderId))),
+    [selectedIds, visibleOrderIds]
+  );
+  const selectedCount = visibleSelectedIds.size;
+  const allSelected = items.length > 0 && items.every((item) => visibleSelectedIds.has(item.id));
+  const selectedOrderIds = useMemo(() => [...visibleSelectedIds], [visibleSelectedIds]);
+  const canMoveReadyToShip = isSameStatus(items, visibleSelectedIds, "received") || isSameStatus(items, visibleSelectedIds, "hold");
+  const canMoveShipping = isSameStatus(items, visibleSelectedIds, "ready_to_ship");
+  const canMoveDelivered = isSameStatus(items, visibleSelectedIds, "shipping");
+  const canMoveHold = isSameStatus(items, visibleSelectedIds, "received");
+  const canMoveCancelled = canCancel(items, visibleSelectedIds);
 
   function toggleOrder(orderId: string) {
     setSelectedIds((current) => {
@@ -59,11 +64,11 @@ export function OrderListTable({ items }: OrderListTableProps) {
 
   function toggleAll() {
     setSelectedIds((current) => {
-      if (items.length > 0 && items.every((item) => current.has(item.id))) {
-        return new Set();
+      if (allSelected) {
+        return new Set([...current].filter((orderId) => !visibleOrderIds.has(orderId)));
       }
 
-      return new Set(items.map((item) => item.id));
+      return new Set([...current, ...items.map((item) => item.id)]);
     });
   }
 

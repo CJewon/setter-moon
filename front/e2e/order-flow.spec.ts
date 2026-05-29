@@ -143,6 +143,10 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByText(statusPayload.message)).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
 
+    await page.goto("/inventory/movements");
+    await expect(page.getByRole("heading", { name: "재고 이력" })).toBeVisible();
+    await expect(page.getByText("판매 차감").first()).toBeVisible();
+
     await page.goto("/dashboard");
     await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
     await expect(page.getByText(editedCustomerName).first()).toBeVisible();
@@ -154,5 +158,25 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByRole("heading", { name: "상태 변경 이력" })).toBeVisible();
     await expect(page.getByText("주문접수").first()).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
+
+    page.once("dialog", (dialog) => dialog.accept());
+    const cancelResponsePromise = page.waitForResponse((response) =>
+      response.url().includes(`/api/orders/${createPayload.data?.orderId}/status`) && response.request().method() === "PATCH"
+    );
+    await page.getByRole("button", { name: "취소" }).click();
+
+    const cancelResponse = await cancelResponsePromise;
+    const cancelPayload = (await cancelResponse.json()) as {
+      code: number;
+      message: string;
+    };
+
+    expect(cancelResponse.ok(), JSON.stringify(cancelPayload)).toBe(true);
+    expect(cancelPayload.code).toBe(200);
+    await expect(page.getByText(cancelPayload.message)).toBeVisible();
+    await expect(page.getByText("취소").first()).toBeVisible();
+
+    await page.goto("/inventory/movements");
+    await expect(page.getByText("취소 복구").first()).toBeVisible();
   });
 });
