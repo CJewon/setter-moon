@@ -137,4 +137,74 @@ test.describe("현재 구현 화면 E2E", () => {
     await page.waitForURL("/");
     await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 덜 헷갈리게" })).toBeVisible();
   });
+
+  test("조회 API는 JSON 응답 규칙을 따른다", async ({ page }) => {
+    await signInAndEnsureStore(page);
+
+    const responses = await page.evaluate(async () => {
+      const urls = [
+        "/api/auth/session",
+        "/api/dashboard",
+        "/api/products?page=1&pageSize=10",
+        "/api/inventory?page=1&pageSize=10",
+        "/api/inventory/low-stock?page=1&pageSize=10",
+        "/api/inventory/movements?page=1&pageSize=10",
+        "/api/orders?page=1&pageSize=10",
+        "/api/stores",
+        "/api/stores/current",
+        "/api/my-page",
+        "/api/usage/summary"
+      ];
+
+      return Promise.all(
+        urls.map(async (url) => {
+          const response = await fetch(url);
+          const text = await response.text();
+          let body: unknown = null;
+
+          try {
+            body = JSON.parse(text);
+          } catch {
+            body = { raw: text };
+          }
+
+          return {
+            body,
+            contentType: response.headers.get("content-type"),
+            status: response.status,
+            url
+          };
+        })
+      );
+    });
+
+    for (const response of responses) {
+      expect(response.status, response.url).toBe(200);
+      expect(response.contentType, response.url).toContain("application/json");
+      expect(response.body, response.url).toEqual(
+        expect.objectContaining({
+          code: 200,
+          data: expect.anything(),
+          message: expect.any(String)
+        })
+      );
+    }
+
+    const invalidPagination = await page.evaluate(async () => {
+      const response = await fetch("/api/inventory?page=abc&pageSize=10");
+
+      return {
+        body: await response.json(),
+        status: response.status
+      };
+    });
+
+    expect(invalidPagination.status).toBe(400);
+    expect(invalidPagination.body).toEqual(
+      expect.objectContaining({
+        code: 400,
+        message: "페이지 번호를 확인해 주세요."
+      })
+    );
+  });
 });
