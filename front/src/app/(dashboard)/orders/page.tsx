@@ -6,7 +6,6 @@ import { OrderListTable } from "@/features/orders/components/order-list-table";
 import { listOrdersForStore } from "@/server/orders/service";
 import type { OrderSort } from "@/server/orders/service";
 import { requireDashboardAccess } from "@/server/auth/session";
-import { PageHeader } from "@/shared/components/page-header";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { routes } from "@/shared/constants/routes";
 import { orderStatusLabel } from "@/shared/constants/status-labels";
@@ -105,11 +104,6 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
 
   return (
     <>
-      <PageHeader
-        title="주문"
-        description="수동 등록한 주문과 배송 상태를 관리합니다."
-        action={{ href: routes.newOrder, label: "주문 등록" }}
-      />
       <OrderListFilters
         customerKeyword={customerKeyword}
         fromDate={fromDate}

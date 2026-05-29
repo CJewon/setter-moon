@@ -104,59 +104,62 @@ export function OrderListTable({ items }: OrderListTableProps) {
 
   return (
     <div className="grid gap-3">
-      {selectedCount > 0 ? (
-        <div className="flex flex-col gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-semibold text-blue-900">선택 {formatNumber(selectedCount)}건</p>
-          <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:justify-end sm:overflow-visible sm:pb-0">
-            <button
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
-              disabled={!canMoveReadyToShip || mutation.isPending}
-              type="button"
-              onClick={() => submitBulkStatus("ready_to_ship", "선택한 주문을 배송대기 상태로 변경할까요? 재고가 차감됩니다.")}
-            >
-              배송대기
-            </button>
-            <button
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
-              disabled={!canMoveShipping || mutation.isPending}
-              type="button"
-              onClick={() => submitBulkStatus("shipping", "선택한 주문을 배송중 상태로 변경할까요?")}
-            >
-              배송중
-            </button>
-            <button
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
-              disabled={!canMoveDelivered || mutation.isPending}
-              type="button"
-              onClick={() => submitBulkStatus("delivered", "선택한 주문을 배송완료 상태로 변경할까요?")}
-            >
-              배송완료
-            </button>
-            <button
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:text-slate-400"
-              disabled={!canMoveHold || mutation.isPending}
-              type="button"
-              onClick={() => submitBulkStatus("hold", "선택한 주문을 보류 상태로 변경할까요?", { holdReservationPolicy: "keep" })}
-            >
-              보류
-            </button>
-            <button
-              className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-red-200 bg-white px-3 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:text-slate-400"
-              disabled={!canMoveCancelled || mutation.isPending}
-              type="button"
-              onClick={() =>
-                submitBulkStatus(
-                  "cancelled",
-                  "선택한 주문을 취소 상태로 변경할까요? 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요.",
-                  { restoreStock: true }
-                )
-              }
-            >
-              취소
-            </button>
-          </div>
+      <div className="flex flex-col gap-2 rounded-md border border-slate-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-slate-950">상태 변경</p>
+          <p className="mt-0.5 text-xs text-slate-500">
+            {selectedCount > 0 ? `선택 ${formatNumber(selectedCount)}건` : "주문을 선택한 뒤 상태를 변경하세요."}
+          </p>
         </div>
-      ) : null}
+        <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:justify-end sm:overflow-visible sm:pb-0">
+          <button
+            className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
+            disabled={!canMoveReadyToShip || mutation.isPending}
+            type="button"
+            onClick={() => submitBulkStatus("ready_to_ship", "선택한 주문을 배송대기 상태로 변경할까요? 재고가 차감됩니다.")}
+          >
+            배송대기
+          </button>
+          <button
+            className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
+            disabled={!canMoveShipping || mutation.isPending}
+            type="button"
+            onClick={() => submitBulkStatus("shipping", "선택한 주문을 배송중 상태로 변경할까요?")}
+          >
+            배송중
+          </button>
+          <button
+            className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md bg-blue-600 px-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:bg-slate-300"
+            disabled={!canMoveDelivered || mutation.isPending}
+            type="button"
+            onClick={() => submitBulkStatus("delivered", "선택한 주문을 배송완료 상태로 변경할까요?")}
+          >
+            배송완료
+          </button>
+          <button
+            className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:text-slate-400"
+            disabled={!canMoveHold || mutation.isPending}
+            type="button"
+            onClick={() => submitBulkStatus("hold", "선택한 주문을 보류 상태로 변경할까요?", { holdReservationPolicy: "keep" })}
+          >
+            보류
+          </button>
+          <button
+            className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-red-200 bg-white px-3 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:text-slate-400"
+            disabled={!canMoveCancelled || mutation.isPending}
+            type="button"
+            onClick={() =>
+              submitBulkStatus(
+                "cancelled",
+                "선택한 주문을 취소 상태로 변경할까요? 실제 환불, 교환, 반품 처리는 판매 채널에서 진행해 주세요.",
+                { restoreStock: true }
+              )
+            }
+          >
+            취소
+          </button>
+        </div>
+      </div>
 
       <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
         <table className="app-table responsive-card-table">

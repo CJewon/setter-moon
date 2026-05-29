@@ -68,7 +68,7 @@ export function OrderListFilters({ customerKeyword, fromDate, pageSize, productK
           <option value="oldest">오래된순</option>
         </select>
       </label>
-      <div className="grid grid-cols-2 gap-2 xl:flex xl:items-end">
+      <div className="grid grid-cols-3 gap-2 xl:flex xl:items-end">
         <button
           className="inline-flex min-h-10 items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700"
           type="submit"
@@ -80,6 +80,12 @@ export function OrderListFilters({ customerKeyword, fromDate, pageSize, productK
           href={routes.orders}
         >
           초기화
+        </a>
+        <a
+          className="inline-flex min-h-10 items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-4 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+          href={routes.newOrder}
+        >
+          주문 등록
         </a>
       </div>
     </form>

@@ -7,6 +7,7 @@ import type { AppAccess } from "@/server/auth/session";
 import { formatNumber } from "@/shared/lib/format";
 import { SignOutButton } from "@/shared/components/sign-out-button";
 import { UserMenu } from "@/shared/components/user-menu";
+import { DashboardTopbarTitle } from "@/shared/components/dashboard-topbar-title";
 
 type NavItem = {
   href: Route;
@@ -83,20 +84,25 @@ export function AppShell({ access, summary, children }: AppShellProps) {
                 </Link>
               ))}
             </nav>
-            <div className="flex gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-4 sm:overflow-visible sm:pb-0 lg:flex lg:flex-1">
-              {summaryItems.map((item) => (
-                <Link
-                  key={item.key}
-                  href={item.href}
-                  className="min-w-[116px] rounded-md border border-slate-200 bg-white px-2.5 py-2 hover:bg-slate-50 sm:min-w-0 lg:min-w-[108px] xl:min-w-[120px]"
-                >
-                  <p className="text-xs font-medium text-slate-500">{item.label}</p>
-                  <p className="mt-1 text-base font-bold text-slate-950">{formatNumber(summary[item.key])}</p>
-                </Link>
-              ))}
-            </div>
-            <div className="hidden lg:ml-auto lg:block">
-              <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+            <div className="flex min-w-0 flex-col gap-2.5 lg:flex-1 lg:flex-row lg:items-center lg:justify-between">
+              <DashboardTopbarTitle />
+              <div className="flex min-w-0 items-center gap-2 lg:ml-auto">
+                <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-4 sm:overflow-visible sm:pb-0 lg:flex lg:flex-none">
+                  {summaryItems.map((item) => (
+                    <Link
+                      key={item.key}
+                      href={item.href}
+                      className="min-w-[116px] rounded-md border border-slate-200 bg-white px-2.5 py-2 hover:bg-slate-50 sm:min-w-0 lg:min-w-[104px] xl:min-w-[116px]"
+                    >
+                      <p className="text-xs font-medium text-slate-500">{item.label}</p>
+                      <p className="mt-1 text-base font-bold text-slate-950">{formatNumber(summary[item.key])}</p>
+                    </Link>
+                  ))}
+                </div>
+                <div className="hidden shrink-0 lg:block">
+                  <UserMenu displayName={displayName} email={access.user?.email ?? access.profile?.email ?? null} storeName={access.store?.name ?? null} />
+                </div>
+              </div>
             </div>
           </div>
         </header>
