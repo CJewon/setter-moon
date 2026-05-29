@@ -17,7 +17,7 @@ export function AuthShell({ title, description, children, supportTitle, supportI
       <section
         className={cn(
           "mx-auto flex min-h-[calc(100vh-4rem)] w-full flex-col justify-center",
-          size === "wide" ? "max-w-[440px]" : "max-w-[400px]"
+          size === "wide" ? "max-w-110" : "max-w-100"
         )}
       >
         <div className="mb-6 flex justify-center">

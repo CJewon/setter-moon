@@ -55,7 +55,7 @@ export function ProductVariantStockSection({
                     <span className="mt-1 block text-xs font-medium text-slate-500">{variant.isActive ? "등록할 옵션 조합" : "사용 안 함"}</span>
                   </span>
                 </label>
-                <div className="grid gap-2 sm:grid-cols-4 lg:min-w-[640px]">
+                <div className="grid gap-2 sm:grid-cols-4 lg:min-w-160">
                   <VariantNumberInput
                     disabled={!variant.isActive}
                     label="옵션별 판매가"
