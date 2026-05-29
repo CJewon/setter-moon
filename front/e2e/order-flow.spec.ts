@@ -143,7 +143,12 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByText(statusPayload.message)).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
 
-    await page.getByRole("link", { name: createPayload.data?.orderNo ?? "" }).click();
+    await page.goto("/dashboard");
+    await expect(page.getByRole("heading", { name: "대시보드" })).toBeVisible();
+    await expect(page.getByText(editedCustomerName).first()).toBeVisible();
+    await expect(page.getByText("배송대기").first()).toBeVisible();
+
+    await page.goto(`/orders/${createPayload.data?.orderId}`);
     await expect(page.getByRole("heading", { name: "주문 상세" })).toBeVisible();
     await expect(page.getByText("취소는 SellerRoom 안에서 주문 상태만 바꾸는 기능입니다.")).toBeVisible();
     await expect(page.getByRole("heading", { name: "상태 변경 이력" })).toBeVisible();

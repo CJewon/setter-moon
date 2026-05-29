@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 const topbarPageTitles: Record<string, { description: string; title: string }> = {
   "/categories": {
     title: "카테고리",
-    description: "상품 분류를 관리합니다."
+    description: "상품 수가 늘어난 뒤 분류 기준을 정리합니다."
   },
   "/dashboard": {
     title: "대시보드",

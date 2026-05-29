@@ -118,7 +118,7 @@ test.describe.serial("상품 등록 화면", () => {
     const hideResponsePromise = page.waitForResponse((response) =>
       response.url().includes(`/api/products/${createPayload.data?.productId}`) && response.request().method() === "PATCH"
     );
-    await page.getByRole("button", { name: "상품 숨김 처리" }).click();
+    await page.getByRole("button", { name: "상품 숨기기" }).click();
     const hideResponse = await hideResponsePromise;
     const hidePayload = (await hideResponse.json()) as {
       code: number;
@@ -132,6 +132,10 @@ test.describe.serial("상품 등록 화면", () => {
     });
     await expect(page.getByText("숨김").first()).toBeVisible();
 
+    await page.goto("/orders/new");
+    await expect(page.locator("#product-select option").filter({ hasText: productName })).toHaveCount(0);
+
+    await page.goto(`/products/${createPayload.data?.productId}`);
     await page.getByRole("link", { name: "상품 목록으로" }).click();
     await expect(page).toHaveURL(/\/products$/);
 

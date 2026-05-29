@@ -111,9 +111,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           <h2 className="text-base font-semibold">재고 작업</h2>
           <p className="mt-3 text-sm text-slate-600">현재는 상품별 재고 현황을 확인할 수 있습니다. 재고 변경은 이력으로 함께 관리합니다.</p>
           <div className="mt-5 rounded-md border border-slate-100 bg-slate-50 p-4">
-            <h3 className="text-sm font-bold text-slate-950">판매상태와 숨김 처리</h3>
+            <h3 className="text-sm font-bold text-slate-950">판매상태 관리</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              목록과 주문 등록 화면에 노출할 판매상태를 바꿉니다. 삭제 대신 숨김 처리로 과거 주문과 재고 이력을 보존합니다.
+              판매상태를 바꾸거나 상품을 숨길 수 있습니다. 숨긴 상품은 주문 등록에서 선택되지 않고, 기존 주문과 재고 이력은 그대로 남습니다.
             </p>
             <div className="mt-4">
               <ProductStatusQuickUpdate

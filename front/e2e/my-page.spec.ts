@@ -28,9 +28,17 @@ test.describe("마이페이지", () => {
 
     await expect(page.getByText("변경사항 있음")).toBeVisible();
     await expect(saveButton).toBeEnabled();
-    await saveButton.click();
 
-    await expect(page.getByText("마이페이지 정보를 저장했습니다.")).toBeVisible();
+    const saveResponsePromise = page.waitForResponse(
+      (response) => response.url().includes("/api/my-page") && response.request().method() === "PATCH"
+    );
+    await saveButton.click();
+    const saveResponse = await saveResponsePromise;
+    const savePayload = (await saveResponse.json()) as { code: number; message: string };
+
+    expect(saveResponse.ok(), JSON.stringify(savePayload)).toBe(true);
+    expect(savePayload.code).toBe(200);
+    await expect(page.getByText(savePayload.message)).toBeVisible();
     await expect(page.locator("#my-page-form").getByText("저장 완료")).toBeVisible();
     await expect(saveButton).toBeDisabled();
 

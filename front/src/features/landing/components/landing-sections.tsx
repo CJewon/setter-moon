@@ -210,8 +210,8 @@ export function FaqSection() {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="자주 묻는 질문"
-          title="지금 제공하는 범위와 다음 확장 범위를 정리했습니다."
-          description="셀러룸이 지금 제공하는 범위와 아직 약속하지 않는 범위를 분명하게 나눕니다."
+          title="지금 바로 쓸 수 있는 범위와 이후 확장할 범위를 정리했습니다."
+          description="처음 쓰는 셀러도 헷갈리지 않도록 현재 운영 범위와 나중에 붙일 기능을 나눠 안내합니다."
           centered
         />
         <div className="mt-8 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">

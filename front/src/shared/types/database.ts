@@ -1,5 +1,6 @@
-// Replace this placeholder with generated Supabase types after running:
-// supabase gen types typescript --linked > backend/types/database.ts
+// Hand-maintained Supabase schema types for the current MVP.
+// Replace with generated output after Supabase CLI auth is available:
+// npx supabase gen types typescript --project-id etadsvzjbdanmaigqhay --schema public > front/src/shared/types/database.ts
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
@@ -66,6 +67,33 @@ export type Database = {
           business_type?: string | null;
           plan_id?: "free" | "paid_full";
           memo?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      categories: {
+        Row: {
+          id: string;
+          store_id: string;
+          name: string;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          store_id: string;
+          name: string;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          store_id?: string;
+          name?: string;
+          sort_order?: number;
           created_at?: string;
           updated_at?: string;
         };

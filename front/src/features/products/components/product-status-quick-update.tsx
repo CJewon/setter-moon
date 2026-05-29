@@ -48,7 +48,7 @@ export function ProductStatusQuickUpdate({ product }: ProductStatusQuickUpdatePr
   }
 
   function handleHideProduct() {
-    const confirmed = window.confirm("상품을 숨김 처리할까요? 숨김 상품은 주문 등록 선택지에서 제외되고, 상품 목록의 숨김 필터에서 다시 확인할 수 있습니다.");
+    const confirmed = window.confirm("이 상품을 숨길까요? 숨긴 상품은 주문 등록에서 선택되지 않지만, 기존 주문과 재고 이력은 그대로 보존됩니다.");
 
     if (!confirmed) {
       return;
@@ -105,7 +105,7 @@ export function ProductStatusQuickUpdate({ product }: ProductStatusQuickUpdatePr
           onClick={handleHideProduct}
           type="button"
         >
-          상품 숨김 처리
+          상품 숨기기
         </button>
       )}
     </div>
