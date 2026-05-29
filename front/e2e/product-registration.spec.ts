@@ -114,13 +114,31 @@ test.describe.serial("상품 등록 화면", () => {
     });
     await expect(page.getByText("품절").first()).toBeVisible();
 
+    page.once("dialog", (dialog) => dialog.accept());
+    const hideResponsePromise = page.waitForResponse((response) =>
+      response.url().includes(`/api/products/${createPayload.data?.productId}`) && response.request().method() === "PATCH"
+    );
+    await page.getByRole("button", { name: "상품 숨김 처리" }).click();
+    const hideResponse = await hideResponsePromise;
+    const hidePayload = (await hideResponse.json()) as {
+      code: number;
+      message: string;
+    };
+
+    expect(hideResponse.ok(), JSON.stringify(hidePayload)).toBe(true);
+    expect(hidePayload).toMatchObject({
+      code: 200,
+      message: "상품 정보를 저장했습니다."
+    });
+    await expect(page.getByText("숨김").first()).toBeVisible();
+
     await page.getByRole("link", { name: "상품 목록으로" }).click();
     await expect(page).toHaveURL(/\/products$/);
 
     const productRow = page.getByRole("row").filter({ hasText: productName });
 
     await expect(productRow.getByRole("link", { name: productName })).toBeVisible();
-    await expect(productRow).toContainText("품절");
+    await expect(productRow).toContainText("숨김");
     await expect(productRow).toContainText("2개");
     await expect(productRow).toContainText("10개");
     await expect(productRow).toContainText("29,000원");

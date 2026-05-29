@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useUpdateProductMutation } from "@/features/products/hooks/use-product-update-mutation";
 import type { ProductEditValues } from "@/features/products/schemas/product-edit-schema";
-import { primaryActionClassName } from "@/shared/components/action-styles";
+import { primaryActionClassName, secondaryActionClassName } from "@/shared/components/action-styles";
 import { useToast } from "@/shared/components/toast-provider";
 import { productStatusLabel } from "@/shared/constants/status-labels";
 import { getApiErrorState } from "@/shared/api/http";
@@ -24,11 +24,11 @@ export function ProductStatusQuickUpdate({ product }: ProductStatusQuickUpdatePr
   const [status, setStatus] = useState<ProductEditValues["status"]>(product.status);
   const isUnchanged = status === product.status;
 
-  function handleSubmit() {
+  function submitStatus(nextStatus: ProductEditValues["status"]) {
     updateProductMutation.mutate(
       {
         ...product,
-        status
+        status: nextStatus
       },
       {
         onError: (error) => {
@@ -41,6 +41,26 @@ export function ProductStatusQuickUpdate({ product }: ProductStatusQuickUpdatePr
         }
       }
     );
+  }
+
+  function handleSubmit() {
+    submitStatus(status);
+  }
+
+  function handleHideProduct() {
+    const confirmed = window.confirm("상품을 숨김 처리할까요? 숨김 상품은 주문 등록 선택지에서 제외되고, 상품 목록의 숨김 필터에서 다시 확인할 수 있습니다.");
+
+    if (!confirmed) {
+      return;
+    }
+
+    setStatus("hidden");
+    submitStatus("hidden");
+  }
+
+  function handleReactivateProduct() {
+    setStatus("active");
+    submitStatus("active");
   }
 
   return (
@@ -69,6 +89,25 @@ export function ProductStatusQuickUpdate({ product }: ProductStatusQuickUpdatePr
       >
         {updateProductMutation.isPending ? "변경 중" : "판매상태 변경"}
       </button>
+      {product.status === "hidden" ? (
+        <button
+          className={secondaryActionClassName}
+          disabled={updateProductMutation.isPending}
+          onClick={handleReactivateProduct}
+          type="button"
+        >
+          판매중으로 복구
+        </button>
+      ) : (
+        <button
+          className={secondaryActionClassName}
+          disabled={updateProductMutation.isPending}
+          onClick={handleHideProduct}
+          type="button"
+        >
+          상품 숨김 처리
+        </button>
+      )}
     </div>
   );
 }
