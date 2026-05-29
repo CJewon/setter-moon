@@ -16,6 +16,16 @@ test.describe("마이페이지", () => {
     const saveButton = page.getByRole("button", { name: "변경사항 저장" });
     await expect(saveButton).toBeDisabled();
     await expect(page.getByText("변경사항 없음")).toHaveCount(0);
+    const saveButtonBox = await saveButton.boundingBox();
+    const viewport = page.viewportSize();
+
+    expect(saveButtonBox).not.toBeNull();
+    expect(viewport).not.toBeNull();
+
+    if (saveButtonBox && viewport) {
+      expect(saveButtonBox.x + saveButtonBox.width).toBeGreaterThan(viewport.width - 40);
+      expect(saveButtonBox.y + saveButtonBox.height).toBeGreaterThan(viewport.height - 40);
+    }
 
     const suffix = Date.now().toString().slice(-5);
     const displayName = `테스터 ${suffix}`;
