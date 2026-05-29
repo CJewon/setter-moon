@@ -120,25 +120,21 @@ function FormLoadingSkeleton() {
 
 function TableLoadingSkeleton() {
   return (
-    <div className="rounded-md border border-slate-100 bg-slate-50/70 p-3 sm:p-4">
-      <div className="hidden grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_0.7fr] gap-3 border-b border-slate-200 pb-3 md:grid">
+    <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
+      <div className="hidden grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_0.7fr] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 md:grid">
         {Array.from({ length: 5 }, (_, index) => (
-          <SkeletonBlock key={index} className="h-3 w-full" />
+          <SkeletonBlock key={index} className="h-3 w-16" />
         ))}
       </div>
-      <div className="grid gap-3 pt-0 md:pt-3">
-        {Array.from({ length: 6 }, (_, index) => (
-          <div
-            key={index}
-            className="grid gap-2 rounded-md border border-slate-100 bg-white p-3 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr_0.7fr] md:border-0 md:bg-transparent md:p-0"
-          >
-            <SkeletonBlock className="h-4 w-4/5" />
-            <SkeletonBlock className="h-4 w-2/3" />
-            <SkeletonBlock className="h-4 w-1/2" />
-            <SkeletonBlock className="h-4 w-1/2" />
-            <SkeletonBlock className="h-6 w-16 rounded-full" />
-          </div>
-        ))}
+      <div className="flex min-h-56 items-center justify-center px-4 py-10 text-center sm:min-h-64">
+        <div className="flex flex-col items-center">
+          <span
+            aria-label="데이터 불러오는 중"
+            className="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600"
+          />
+          <p className="mt-4 text-sm font-semibold text-slate-950">목록을 불러오고 있습니다.</p>
+          <p className="mt-1 text-sm text-slate-500">잠시 후 표에 데이터가 표시됩니다.</p>
+        </div>
       </div>
     </div>
   );
@@ -182,7 +178,7 @@ export function QueryLoadingState({
           <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
         </div>
       </div>
-      <div className="animate-pulse p-4 sm:p-5">
+      <div className={variant === "table" ? "p-4 sm:p-5" : "animate-pulse p-4 sm:p-5"}>
         <LoadingSkeleton variant={variant} />
       </div>
     </div>

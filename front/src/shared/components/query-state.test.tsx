@@ -11,6 +11,8 @@ describe("QueryLoadingState", () => {
     expect(status.getAttribute("aria-busy")).toBe("true");
     expect(screen.getByText("상품 목록을 불러오고 있습니다.")).toBeTruthy();
     expect(screen.getByText("화면에 필요한 정보를 준비하고 있습니다.")).toBeTruthy();
+    expect(screen.getByLabelText("데이터 불러오는 중")).toBeTruthy();
+    expect(screen.getByText("목록을 불러오고 있습니다.")).toBeTruthy();
   });
 
   it("supports page-specific loading copy", () => {
