@@ -1,7 +1,6 @@
 "use client";
 
 import { MyPageForm } from "@/features/my-page/components/my-page-form";
-import { MyPageOverview } from "@/features/my-page/components/my-page-overview";
 import { useMyPageQuery } from "@/features/my-page/hooks/use-my-page-query";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
 
@@ -20,7 +19,6 @@ export function MyPageClient() {
 
   return (
     <>
-      <MyPageOverview displayName={displayName} email={email} />
       <MyPageForm displayName={displayName} email={email} />
     </>
   );

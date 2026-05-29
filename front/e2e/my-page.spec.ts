@@ -7,8 +7,9 @@ test.describe("마이페이지", () => {
     await page.goto("/my-page");
 
     await expect(page.getByRole("heading", { name: "마이페이지" })).toBeVisible();
-    await expect(page.getByText("현재 접속 계정")).toBeVisible();
     await expect(page.getByRole("heading", { name: "계정 정보" })).toBeVisible();
+    await expect(page.getByText("현재 접속 계정")).toHaveCount(0);
+    await expect(page.getByText("로그인 이메일")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "스토어 정보" })).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "플랜 설정" })).toHaveCount(0);
 
