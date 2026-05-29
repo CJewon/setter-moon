@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DashboardSalesChart } from "@/features/dashboard/components/dashboard-sales-chart";
 import { useDashboardQuery } from "@/features/dashboard/hooks/use-dashboard-query";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
@@ -19,7 +20,6 @@ export function DashboardPageClient() {
   }
 
   const dashboard = dashboardQuery.data;
-  const maxTrendSales = Math.max(...dashboard.trend.map((item) => item.salesAmount), 1);
   const summaryCards = [
     { label: "오늘 주문", value: formatNumber(dashboard.summary.todayOrders), helper: "주문일 기준" },
     { label: "오늘 판매금액", value: formatWon(dashboard.summary.todaySalesAmount), helper: "취소 주문 제외" },
@@ -44,27 +44,7 @@ export function DashboardPageClient() {
             <h2 className="text-base font-semibold">최근 7일 판매 흐름</h2>
             <StatusBadge tone="info">주문일 기준</StatusBadge>
           </div>
-          <div className="mt-4 grid h-56 grid-cols-7 items-end gap-2 rounded-md bg-slate-50 px-3 py-4 sm:h-64 sm:gap-3 sm:px-4 sm:py-5">
-            {dashboard.trend.map((item) => {
-              const height = item.salesAmount === 0 ? 8 : Math.max((item.salesAmount / maxTrendSales) * 100, 12);
-
-              return (
-                <div key={item.label} className="flex h-full min-w-0 flex-col justify-end gap-2 text-center">
-                  <div className="flex flex-1 items-end">
-                    <div
-                      className="w-full rounded-t-md bg-blue-600/80"
-                      style={{ height: `${height}%` }}
-                      title={`${item.label} ${formatWon(item.salesAmount)}`}
-                    />
-                  </div>
-                  <div>
-                    <p className="truncate text-xs font-semibold text-slate-700">{item.label}</p>
-                    <p className="mt-0.5 truncate text-[11px] text-slate-500">{formatNumber(item.orderCount)}건</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <DashboardSalesChart data={dashboard.trend} />
         </div>
         <div className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
           <div className="flex items-center justify-between">

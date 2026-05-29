@@ -94,6 +94,11 @@ test.describe("현재 구현 화면 E2E", () => {
       await expect(page.getByText(screen.visibleText).first()).toBeVisible();
     }
 
+    await page.goto("/dashboard");
+    await expect(page.getByText("최근 7일 판매 흐름")).toBeVisible();
+    await expect(page.getByText("가로축: 날짜")).toBeVisible();
+    await expect(page.getByText("세로축: 판매금액")).toBeVisible();
+
     await page.goto("/products/new");
     await page.getByRole("link", { name: "상품 목록으로" }).click();
     await expect(page).toHaveURL(/\/products$/);
