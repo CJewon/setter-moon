@@ -30,8 +30,8 @@ export const SHARED_PLAN_FEATURE_ITEMS = [
     value: "제공"
   },
   {
-    label: "계정 공유",
-    value: "추후 기획"
+    label: "재고 관리",
+    value: "제공"
   }
 ] as const;
 
