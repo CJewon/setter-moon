@@ -7,7 +7,8 @@ import { OrderListTable } from "@/features/orders/components/order-list-table";
 import { useOrdersQuery } from "@/features/orders/hooks/use-order-queries";
 import type { OrderSort } from "@/server/orders/service";
 import type { OrderStatus } from "@/server/orders/types";
-import { primaryActionClassName } from "@/shared/components/action-styles";
+import { primaryActionClassName, secondaryActionClassName } from "@/shared/components/action-styles";
+import { EmptyState } from "@/shared/components/empty-state";
 import { PaginationControls } from "@/shared/components/pagination-controls";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
 import { routes } from "@/shared/constants/routes";
@@ -64,6 +65,7 @@ export function OrderListPageClient({ searchParams }: OrderListPageClientProps) 
   const toDate = searchParams.toDate?.trim() ?? "";
   const sort = getSort(searchParams.sort);
   const pageSize = getPageSize(searchParams.pageSize);
+  const hasOrderFilters = Boolean(keyword || customerKeyword || productKeyword || fromDate || toDate || selectedStatus);
   const orderPageQuery = useOrdersQuery({
     customerKeyword,
     fromDate,
@@ -149,27 +151,49 @@ export function OrderListPageClient({ searchParams }: OrderListPageClientProps) 
       {orderPageQuery.isLoading ? <QueryLoadingState title="주문 목록을 불러오고 있습니다." variant="table" /> : null}
       {orderPageQuery.isError ? <QueryErrorState title="주문 목록을 불러오지 못했습니다." /> : null}
       {orderPageQuery.data ? (
-        <>
-          <OrderListTable items={orderPageQuery.data.items} />
-          <PaginationControls
-            basePath={routes.orders}
-            page={orderPageQuery.data.page}
-            pageSize={orderPageQuery.data.pageSize}
-            searchParams={{
-              customerKeyword,
-              page: searchParams.page,
-              pageSize: searchParams.pageSize,
-              fromDate,
-              keyword,
-              productKeyword,
-              sort,
-              status: selectedStatus,
-              toDate
-            }}
-            totalCount={orderPageQuery.data.totalCount}
-            totalPages={orderPageQuery.data.totalPages}
+        orderPageQuery.data.items.length === 0 ? (
+          <EmptyState
+            title={hasOrderFilters ? "조건에 맞는 주문이 없습니다." : "아직 등록된 주문이 없습니다."}
+            description={
+              hasOrderFilters
+                ? "검색어, 상태, 기간 필터를 바꿔 다시 확인해 주세요."
+                : "첫 주문을 등록하면 주문접수부터 배송완료까지 한 화면에서 관리할 수 있어요."
+            }
+            action={
+              hasOrderFilters ? (
+                <Link href={routes.orders} className={secondaryActionClassName}>
+                  전체 주문 보기
+                </Link>
+              ) : (
+                <Link href={routes.newOrder} className={primaryActionClassName}>
+                  주문 등록하기
+                </Link>
+              )
+            }
           />
-        </>
+        ) : (
+          <>
+            <OrderListTable items={orderPageQuery.data.items} />
+            <PaginationControls
+              basePath={routes.orders}
+              page={orderPageQuery.data.page}
+              pageSize={orderPageQuery.data.pageSize}
+              searchParams={{
+                customerKeyword,
+                page: searchParams.page,
+                pageSize: searchParams.pageSize,
+                fromDate,
+                keyword,
+                productKeyword,
+                sort,
+                status: selectedStatus,
+                toDate
+              }}
+              totalCount={orderPageQuery.data.totalCount}
+              totalPages={orderPageQuery.data.totalPages}
+            />
+          </>
+        )
       ) : null}
     </>
   );

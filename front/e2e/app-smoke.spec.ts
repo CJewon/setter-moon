@@ -127,6 +127,10 @@ test.describe("현재 구현 화면 E2E", () => {
     await page.goto("/orders?page=1&pageSize=20");
     await expect(page.getByRole("navigation", { name: "목록 페이지 이동" })).toBeVisible();
     await expect(page.getByText("페이지당")).toHaveCount(0);
+    await page.goto("/orders?customerKeyword=__no_order_result__&page=1&pageSize=10");
+    await expect(page.getByText("조건에 맞는 주문이 없습니다.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "전체 주문 보기" })).toBeVisible();
+    await expect(page.locator("table")).toHaveCount(0);
   });
 
   test("사용자 메뉴에서 마이페이지 이동과 로그아웃이 동작한다", async ({ page }) => {
