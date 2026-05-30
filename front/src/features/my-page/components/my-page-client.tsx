@@ -22,14 +22,13 @@ export function MyPageClient() {
   const isPlanHealthy = plan.status !== "past_due" && plan.status !== "cancelled";
 
   return (
-    <div className="grid gap-3 sm:gap-4">
-      <MyPageForm displayName={displayName} email={email} />
+    <MyPageForm displayName={displayName} email={email}>
       <SettingsUsageGrid metrics={usageSummary.metrics} />
       <SettingsPlanPanel
         isPaidPlan={isPaidPlan}
         isPlanHealthy={isPlanHealthy}
         planCurrentPeriodEnd={plan.currentPeriodEnd}
       />
-    </div>
+    </MyPageForm>
   );
 }

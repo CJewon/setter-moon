@@ -15,6 +15,19 @@ test.describe("마이페이지", () => {
     await expect(page.getByRole("heading", { name: "스토어 정보" })).toHaveCount(0);
 
     const saveButton = page.locator("#my-page-form").getByRole("button", { name: "저장" });
+    const myPageSections = page.locator("#my-page-form > section");
+    await expect(myPageSections).toHaveCount(3);
+
+    const planSectionBox = await myPageSections.nth(2).boundingBox();
+    const saveButtonBox = await saveButton.boundingBox();
+
+    expect(planSectionBox).not.toBeNull();
+    expect(saveButtonBox).not.toBeNull();
+
+    if (planSectionBox && saveButtonBox) {
+      expect(saveButtonBox.y).toBeGreaterThanOrEqual(planSectionBox.y + planSectionBox.height);
+    }
+
     await expect(saveButton).toBeDisabled();
     await expect(page.getByText("변경사항 없음")).toHaveCount(0);
 
