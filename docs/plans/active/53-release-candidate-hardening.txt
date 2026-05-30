@@ -1,0 +1,97 @@
+# 53 출시 후보 완성도 점검
+
+## 목표
+
+기획 기준 개발 진행률 90% 이후의 다음 작업은 새 기능 확장이 아니라 MVP release candidate로 넘기기 위한 안정화입니다.
+
+## Notion 링크
+
+- 회의록: https://www.notion.so/370275ff81fe81bd9a61facc3ccdce80
+- 53-01 출시 후보 완료 기준 최종 정리: https://www.notion.so/370275ff81fe81968ea6f1a0d4e79d1a
+- 53-02 첫 사용자 빈 상태·한도 UX 점검: https://www.notion.so/370275ff81fe8177ae22c6edc779af73
+- 53-03 원격 DB migration·배포 환경 최종 확인: https://www.notion.so/370275ff81fe81e5b85dc9a79f87701c
+- 53-04 권한·API·보안 출시 전 리뷰: https://www.notion.so/370275ff81fe813f8108cf6b67ab1e54
+- 53-05 실제 Chrome 출시 후보 회귀 테스트: https://www.notion.so/370275ff81fe81599beff4bb4ecf6983
+
+## 회의 결론
+
+- 배포 환경이 준비되었으므로 다음 사이클은 출시 후보 안정화로 진행합니다.
+- 기능 추가보다 원격 DB, 배포 환경, 첫 사용자 UX, 권한/API/보안, 실제 Chrome 회귀 검증을 우선합니다.
+- 결제, 외부 채널 연동, 팀 기능, 카테고리 CRUD는 MVP 이후로 유지합니다.
+- blocker, warning, 후순위 개선을 명확히 나누어 release candidate 여부를 판단합니다.
+
+## 역할별 Task
+
+### 53-01 project_planner
+
+출시 후보 완료 기준을 화면, API, 데이터, 배포, 테스트 관점으로 정리합니다.
+
+완료 기준:
+
+- 화면별 완료 기준이 최신 기획과 충돌하지 않습니다.
+- MVP 제외 범위와 후순위 범위가 명확합니다.
+- blocker, warning, 후순위 개선 기준이 정리됩니다.
+
+### 53-02 designer
+
+첫 사용자 빈 상태, 한도 안내, toast, CTA 동선을 점검합니다.
+
+완료 기준:
+
+- 상품/주문/재고 데이터가 없어도 다음 행동이 명확합니다.
+- 사용자 화면에 개발자 용어, 내부 구현 용어, MVP 문구가 노출되지 않습니다.
+- 모바일, 태블릿, PC 기준 어색한 여백과 줄바꿈이 정리됩니다.
+
+### 53-03 fullstack_developer
+
+Vercel 배포 환경과 원격 Supabase DB가 로컬 구현 기준과 맞는지 확인합니다.
+
+완료 기준:
+
+- 원격 DB에 필요한 migration이 적용되어 있습니다.
+- 배포 URL 기준 핵심 JSON API가 `{ code, message, data }` 규칙을 따릅니다.
+- service role key가 브라우저 번들로 노출되지 않습니다.
+
+### 53-04 reviewer
+
+출시 전 권한, API, 보안, 개인정보 표시를 리뷰합니다.
+
+완료 기준:
+
+- 다른 사용자의 store/product/order 접근 가능성이 없습니다.
+- 인증/권한 실패 응답이 규칙대로 처리됩니다.
+- blocker가 있으면 구현 Task로 연결합니다.
+
+### 53-05 tester
+
+실제 Chrome 기준으로 로컬 전체 핵심 E2E와 배포 URL smoke-test를 나누어 실행합니다.
+
+완료 기준:
+
+- `localhost:3001` 기준 핵심 E2E 결과가 기록됩니다.
+- 배포 URL 기준 smoke-test 결과가 기록됩니다.
+- 실패가 있으면 trace, 재현 경로, 담당자 Task가 연결됩니다.
+
+## 검증 후보
+
+```txt
+npm.cmd run typecheck
+npm.cmd run lint
+npm.cmd run test
+npm.cmd run build
+npm.cmd --workspace front run test:e2e -- --project=chrome
+```
+
+배포 URL smoke:
+
+```txt
+GitHub Actions > Vercel Manual Deploy > Run workflow
+target: preview 또는 production
+run_smoke: true
+```
+
+## 주의
+
+- 전체 E2E는 실제 Chrome 기준으로 진행합니다.
+- 배포 smoke-test가 실패하면 배포 실패인지, 보호 화면 문제인지, 환경변수 문제인지 먼저 분리합니다.
+- 원격 DB migration 누락이 있으면 기능 코드를 추가하기 전에 DB 상태를 먼저 맞춥니다.
