@@ -14,7 +14,7 @@ import {
 
 export function PlanSection() {
   return (
-    <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="plan">
+    <section className="bg-white scroll-mt-24" id="plan">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
           title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 확장 플랜으로 한도를 해제합니다.`}

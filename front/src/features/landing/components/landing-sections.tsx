@@ -82,7 +82,7 @@ export function WorkflowSection() {
 
 export function FaqSection() {
   return (
-    <section className="bg-white" id="faq">
+    <section className="bg-slate-50" id="faq">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
           title="지금 바로 쓸 수 있는 범위부터 제공합니다."
