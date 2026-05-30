@@ -69,6 +69,41 @@ E2E_SELLER_PASSWORD=Password1!
 - service role key, DB password, access token은 커밋하지 않습니다.
 - `.env`, `.env.local`, `.env.*`, `.tmp/`, `.codex/`는 gitignore 대상입니다.
 
+## Vercel 배포
+
+초기 배포는 Vercel Hobby/free 배포를 기준으로 준비합니다. 단, Vercel 공식 기준에서 Hobby 플랜은 개인 프로젝트와 소규모 테스트에 맞춰져 있고 사용량 한도가 있으므로, 실제 유료 서비스로 운영하기 전에는 Pro 전환 필요 여부를 확인합니다.
+
+Vercel 프로젝트 설정 권장값:
+
+```txt
+Framework Preset: Next.js
+Root Directory: front
+Install Command: npm install
+Build Command: npm run build
+Output Directory: 기본값 사용
+Node.js Version: 20.9 이상
+```
+
+Vercel 환경 변수:
+
+```txt
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
+SUPABASE_SERVICE_ROLE_KEY=<server-only-secret-key>
+NEXT_PUBLIC_APP_NAME=SellerRoom
+NEXT_PUBLIC_APP_URL=https://<vercel-production-domain>
+NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=product-images
+```
+
+주의:
+
+- `SUPABASE_SERVICE_ROLE_KEY`는 Vercel 환경 변수에만 등록하고 브라우저 코드, README, Notion 공개 문서에 값 자체를 쓰지 않습니다.
+- `E2E_SELLER_EMAIL`, `E2E_SELLER_PASSWORD`는 배포 환경 필수값이 아닙니다. 배포 후 자동 smoke test를 Vercel URL로 실행할 때만 별도 CI/로컬 환경에 둡니다.
+- Supabase Auth의 Site URL은 Vercel production URL로 설정합니다.
+- 이메일 인증, 비밀번호 재설정, OAuth를 실제로 사용할 때는 Supabase Redirect URLs에 production URL, preview URL, localhost URL을 추가합니다.
+- 배포 전 Supabase Security Advisor warning을 blocker, warning, 후순위로 분류합니다.
+- 배포 후 `/api/health`, 랜딩, 로그인, 대시보드, 상품/재고/주문 목록, JSON API 응답을 smoke test로 확인합니다.
+
 ## 주요 폴더
 
 ```txt
