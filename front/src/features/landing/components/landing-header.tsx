@@ -5,8 +5,8 @@ import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from "@/features/landing/landing-content
 const navItems = [
   { href: "#intro", label: "소개" },
   { href: "#features", label: "기능" },
-  { href: "#preview", label: "화면" },
-  { href: "#plan", label: "가격" }
+  { href: "#workflow", label: "운영 흐름" },
+  { href: "#pricing", label: "요금" }
 ] as const;
 
 export function LandingHeader() {

@@ -6,7 +6,7 @@ import { faqItems, features, problemPrompts, SIGN_IN_ROUTE, SIGN_UP_ROUTE, workf
 
 export function ProblemSection() {
   return (
-    <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="intro">
+    <section className="border-y border-slate-200 bg-slate-50 scroll-mt-28" id="features">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <SectionHeading
           title="혼자 운영해도 주문과 재고가 헷갈리지 않게 정리합니다."
@@ -33,7 +33,7 @@ export function ProblemSection() {
 
 export function FeatureSection() {
   return (
-    <section className="bg-white scroll-mt-24" id="features">
+    <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <SectionHeading
           title="상품 등록부터 배송 상태까지 한 흐름으로 이어집니다."
@@ -52,7 +52,7 @@ export function FeatureSection() {
 
 export function WorkflowSection() {
   return (
-    <section className="bg-slate-50" id="flow">
+    <section className="scroll-mt-28 bg-slate-50" id="workflow">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <SectionHeading
           title="주문접수와 재고 차감 시점을 나눠서 봅니다."

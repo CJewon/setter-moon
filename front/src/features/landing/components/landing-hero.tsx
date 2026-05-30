@@ -5,7 +5,7 @@ import { demoOrders, heroBadges, lowStockPreview, SIGN_UP_ROUTE } from "@/featur
 
 export function HeroSection() {
   return (
-    <section className="border-b border-slate-200 bg-white">
+    <section className="scroll-mt-28 border-b border-slate-200 bg-white" id="intro">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className="inline-flex min-h-9 items-center justify-center rounded-md border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700">
@@ -43,7 +43,7 @@ export function HeroSection() {
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
-              href="#preview"
+              href="#features"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
             >
               둘러보기
@@ -58,7 +58,7 @@ export function HeroSection() {
 
 function HeroConsolePreview() {
   return (
-    <div id="preview" className="pointer-events-none relative mx-auto mt-10 w-full max-w-6xl scroll-mt-24">
+    <div className="pointer-events-none relative mx-auto mt-10 w-full max-w-6xl">
       <div className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
         <div className="flex min-h-12 items-center border-b border-slate-200 px-4">
           <div className="flex items-center gap-2">
