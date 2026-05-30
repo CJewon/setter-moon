@@ -210,6 +210,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      order_change_logs: {
+        Row: {
+          id: string;
+          order_id: string;
+          changed_by: string | null;
+          summary: string;
+          changes: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          changed_by?: string | null;
+          summary: string;
+          changes?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          changed_by?: string | null;
+          summary?: string;
+          changes?: Json;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
