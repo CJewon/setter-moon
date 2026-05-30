@@ -149,7 +149,7 @@ export const problemPrompts: ProblemPrompt[] = [
   },
   {
     question: "여러 채널 주문을 다시 옮겨 적는 시간이 아깝나요?",
-    answer: "초기 버전은 자동 연동 대신 빠르게 입력하고 확인하는 수동 관리 방식에 집중합니다."
+    answer: "초기 버전은 빠르게 입력하고 확인하는 수동 관리 방식에 집중합니다."
   }
 ];
 
@@ -223,8 +223,8 @@ export const targetUsers: TargetUser[] = [
 
 export const faqItems: FaqItem[] = [
   {
-    question: "쇼핑몰 채널과 자동 연동되나요?",
-    answer: "초기 버전에서는 자동 연동을 제공하지 않습니다. 여러 채널에서 들어온 주문을 빠르게 수동 등록하고 재고 흐름을 확인하는 데 집중합니다."
+    question: "쇼핑몰 채널 주문도 관리할 수 있나요?",
+    answer: "현재는 채널 API 연결을 제공하지 않습니다. 여러 채널에서 들어온 주문을 직접 등록하고 재고 흐름을 확인하는 데 집중합니다."
   },
   {
     question: "재고는 언제 실제로 차감되나요?",

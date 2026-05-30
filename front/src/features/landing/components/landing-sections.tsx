@@ -86,7 +86,7 @@ export function FaqSection() {
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
           title="지금 바로 쓸 수 있는 범위부터 제공합니다."
-          description="자동 연동이나 결제처럼 무거운 기능보다, 당장 주문과 재고를 정리하는 데 필요한 범위에 집중합니다."
+          description="채널 API 연결이나 결제처럼 무거운 기능보다, 당장 주문과 재고를 정리하는 데 필요한 범위에 집중합니다."
           centered
         />
         <div className="mt-8 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">

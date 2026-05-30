@@ -12,18 +12,18 @@ const navItems = [
 export function LandingHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-lg font-bold text-slate-950">
+      <div className="mx-auto grid h-16 w-full max-w-[1760px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-4 sm:px-6 lg:px-10 2xl:px-12">
+        <Link href="/" className="justify-self-start text-lg font-bold text-slate-950">
           SellerRoom
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
+        <nav className="hidden items-center gap-6 justify-self-center text-sm font-semibold md:flex">
           {navItems.map((item) => (
             <a key={item.href} href={item.href} className="text-slate-600 transition-colors hover:text-slate-950">
               {item.label}
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-self-end">
           <Link
             href={SIGN_IN_ROUTE}
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"

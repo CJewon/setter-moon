@@ -26,7 +26,7 @@ export function ProductCreateProgress({ usageSummary }: { usageSummary: UsageSum
       </ol>
       <div className="mt-5 rounded-md bg-blue-50 p-3 text-xs leading-5 text-blue-900">
         {isUnlimitedPlan
-          ? "유료 풀버전은 상품과 옵션 조합을 한도 없이 등록할 수 있어요."
+          ? "유료 확장 플랜은 상품과 옵션 조합을 한도 없이 등록할 수 있어요."
           : `무료 플랜은 상품 ${formatUsageLimit(productMetric?.limit)}, 옵션 조합 ${formatUsageLimit(
               optionCombinationMetric?.limit
             )}까지 등록할 수 있어요.`}

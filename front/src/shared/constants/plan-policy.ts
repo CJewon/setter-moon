@@ -39,7 +39,7 @@ export const FREE_PLAN_BADGES = FREE_PLAN_LIMIT_ITEMS.map((item) => `${item.labe
 
 export const FREE_PLAN_SUMMARY = `${FREE_PLAN_LIMIT_ITEMS[0].label} ${FREE_PLAN_LIMIT_ITEMS[0].value}, ${FREE_PLAN_LIMIT_ITEMS[1].label} ${FREE_PLAN_LIMIT_ITEMS[1].value}, ${FREE_PLAN_LIMIT_ITEMS[2].label} ${FREE_PLAN_LIMIT_ITEMS[2].value}까지 제공합니다.`;
 
-export const PAID_FULL_SUMMARY = `유료 풀버전은 ${PLAN_PRICE_LABEL} 기준으로 한도 해제를 제공합니다.`;
+export const PAID_FULL_SUMMARY = `유료 확장 플랜은 ${PLAN_PRICE_LABEL} 기준으로 한도 해제를 제공합니다.`;
 
 export const PRICING_PLANS = [
   {
@@ -58,9 +58,9 @@ export const PRICING_PLANS = [
     ]
   },
   {
-    name: "풀버전",
+    name: "확장",
     badge: "한도 없이 운영",
-    description: "상품과 주문이 늘어난 셀러를 위한 전체 기능",
+    description: "상품과 주문이 늘어난 셀러를 위한 확장 플랜",
     price: PLAN_PRICE_LABEL,
     priceCaption: "무료로 시작 후 전환 가능",
     ctaLabel: "무료로 시작 후 전환하기",

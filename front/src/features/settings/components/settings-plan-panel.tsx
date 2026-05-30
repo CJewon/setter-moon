@@ -15,7 +15,7 @@ export function SettingsPlanPanel({ isPaidPlan, isPlanHealthy, planCurrentPeriod
           <p className="mt-1 text-sm text-slate-500">현재 플랜과 운영 한도 기준을 확인합니다.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 풀버전" : "무료 플랜"}</StatusBadge>
+          <StatusBadge tone={isPaidPlan ? "success" : "neutral"}>{isPaidPlan ? "유료 확장" : "무료 플랜"}</StatusBadge>
           <StatusBadge tone={isPlanHealthy ? "success" : "warning"}>{isPlanHealthy ? "정상" : "확인 필요"}</StatusBadge>
         </div>
       </div>

@@ -54,7 +54,7 @@ function UsageMetricCard({ metric }: { metric: UsageMetric }) {
         </StatusBadge>
       </div>
       {metric.limit === null ? (
-        <p className="mt-3 text-sm text-slate-500">풀버전은 사용량 제한이 없습니다.</p>
+        <p className="mt-3 text-sm text-slate-500">확장 플랜은 사용량 제한이 없습니다.</p>
       ) : (
         <div className="mt-4">
           <div className="h-2 overflow-hidden rounded-full bg-white">

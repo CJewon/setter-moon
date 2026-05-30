@@ -17,7 +17,7 @@ export function PlanSection() {
     <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="plan">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
-          title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 풀버전으로 한도를 해제합니다.`}
+          title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 확장 플랜으로 한도를 해제합니다.`}
           description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY} 스토어 기능과 배송 상태 관리는 두 플랜 모두 동일하게 제공합니다.`}
           centered
         />
@@ -83,7 +83,7 @@ function PricingComparisonTable({ rows }: { rows: readonly PricingComparisonRow[
           <tr className="border-b border-slate-200 bg-slate-100 text-xs font-bold text-slate-600">
             <th className="px-4 py-3">비교 항목</th>
             <th className="px-4 py-3">무료</th>
-            <th className="px-4 py-3">풀버전</th>
+            <th className="px-4 py-3">확장</th>
           </tr>
         </thead>
         <tbody>
