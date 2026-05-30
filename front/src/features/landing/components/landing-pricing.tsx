@@ -14,11 +14,11 @@ import {
 
 export function PlanSection() {
   return (
-    <section className="border-y border-slate-200 bg-slate-50" id="plan">
-      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="plan">
+      <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
-          eyebrow="가격 안내"
-          title={`무료로 운영을 시작하고, ${PLAN_PRICE_LABEL} 풀버전으로 한도를 해제합니다.`}
+          eyebrow="가격"
+          title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 풀버전으로 한도를 해제합니다.`}
           description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY} 스토어 기능과 배송 상태 관리는 두 플랜 모두 동일하게 제공합니다.`}
           centered
         />
@@ -32,7 +32,7 @@ export function PlanSection() {
         <PricingComparisonTable rows={PRICING_COMPARISON_ROWS} />
 
         <div className="mt-5 rounded-md border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-600">
-          월 신규 주문 등록 한도는 새 주문 등록 기준입니다. 이미 생성된 주문의 배송대기, 배송중, 배송완료, 취소, 보류 처리는 한도 도달 후에도 계속 진행할 수 있습니다.
+          월 신규 주문 한도는 주문 등록 기준입니다. 이미 만든 주문의 상태 변경은 한도 도달 후에도 계속 진행할 수 있습니다.
         </div>
       </div>
     </section>

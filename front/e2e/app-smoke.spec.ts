@@ -18,13 +18,17 @@ const protectedScreens = [
 test.describe("현재 구현 화면 E2E", () => {
   test("공개 화면이 렌더링된다", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 덜 헷갈리게" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 가볍게" })).toBeVisible();
     await expect(page.locator("header").getByRole("link", { name: "로그인" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /무료로 시작/ }).first()).toBeVisible();
-    await expect(page.locator("header").getByRole("link", { name: "이런 분께" })).toHaveAttribute("href", "#problem");
-    await expect(page.locator("header").getByRole("link", { name: "운영 흐름" })).toHaveAttribute("href", "#flow");
-    await expect(page.locator("header").getByRole("link", { name: "화면 미리보기" })).toHaveAttribute("href", "#preview");
-    await expect(page.locator("header").getByRole("link", { name: "가격 안내" })).toHaveAttribute("href", "#plan");
+    await expect(page.getByRole("link", { name: /무료 시작/ }).first()).toBeVisible();
+    await expect(page.locator("header").getByRole("link", { name: "소개" })).toHaveAttribute("href", "#intro");
+    await expect(page.locator("header").getByRole("link", { name: "기능" })).toHaveAttribute("href", "#features");
+    await expect(page.locator("header").getByRole("link", { name: "화면" })).toHaveAttribute("href", "#preview");
+    await expect(page.locator("header").getByRole("link", { name: "가격" })).toHaveAttribute("href", "#plan");
+    await expect(page.getByText("이런 분께")).toHaveCount(0);
+    await expect(page.getByText("운영 흐름")).toHaveCount(0);
+    await expect(page.getByText("화면 미리보기")).toHaveCount(0);
+    await expect(page.getByText("가격 안내")).toHaveCount(0);
     await expect(page.getByText("문제")).toHaveCount(0);
     await expect(page.getByText("작동 방식")).toHaveCount(0);
     await expect(page.getByText("데모 화면")).toHaveCount(0);
@@ -152,7 +156,7 @@ test.describe("현재 구현 화면 E2E", () => {
     await page.locator('header button[aria-haspopup="menu"]').last().click();
     await page.getByRole("menuitem", { name: "로그아웃" }).click();
     await page.waitForURL("/");
-    await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 덜 헷갈리게" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 가볍게" })).toBeVisible();
   });
 
   test("조회 API는 JSON 응답 규칙을 따른다", async ({ page }) => {
