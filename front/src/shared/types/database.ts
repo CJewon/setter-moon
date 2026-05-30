@@ -455,6 +455,20 @@ export type Database = {
           monthly_order_count: number;
         }[];
       };
+      update_order_status_atomic: {
+        Args: {
+          p_store_id: string;
+          p_order_id: string;
+          p_to_status: Database["public"]["Enums"]["order_status"];
+          p_restore_stock?: boolean;
+          p_hold_reservation_policy?: Database["public"]["Enums"]["hold_reservation_policy"] | null;
+          p_memo?: string | null;
+        };
+        Returns: {
+          order_id: string;
+          status: Database["public"]["Enums"]["order_status"];
+        }[];
+      };
     };
     Enums: {
       product_status: "active" | "sold_out" | "hidden";

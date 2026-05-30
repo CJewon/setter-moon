@@ -75,7 +75,13 @@ export type BulkOrderStatusUpdateResult = {
 function isSchemaMissingError(error: { code?: string; message?: string }) {
   const message = error.message?.toLowerCase() ?? "";
 
-  return error.code === "PGRST205" || error.code === "42P01" || message.includes("could not find the table");
+  return (
+    error.code === "PGRST205" ||
+    error.code === "PGRST202" ||
+    error.code === "42P01" ||
+    message.includes("could not find the table") ||
+    message.includes("could not find the function")
+  );
 }
 
 function getOrderNumber() {
@@ -811,6 +817,67 @@ async function applyStockPlan(
 }
 
 export async function updateOrderStatusForStore(
+  supabase: OrdersSupabaseClient,
+  store: Store,
+  orderId: string,
+  values: OrderStatusUpdateValues
+) {
+  const { data, error } = await supabase
+    .rpc("update_order_status_atomic", {
+      p_hold_reservation_policy: values.holdReservationPolicy ?? null,
+      p_memo: values.memo?.trim() || null,
+      p_order_id: orderId,
+      p_restore_stock: values.restoreStock ?? true,
+      p_store_id: store.id,
+      p_to_status: values.toStatus
+    })
+    .maybeSingle();
+
+  if (error) {
+    if (isSchemaMissingError(error)) {
+      return updateOrderStatusForStoreLegacy(supabase, store, orderId, values);
+    }
+
+    throw getOrderStatusRpcError(error);
+  }
+
+  if (!data) {
+    throw new OrderNotFoundError();
+  }
+
+  return {
+    orderId: data.order_id,
+    status: data.status
+  };
+}
+
+function getOrderStatusRpcError(error: { code?: string; message?: string }) {
+  const message = error.message ?? "";
+
+  if (message.includes("ORDER_NOT_FOUND")) {
+    return new OrderNotFoundError();
+  }
+
+  if (message.includes("INVALID_STATUS_TRANSITION")) {
+    return new InvalidOrderStatusTransitionError();
+  }
+
+  if (message.includes("HOLD_POLICY_REQUIRED")) {
+    return new OrderValidationError("보류 처리 시 예약 수량 유지 여부를 선택해 주세요.");
+  }
+
+  if (message.includes("ORDER_ITEMS_REQUIRED")) {
+    return new OrderValidationError("주문 상품이 없어 상태를 변경할 수 없습니다.");
+  }
+
+  if (message.includes("INSUFFICIENT_STOCK")) {
+    return new InsufficientStockError();
+  }
+
+  return new OrderMutationError(error);
+}
+
+async function updateOrderStatusForStoreLegacy(
   supabase: OrdersSupabaseClient,
   store: Store,
   orderId: string,
