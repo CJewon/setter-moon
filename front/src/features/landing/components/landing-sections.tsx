@@ -7,12 +7,13 @@ import { faqItems, features, problemPrompts, SIGN_IN_ROUTE, SIGN_UP_ROUTE, workf
 export function ProblemSection() {
   return (
     <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="intro">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <SectionHeading
           title="혼자 운영해도 주문과 재고가 헷갈리지 않게 정리합니다."
           description="여러 판매 채널에서 들어온 주문을 직접 정리하고, 옵션별 재고까지 함께 봐야 하는 초기 1인 셀러에게 맞춘 관리 화면입니다."
+          centered
         />
-        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
           {problemPrompts.map((point) => (
             <article key={point.question} className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start gap-3">
@@ -52,27 +53,28 @@ export function FeatureSection() {
 export function WorkflowSection() {
   return (
     <section className="bg-slate-50" id="flow">
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[0.92fr_1.08fr] lg:px-8 lg:py-20">
-        <div>
-          <SectionHeading
-            title="주문접수와 재고 차감 시점을 나눠서 봅니다."
-            description="주문접수는 예약 수량으로 보고, 배송 준비가 시작될 때 실제 재고가 줄어들도록 흐름을 단순하게 잡았습니다."
-          />
-          <ol className="mt-8 space-y-3">
-            {workflowSteps.map((step, index) => (
-              <li key={step.title} className="flex min-h-16 gap-3 rounded-md border border-slate-200 bg-white px-4 py-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700">
-                  {index + 1}
-                </span>
-                <span>
-                  <span className="block text-sm font-bold text-slate-900">{step.title}</span>
-                  <span className="mt-1 block text-sm leading-6 text-slate-600">{step.description}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <SectionHeading
+          title="주문접수와 재고 차감 시점을 나눠서 봅니다."
+          description="주문접수는 예약 수량으로 보고, 배송 준비가 시작될 때 실제 재고가 줄어들도록 흐름을 단순하게 잡았습니다."
+          centered
+        />
+        <ol className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {workflowSteps.map((step, index) => (
+            <li key={step.title} className="flex min-h-28 gap-3 rounded-md border border-slate-200 bg-white px-4 py-4 shadow-sm">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700">
+                {index + 1}
+              </span>
+              <span>
+                <span className="block text-sm font-bold text-slate-900">{step.title}</span>
+                <span className="mt-1 block text-sm leading-6 text-slate-600">{step.description}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-8">
+          <InventoryPreview />
         </div>
-        <InventoryPreview />
       </div>
     </section>
   );

@@ -1,0 +1,77 @@
+# 42 랜딩 문제·흐름 섹션 레이아웃 균형 수정
+
+작성일: 2026-05-31
+상태: 완료
+참석자: project_planner, designer, fullstack_developer, reviewer, tester
+
+## Notion 링크
+
+- 회의록: https://www.notion.so/370275ff81fe81eab8b1dd7c0aa36caf
+- 42-01 랜딩 설명형 섹션 레이아웃 기준 반영: https://www.notion.so/370275ff81fe81ad9caaddcb3280c841
+- 42-02 랜딩 문제·흐름 섹션 세로 레이아웃 수정: https://www.notion.so/370275ff81fe815ca47defe7611929c6
+- 42-03 랜딩 레이아웃 리뷰 및 E2E 검증: https://www.notion.so/370275ff81fe81b2a4d1da2618fa9934
+
+## 배경
+
+랜딩의 문제 제기 섹션과 주문접수/재고 차감 설명 섹션은 내용은 유지하되, 2열 레이아웃 때문에 제목 폭이 좁아져 한국어 문장이 어색하게 줄바꿈될 수 있다는 피드백이 있었습니다.
+
+특히 `주문접수와 재고 차감 시점을 나눠서 봅니다.`가 좁은 영역에서 `봅/니다`처럼 음절 단위로 끊길 위험이 있습니다.
+
+## 회의 결론
+
+- 두 섹션은 좌우 비교 섹션이 아니라 설명형 섹션입니다.
+- 제목은 상단에서 충분한 폭을 확보하고, 콘텐츠는 하단 grid로 배치합니다.
+- 기능 정책과 화면 워크플로우는 바꾸지 않습니다.
+- 기획안에는 “랜딩 설명형 섹션은 제목 폭을 좁히는 2열 대칭 구조를 피한다”는 기준을 추가합니다.
+
+## Task
+
+### 42-01 랜딩 설명형 섹션 레이아웃 기준 반영
+
+담당자: project_planner
+상태: 완료
+
+완료 기준:
+
+- 기획안에 랜딩 설명형 섹션 레이아웃 기준이 기록됩니다.
+- 기능 정책 변경이 아님을 명시합니다.
+
+### 42-02 랜딩 문제·흐름 섹션 세로 레이아웃 수정
+
+담당자: fullstack_developer
+상태: 완료
+
+완료 기준:
+
+- ProblemSection은 상단 제목/설명, 하단 카드 grid 구조입니다.
+- WorkflowSection은 상단 제목/설명, 하단 단계 카드 grid, 재고 미리보기 순서입니다.
+- SectionHeading은 한국어 제목이 음절 단위로 쪼개지지 않도록 `break-keep`을 적용합니다.
+
+### 42-03 랜딩 레이아웃 리뷰 및 E2E 검증
+
+담당자: tester
+상태: 완료
+
+완료 기준:
+
+- 1024px, 1200px, 모바일 기준 제목 줄바꿈과 레이아웃을 확인합니다.
+- typecheck, lint, test, build, 실제 Chrome E2E가 통과합니다.
+
+## 완료 결과
+
+- ProblemSection을 상단 제목/설명, 하단 문제 카드 grid 구조로 변경했습니다.
+- WorkflowSection을 상단 제목/설명, 하단 단계 카드 grid, 재고 미리보기 순서로 변경했습니다.
+- `SectionHeading` 제목과 설명에 `break-keep`을 적용했습니다.
+- `setter-moon 기획안`에 랜딩 설명형 섹션 레이아웃 기준을 추가했습니다.
+
+## 검증 결과
+
+```txt
+npm.cmd run typecheck: 통과
+npm.cmd run lint: 통과
+npm.cmd run test: 17개 Test Suite, 64개 테스트 통과
+npm.cmd run build: 통과
+npm.cmd --workspace front run test:e2e -- --project=chrome: 18개 E2E 통과
+```
+
+1024px 스크린샷 기준으로 `주문접수와 재고 차감 시점을 나눠서 봅니다.` 제목이 음절 단위로 어색하게 끊기지 않는 것을 확인했습니다.
