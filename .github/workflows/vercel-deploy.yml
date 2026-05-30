@@ -33,8 +33,8 @@ jobs:
       prod_flag: ${{ steps.target.outputs.prod_flag }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || vars.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout
@@ -53,12 +53,18 @@ jobs:
         shell: bash
         run: |
           missing=0
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then
-              echo "::error title=Missing GitHub Secret::$name is not set. Add it in GitHub repository Settings > Secrets and variables > Actions."
-              missing=1
-            fi
-          done
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error title=Missing GitHub Secret::VERCEL_TOKEN is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Secrets."
+            missing=1
+          fi
+          if [ -z "$VERCEL_ORG_ID" ]; then
+            echo "::error title=Missing Vercel Project Value::VERCEL_ORG_ID is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Variables, or add it as a repository secret."
+            missing=1
+          fi
+          if [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::error title=Missing Vercel Project Value::VERCEL_PROJECT_ID is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Variables, or add it as a repository secret."
+            missing=1
+          fi
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
@@ -114,8 +120,8 @@ jobs:
       deployment_url: ${{ steps.deploy.outputs.deployment_url }}
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || vars.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Setup Node
@@ -127,12 +133,18 @@ jobs:
         shell: bash
         run: |
           missing=0
-          for name in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
-            if [ -z "${!name}" ]; then
-              echo "::error title=Missing GitHub Secret::$name is not set. Add it in GitHub repository Settings > Secrets and variables > Actions."
-              missing=1
-            fi
-          done
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error title=Missing GitHub Secret::VERCEL_TOKEN is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Secrets."
+            missing=1
+          fi
+          if [ -z "$VERCEL_ORG_ID" ]; then
+            echo "::error title=Missing Vercel Project Value::VERCEL_ORG_ID is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Variables, or add it as a repository secret."
+            missing=1
+          fi
+          if [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "::error title=Missing Vercel Project Value::VERCEL_PROJECT_ID is not set. Add it in GitHub repository Settings > Secrets and variables > Actions > Variables, or add it as a repository secret."
+            missing=1
+          fi
           if [ "$missing" -ne 0 ]; then
             exit 1
           fi
