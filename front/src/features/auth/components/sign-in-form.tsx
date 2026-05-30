@@ -30,8 +30,8 @@ export function SignInForm() {
     const frameId = window.requestAnimationFrame(() => {
       const savedEmail = window.localStorage.getItem(rememberedEmailStorageKey) ?? "";
 
-      setEmail(savedEmail);
-      setRememberEmail(Boolean(savedEmail));
+      setEmail((currentEmail) => currentEmail || savedEmail);
+      setRememberEmail((currentValue) => currentValue || Boolean(savedEmail));
     });
 
     return () => window.cancelAnimationFrame(frameId);
