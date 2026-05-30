@@ -1,4 +1,5 @@
 import type { Feature, Metric } from "@/features/landing/landing-content";
+import { cn } from "@/shared/utils/cn";
 
 export function MetricPreview({ metric }: { metric: Metric }) {
   return (
@@ -16,16 +17,16 @@ export function SectionHeading({
   description,
   centered = false
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   centered?: boolean;
 }) {
   return (
     <div className={centered ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
-      <p className="text-sm font-bold text-blue-700">{eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">{title}</h2>
-      <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
+      {eyebrow ? <p className="text-sm font-bold text-blue-700">{eyebrow}</p> : null}
+      <h2 className={cn("text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl", eyebrow && "mt-3")}>{title}</h2>
+      <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">{description}</p>
     </div>
   );
 }
@@ -34,8 +35,8 @@ export function FeatureCard({ feature }: { feature: Feature }) {
   const Icon = feature.icon;
 
   return (
-    <article className="rounded-md border border-slate-200 bg-slate-50 p-5">
-      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white text-blue-600">
+    <article className="rounded-md border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-blue-50 text-blue-700">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
       <h3 className="mt-5 text-base font-bold text-slate-950">{feature.title}</h3>

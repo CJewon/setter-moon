@@ -17,7 +17,6 @@ export function PlanSection() {
     <section className="border-y border-slate-200 bg-slate-50 scroll-mt-24" id="plan">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
-          eyebrow="가격"
           title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 풀버전으로 한도를 해제합니다.`}
           description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY} 스토어 기능과 배송 상태 관리는 두 플랜 모두 동일하게 제공합니다.`}
           centered

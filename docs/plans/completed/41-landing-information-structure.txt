@@ -1,7 +1,7 @@
 # 41 랜딩 정보구조 및 섹션 위계 정리
 
 작성일: 2026-05-31
-상태: 시작 전
+상태: 완료
 참석자: project_planner, designer, fullstack_developer, reviewer, tester
 Notion 반영 상태: 완료
 
@@ -87,7 +87,7 @@ Hero
 ### 41-01 랜딩 정보구조 기획 정리
 
 담당자: project_planner
-상태: 시작 전
+상태: 완료
 시작일: 2026-05-31
 마감일: 2026-05-31
 메모: Hero를 소개 영역으로 확정하고, 문제 상황·핵심 기능·운영 흐름 기준으로 랜딩 기획을 정리합니다.
@@ -101,7 +101,7 @@ Hero
 ### 41-02 랜딩 소개·기능 UI 재설계
 
 담당자: designer
-상태: 시작 전
+상태: 완료
 시작일: 2026-05-31
 마감일: 2026-05-31
 메모: 소개와 기능 영역이 작아 보이는 문제를 해결하기 위해 섹션 여백, 제목 크기, 카드 배치, 미리보기 영역 비중을 재설계합니다.
@@ -115,7 +115,7 @@ Hero
 ### 41-03 랜딩 섹션 구조 구현
 
 담당자: fullstack_developer
-상태: 시작 전
+상태: 완료
 시작일: 2026-05-31
 마감일: 2026-06-01
 메모: `landing-sections.tsx`, `landing-content.ts`, 관련 landing component를 수정해 확정된 정보구조와 디자인을 반영합니다.
@@ -130,7 +130,7 @@ Hero
 ### 41-04 랜딩 UX·문구 리뷰
 
 담당자: reviewer
-상태: 시작 전
+상태: 완료
 시작일: 2026-06-01
 마감일: 2026-06-01
 메모: 사용자 관점에서 랜딩 문구, 정보 위계, 중복 표현, 과한 설명, 모바일 가독성을 검토합니다.
@@ -144,7 +144,7 @@ Hero
 ### 41-05 랜딩 반응형 E2E 검증
 
 담당자: tester
-상태: 시작 전
+상태: 완료
 시작일: 2026-06-01
 마감일: 2026-06-01
 메모: 실제 Chrome 기준으로 랜딩 주요 화면폭과 CTA/앵커 이동을 검증합니다.
@@ -159,10 +159,11 @@ Hero
 ## 검증 계획
 
 ```txt
-npm run typecheck
-npm run lint
-npm run test
-npm --workspace front run test:e2e -- --project=chrome
+npm.cmd run typecheck
+npm.cmd run lint
+npm.cmd run test
+npm.cmd run build
+npm.cmd --workspace front run test:e2e -- --project=chrome
 ```
 
 추가 확인:
@@ -173,4 +174,21 @@ rg -n "eyebrow=\"소개\"|eyebrow=\"기능\"|eyebrow=\"흐름\"" front/src/featu
 
 ## 특이사항
 
-이전에 Notion MCP가 `invalid_grant`로 실패했다는 메모가 있었지만, 2026-05-31 재확인 결과 Notion 검색, 회의록 작성, Task 생성이 정상 동작했습니다. 이 문서는 Notion 반영 완료 상태의 로컬 백업입니다.
+이전에 Notion MCP가 `invalid_grant`로 실패했다는 메모가 있었지만, 2026-05-31 재확인 결과 Notion 검색, 회의록 작성, Task 생성이 정상 동작했습니다.
+
+## 완료 결과
+
+- 랜딩 본문 섹션 eyebrow 라벨 `소개`, `기능`, `흐름`, `가격`, `FAQ`를 제거했습니다.
+- Hero가 서비스 소개 역할을 담당하고, 본문은 문제 상황, 핵심 기능, 운영 흐름, 요금제, FAQ 순서로 이어지도록 정리했습니다.
+- 문제 상황 영역은 좌우 분할 구조로 바꿔 소개/기능 영역이 작아 보이는 문제를 완화했습니다.
+- 기능 카드는 흰 배경, 약한 그림자, 넓어진 패딩으로 핵심 기능 영역의 시각적 비중을 키웠습니다.
+
+## 검증 결과
+
+```txt
+npm.cmd run typecheck: 통과
+npm.cmd run lint: 통과
+npm.cmd run test: 17개 Test Suite, 64개 테스트 통과
+npm.cmd run build: 통과
+npm.cmd --workspace front run test:e2e -- --project=chrome: 18개 E2E 통과
+```
