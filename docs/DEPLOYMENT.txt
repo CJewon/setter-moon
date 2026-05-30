@@ -68,6 +68,14 @@ E2E_SELLER_EMAIL
 E2E_SELLER_PASSWORD
 ```
 
+주의:
+
+- Vercel 프로젝트의 Environment Variables와 GitHub repository secrets는 서로 다른 설정입니다.
+- GitHub Actions에서 Vercel CLI를 실행하려면 GitHub repository secrets에 VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID가 반드시 있어야 합니다.
+- Actions 로그에 `--token=`처럼 토큰 값이 빈 상태로 보이면 VERCEL_TOKEN이 등록되지 않았거나 이름이 다르게 등록된 상태입니다.
+- VERCEL_TOKEN은 Vercel Account Settings > Tokens에서 발급한 값을 GitHub repository secret으로 등록합니다.
+- VERCEL_ORG_ID와 VERCEL_PROJECT_ID는 Vercel 프로젝트 연결 정보에서 확인한 값을 GitHub repository secret으로 등록합니다.
+
 실행 방법:
 
 ```txt
