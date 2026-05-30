@@ -41,8 +41,8 @@ export function PlanSection() {
 function PricingCard({ plan }: { plan: PricingPlan }) {
   const isPaid = plan.tone === "paid";
   const articleClassName = isPaid
-    ? "relative rounded-md border border-blue-200 bg-blue-50 p-6 shadow-[0_18px_40px_rgba(37,99,235,0.10)]"
-    : "relative rounded-md border border-slate-200 bg-white p-6";
+    ? "relative rounded-md border border-blue-500 bg-blue-50 p-6 shadow-[0_18px_40px_rgba(37,99,235,0.12)]"
+    : "relative rounded-md border border-blue-100 bg-white p-6";
   const badgeClassName = isPaid
     ? "inline-flex rounded-md bg-blue-600 px-2.5 py-1 text-xs font-bold text-white"
     : "inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700";

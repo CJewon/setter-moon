@@ -104,26 +104,26 @@ export function FaqSection() {
 
 export function FinalCta() {
   return (
-    <section className="bg-blue-600" id="start">
+    <section className="bg-slate-950" id="start">
       <div className="mx-auto max-w-7xl px-4 py-12 text-white sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold text-blue-100">무료 시작</p>
+        <p className="text-sm font-semibold text-blue-300">무료 시작</p>
         <h2 className="mt-3 max-w-3xl text-3xl font-bold tracking-normal sm:text-4xl">
           오늘 들어온 주문부터 SellerRoom으로 정리해보세요.
         </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-blue-100">
+        <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
           상품, 옵션별 재고, 주문 상태를 한곳에 모으고 다음 운영 기준을 빠르게 확인할 수 있습니다.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Link
             href={SIGN_UP_ROUTE}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-white px-5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
           >
             무료 시작
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             href={SIGN_IN_ROUTE}
-            className="inline-flex min-h-11 items-center justify-center rounded-md border border-blue-200 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+            className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-slate-900"
           >
             로그인
           </Link>

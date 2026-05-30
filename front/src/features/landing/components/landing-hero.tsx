@@ -12,7 +12,7 @@ export function HeroSection() {
             1인 셀러를 위한 주문·재고 관리
           </p>
           <h1 className="mt-6 text-4xl font-bold tracking-normal text-slate-950 sm:text-6xl">
-            주문과 재고를{" "}
+            <span className="text-blue-600">주문과 재고를</span>{" "}
             <br className="hidden sm:block" />
             한 화면에서 가볍게
           </h1>
@@ -27,7 +27,7 @@ export function HeroSection() {
             {heroBadges.map((label) => (
               <span
                 key={label}
-                className="inline-flex min-h-8 items-center gap-2 rounded-md border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700"
+                className="inline-flex min-h-8 items-center gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 text-xs font-bold text-slate-800"
               >
                 <CheckCircle2 className="h-4 w-4 text-blue-600" aria-hidden="true" />
                 {label}
