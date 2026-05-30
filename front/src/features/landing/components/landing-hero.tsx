@@ -46,7 +46,7 @@ export function HeroSection() {
               href="#preview"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
             >
-              화면 보기
+              둘러보기
             </a>
           </div>
         </div>
@@ -60,13 +60,12 @@ function HeroConsolePreview() {
   return (
     <div id="preview" className="pointer-events-none relative mx-auto mt-10 w-full max-w-6xl scroll-mt-24">
       <div className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.12)]">
-        <div className="flex min-h-12 items-center justify-between border-b border-slate-200 px-4">
+        <div className="flex min-h-12 items-center border-b border-slate-200 px-4">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-slate-300" />
             <span className="h-3 w-3 rounded-full bg-slate-400" />
             <span className="h-3 w-3 rounded-full bg-blue-500" />
           </div>
-          <span className="text-xs font-semibold text-slate-500">화면 예시</span>
         </div>
         <div className="grid gap-4 p-4 md:grid-cols-[184px_1fr] md:p-5">
           <aside className="hidden rounded-md border border-slate-200 bg-slate-50 p-4 md:block">
@@ -79,14 +78,11 @@ function HeroConsolePreview() {
             </div>
           </aside>
           <div className="min-w-0">
-            <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="text-lg font-bold text-slate-950">대시보드</p>
-                <p className="mt-1 text-xs font-medium text-slate-500">
-                  오늘 주문, 판매금액, 부족 재고를 빠르게 확인합니다.
-                </p>
-              </div>
-              <span className="w-fit rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">미리보기</span>
+            <div className="mb-4 border-b border-slate-200 pb-4">
+              <p className="text-lg font-bold text-slate-950">대시보드</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                오늘 주문, 판매금액, 부족 재고를 빠르게 확인합니다.
+              </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <PreviewStat label="오늘 주문" value="12건" tone="neutral" />
