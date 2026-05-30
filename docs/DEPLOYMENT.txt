@@ -105,7 +105,8 @@ run_smoke: 배포 후 deploy smoke E2E 실행 여부
 - GitHub Actions 화면에서는 Build -> Deploy 순서로 분리되어 보입니다.
 - Build job에서 typecheck, lint, test, Vercel build를 실행합니다.
 - Build job은 .vercel/output과 .vercel/project.json을 1일 보관 artifact로 넘깁니다.
-- Deploy job은 build artifact를 내려받아 vercel deploy --prebuilt 방식으로 배포합니다.
+- Deploy job은 repository를 checkout한 뒤 build artifact를 내려받아 vercel deploy --prebuilt 방식으로 배포합니다.
+- Deploy job에서도 checkout을 수행하는 이유는 Vercel 프로젝트의 Root Directory가 `front`라서, prebuilt 배포 중에도 runner 안에 `front` 경로가 존재해야 하기 때문입니다.
 - run_smoke를 켜면 Deploy 이후 Smoke Test job이 추가로 실행됩니다.
 - front/vercel.json에서 Vercel Git 자동 배포를 꺼두었으므로, push만으로는 배포되지 않습니다.
 - 나중에 develop, stage, main 브랜치를 분리하면 workflow 입력값에 배포 브랜치를 다시 추가합니다.
