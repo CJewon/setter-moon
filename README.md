@@ -104,6 +104,41 @@ NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=product-images
 - 배포 전 Supabase Security Advisor warning을 blocker, warning, 후순위로 분류합니다.
 - 배포 후 `/api/health`, 랜딩, 로그인, 대시보드, 상품/재고/주문 목록, JSON API 응답을 smoke test로 확인합니다.
 
+### GitHub Actions 수동 배포
+
+수동 배포는 `.github/workflows/vercel-deploy.yml`을 사용합니다.
+
+GitHub repository secrets:
+
+```txt
+VERCEL_TOKEN
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+E2E_SELLER_EMAIL
+E2E_SELLER_PASSWORD
+```
+
+실행 방법:
+
+```txt
+GitHub > Actions > Vercel Manual Deploy > Run workflow
+```
+
+입력값:
+
+```txt
+target: preview | production
+ref: 배포할 branch, tag, SHA. 비워두면 현재 선택한 branch 기준.
+run_smoke: 배포 후 deploy smoke E2E 실행 여부.
+```
+
+운영 기준:
+
+- `preview`는 기능 확인, `production`은 실제 배포에 사용합니다.
+- 배포 전 GitHub Actions 안에서 `typecheck`, `lint`, `test`, Vercel build를 실행합니다.
+- 배포는 `vercel build` 후 `vercel deploy --prebuilt` 방식으로 진행합니다.
+- 나중에 `develop`, `stage`, `main` 브랜치를 분리하면 같은 workflow에서 `ref`와 `target`을 선택해 배포합니다.
+
 ## 주요 폴더
 
 ```txt
