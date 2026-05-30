@@ -719,9 +719,62 @@ export async function updateOrderBasicForStore(
   values: OrderEditValues
 ) {
   const order = await getOrderDetailForStore(supabase, storeId, orderId);
+  const nextItem = values.items?.[0];
 
   if (!["received", "hold"].includes(order.status)) {
     throw new InvalidOrderStatusTransitionError("주문접수 또는 보류 상태에서만 주문 정보를 수정할 수 있습니다.");
+  }
+
+  if (nextItem && order.status !== "received") {
+    throw new InvalidOrderStatusTransitionError("주문접수 상태에서만 주문 상품과 수량을 수정할 수 있습니다.");
+  }
+
+  let nextTotalAmount = order.total_amount;
+
+  if (nextItem) {
+    if (order.items.length !== 1) {
+      throw new OrderValidationError("현재 화면에서는 주문 상품 1개만 수정할 수 있습니다.");
+    }
+
+    const variantsById = await getVariantsById(supabase, [nextItem.variantId]);
+    const variant = variantsById.get(nextItem.variantId);
+
+    if (!variant) {
+      throw new OrderValidationError("수정할 옵션 조합을 다시 선택해 주세요.");
+    }
+
+    const productsById = await getProductsById(supabase, storeId, [variant.product_id]);
+    const product = productsById.get(variant.product_id);
+
+    if (!variant.is_active || !product || product.status === "hidden") {
+      throw new OrderValidationError("수정할 상품과 옵션 조합을 다시 선택해 주세요.");
+    }
+
+    nextTotalAmount = nextItem.quantity * nextItem.unitPrice;
+
+    const { data: updatedItem, error: itemUpdateError } = await supabase
+      .from("order_items")
+      .update({
+        product_id: product.id,
+        product_name_snapshot: product.name,
+        quantity: nextItem.quantity,
+        total_price: nextTotalAmount,
+        unit_price: nextItem.unitPrice,
+        variant_id: variant.id,
+        variant_name_snapshot: variant.sku_name
+      })
+      .eq("id", order.items[0].id)
+      .eq("order_id", order.id)
+      .select("id")
+      .maybeSingle();
+
+    if (itemUpdateError) {
+      throw new OrderMutationError(itemUpdateError);
+    }
+
+    if (!updatedItem) {
+      throw new OrderValidationError("수정할 주문 상품을 찾을 수 없습니다.");
+    }
   }
 
   const { data: updatedOrder, error: updateError } = await supabase
@@ -731,6 +784,7 @@ export async function updateOrderBasicForStore(
       customer_phone: values.customerPhone?.trim() || null,
       memo: values.memo?.trim() || null,
       ordered_at: getOrderedAt(values.orderedAt),
+      total_amount: nextTotalAmount,
       updated_at: new Date().toISOString()
     })
     .eq("id", order.id)

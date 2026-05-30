@@ -91,6 +91,9 @@ export function useUpdateOrderMutation(orderId: string) {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["orders"] }),
         queryClient.invalidateQueries({ queryKey: ["order", data.orderId] }),
+        queryClient.invalidateQueries({ queryKey: ["order-product-choices"] }),
+        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
+        queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] }),
         queryClient.invalidateQueries({ queryKey: ["dashboard"] })
       ]);
     }

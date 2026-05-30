@@ -118,7 +118,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     await page.getByRole("link", { name: "주문 수정" }).click();
     await expect(page.getByRole("heading", { name: "주문 수정" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "주문 상품과 수량은 상태에 따라 관리해요" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "주문 상품과 수량 수정" })).toBeVisible();
     await expect(page.getByRole("link", { name: "주문 상세로 이동" })).toBeVisible();
     await expect(page.getByRole("link", { name: "새 주문으로 등록" })).toBeVisible();
     await page.getByLabel("고객명").fill("   ");
@@ -128,6 +128,10 @@ test.describe.serial("주문 등록과 상태 변경", () => {
 
     await page.getByLabel("고객명").fill(editedCustomerName);
     await page.getByLabel("메모").fill(`주문 수정 E2E ${suffix}`);
+    await expect(page.locator("#edit-product-select")).toBeEnabled();
+    await expect(page.locator("#edit-variant-select")).toBeEnabled();
+    await page.locator("#edit-order-quantity").fill("2");
+    await page.locator("#edit-unit-price").fill("21000");
 
     const updateResponsePromise = page.waitForResponse((response) =>
       response.url().includes(`/api/orders/${createPayload.data?.orderId}`) && response.request().method() === "PATCH"
@@ -149,6 +153,8 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByText(updatePayload.message).first()).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/orders/${createPayload.data?.orderId}`));
     await expect(page.getByText(editedCustomerName)).toBeVisible();
+    await expect(page.getByText("2개").first()).toBeVisible();
+    await expect(page.getByText("₩42,000").first()).toBeVisible();
 
     await page.getByRole("link", { name: "주문 목록으로" }).click();
     await expect(page).toHaveURL(/\/orders$/);
@@ -179,6 +185,21 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     expect(statusPayload.code).toBe(200);
     await expect(page.getByText(statusPayload.message)).toBeVisible();
     await expect(page.getByText("배송대기").first()).toBeVisible();
+
+    const blockedEditResponse = await page.request.patch(`/api/orders/${createPayload.data?.orderId}`, {
+      data: {
+        customerName: editedCustomerName,
+        items: [{ quantity: 1, unitPrice: 19000, variantId: orderableProduct?.variantId ?? "" }]
+      }
+    });
+    const blockedEditPayload = (await blockedEditResponse.json()) as {
+      code: number;
+      message: string;
+    };
+
+    expect(blockedEditResponse.status()).toBe(409);
+    expect(blockedEditPayload.code).toBe(409);
+    expect(blockedEditPayload.message).toContain("주문접수");
 
     await page.goto("/inventory/movements");
     await expect(page.getByRole("heading", { name: "재고 이력" })).toBeVisible();

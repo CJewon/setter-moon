@@ -45,6 +45,31 @@ describe("order form schema", () => {
     });
   });
 
+  it("accepts an order edit payload with one changed item", () => {
+    expect(
+      orderEditSchema.parse({
+        customerName: "수정 고객",
+        items: [{ quantity: "2", unitPrice: "21000", variantId: "variant-2" }],
+        orderedAt: "2026-05-29T12:30"
+      })
+    ).toMatchObject({
+      customerName: "수정 고객",
+      items: [{ quantity: 2, unitPrice: 21000, variantId: "variant-2" }]
+    });
+  });
+
+  it("rejects an order edit payload with multiple items", () => {
+    const parsed = orderEditSchema.safeParse({
+      customerName: "수정 고객",
+      items: [
+        { quantity: 1, unitPrice: 19000, variantId: "variant-1" },
+        { quantity: 1, unitPrice: 21000, variantId: "variant-2" }
+      ]
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
   it("rejects an order edit payload without customer name", () => {
     const parsed = orderEditSchema.safeParse({
       customerName: "",

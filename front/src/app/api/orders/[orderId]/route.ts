@@ -90,14 +90,14 @@ export const PATCH = withApiErrorBoundary(async (request: Request, { params }: O
     revalidatePath("/orders");
     revalidatePath(`/orders/${orderId}`);
     revalidatePath(`/orders/${orderId}/edit`);
+    revalidatePath("/inventory");
+    revalidatePath("/inventory/low-stock");
     revalidatePath("/dashboard");
 
     return successResponse(result, {
       message: "주문 정보를 저장했습니다."
     });
   } catch (error) {
-    console.error("Failed to update order", error);
-
     if (isInvalidOrderStatusTransitionError(error)) {
       return errorResponse(409, error.message);
     }
@@ -117,6 +117,8 @@ export const PATCH = withApiErrorBoundary(async (request: Request, { params }: O
     if (isOrderMutationError(error) && (error.code === "42501" || error.code === "PGRST301")) {
       return errorResponse(403, "주문 정보를 수정할 권한을 확인하지 못했습니다. 다시 로그인해 주세요.");
     }
+
+    console.error("Failed to update order", error);
 
     return errorResponse(500, "주문 정보를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }

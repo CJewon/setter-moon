@@ -19,6 +19,11 @@ export type OrderFormValues = z.infer<typeof orderFormSchema>;
 export const orderEditSchema = z.object({
   customerName: z.string().trim().min(1, "고객명을 입력해 주세요.").max(40, "고객명은 40자 이하로 입력해 주세요."),
   customerPhone: z.string().trim().max(30, "연락처는 30자 이하로 입력해 주세요.").optional(),
+  items: z
+    .array(orderItemSchema)
+    .min(1, "수정할 주문 상품을 선택해 주세요.")
+    .max(1, "현재는 주문 상품 1개만 수정할 수 있습니다.")
+    .optional(),
   memo: z.string().trim().max(500, "메모는 500자 이하로 입력해 주세요.").optional(),
   orderedAt: z
     .string()
