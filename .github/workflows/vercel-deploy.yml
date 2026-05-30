@@ -11,10 +11,6 @@ on:
         options:
           - preview
           - production
-      ref:
-        description: "Optional branch, tag, or SHA to deploy"
-        type: string
-        required: false
       run_smoke:
         description: "Run deploy smoke test after deployment"
         type: boolean
@@ -40,7 +36,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.ref || github.ref }}
+          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -89,6 +85,7 @@ jobs:
           deployment_url=$(vercel deploy --prebuilt ${{ steps.target.outputs.prod_flag }} --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "### Vercel deployment" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: main" >> "$GITHUB_STEP_SUMMARY"
           echo "- Target: ${{ inputs.target }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- URL: $deployment_url" >> "$GITHUB_STEP_SUMMARY"
 

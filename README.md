@@ -128,17 +128,17 @@ GitHub > Actions > Vercel Manual Deploy > Run workflow
 
 ```txt
 target: preview | production
-ref: 배포할 branch, tag, SHA. 비워두면 현재 선택한 branch 기준.
 run_smoke: 배포 후 deploy smoke E2E 실행 여부.
 ```
 
 운영 기준:
 
+- 현재는 `main` 브랜치만 배포합니다.
 - `preview`는 기능 확인, `production`은 실제 배포에 사용합니다.
 - 배포 전 GitHub Actions 안에서 `typecheck`, `lint`, `test`, Vercel build를 실행합니다.
 - 배포는 `vercel build` 후 `vercel deploy --prebuilt` 방식으로 진행합니다.
 - `front/vercel.json`에서 Vercel Git 자동 배포를 꺼두었으므로, push만으로는 배포되지 않습니다.
-- 나중에 `develop`, `stage`, `main` 브랜치를 분리하면 같은 workflow에서 `ref`와 `target`을 선택해 배포합니다.
+- 나중에 `develop`, `stage`, `main` 브랜치를 분리하면 workflow 입력값에 배포 브랜치를 다시 추가합니다.
 
 ## 주요 폴더
 
