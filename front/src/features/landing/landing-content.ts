@@ -72,7 +72,7 @@ export type DemoOrder = {
 };
 
 export type InventoryRow = {
-  sku: string;
+  optionLabel: string;
   stock: string;
   reserved: string;
   available: string;
@@ -89,9 +89,9 @@ export const demoOrders: DemoOrder[] = [
 ];
 
 export const lowStockPreview = [
-  { sku: "SHIRT-SKY-M", available: "가용 4" },
-  { sku: "BAG-CREAM", available: "가용 2" },
-  { sku: "RING-12", available: "가용 1" }
+  { optionLabel: "리넨 셔츠 / 스카이 M", available: "가용 4" },
+  { optionLabel: "코튼 백 / 크림", available: "가용 2" },
+  { optionLabel: "실버 링 / 12호", available: "가용 1" }
 ];
 
 export const trustPrinciples: TrustPrinciple[] = [
@@ -241,8 +241,8 @@ export const faqItems: FaqItem[] = [
 ];
 
 export const inventoryRows: InventoryRow[] = [
-  { sku: "SHIRT-SKY-S", stock: "18", reserved: "4", available: "14", status: "정상" },
-  { sku: "SHIRT-SKY-M", stock: "7", reserved: "3", available: "4", status: "주의" },
-  { sku: "BAG-CREAM", stock: "4", reserved: "2", available: "2", status: "부족" },
-  { sku: "RING-12", stock: "3", reserved: "2", available: "1", status: "부족" }
+  { optionLabel: "리넨 셔츠 / 스카이 S", stock: "18", reserved: "4", available: "14", status: "정상" },
+  { optionLabel: "리넨 셔츠 / 스카이 M", stock: "7", reserved: "3", available: "4", status: "주의" },
+  { optionLabel: "코튼 백 / 크림", stock: "4", reserved: "2", available: "2", status: "부족" },
+  { optionLabel: "실버 링 / 12호", stock: "3", reserved: "2", available: "1", status: "부족" }
 ];

@@ -24,8 +24,8 @@ export function InventoryPreview() {
           </thead>
           <tbody>
             {inventoryRows.map((row) => (
-              <tr key={row.sku} className="border-b border-slate-100 last:border-b-0">
-                <td className="px-3 py-3 font-bold text-slate-800">{row.sku}</td>
+              <tr key={row.optionLabel} className="border-b border-slate-100 last:border-b-0">
+                <td className="px-3 py-3 font-bold text-slate-800">{row.optionLabel}</td>
                 <td className="px-3 py-3 text-slate-600">{row.stock}</td>
                 <td className="px-3 py-3 text-slate-600">{row.reserved}</td>
                 <td className="px-3 py-3 text-slate-900">{row.available}</td>

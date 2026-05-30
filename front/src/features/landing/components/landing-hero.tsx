@@ -120,8 +120,8 @@ function HeroConsolePreview() {
                   <p className="text-sm font-bold text-slate-900">부족 옵션</p>
                   <div className="mt-4 space-y-3">
                     {lowStockPreview.map((item) => (
-                      <div key={item.sku} className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
-                        <span className="text-xs font-bold text-slate-800">{item.sku}</span>
+                      <div key={item.optionLabel} className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
+                        <span className="text-xs font-bold text-slate-800">{item.optionLabel}</span>
                         <span className="text-xs font-semibold text-blue-700">{item.available}</span>
                       </div>
                     ))}
