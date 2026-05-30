@@ -1,108 +1,132 @@
 # SellerRoom
 
-초기 1인 셀러를 위한 상품, 옵션/SKU, 재고, 주문, 배송 상태 관리 MVP입니다.
+SellerRoom은 초기 1인 셀러가 상품, 옵션별 재고, 주문, 배송 상태를 한곳에서 관리하는 관리자 사이트입니다.
 
-여러 판매 채널을 직접 연결하는 서비스가 아니라, 스마트스토어, 쿠팡, 인스타그램, 카카오톡 주문처럼 흩어진 운영 정보를 한곳에서 정리하는 백오피스 도구를 목표로 합니다.
+스마트스토어, 쿠팡, 인스타그램, 카카오톡, 오프라인 판매처럼 이미 존재하는 판매 채널의 운영 정보를 정리하는 내부 관리 도구이며, 판매 채널 자체를 만드는 프로젝트가 아닙니다.
 
-## 현재 기준
+## 현재 범위
 
-- 프론트엔드: Next.js App Router, React, TypeScript
-- 백엔드/DB: Supabase, PostgreSQL, RLS, DB trigger
-- 무료 플랜: 상품 10개, SKU/옵션 조합 100개, 월 새 주문 100건
-- 유료 풀버전: 월 9,900원, 사용량 한도 해제
-- 스토어 기능과 배송 상태 관리는 무료/유료 동일 제공
-- 계정 공유와 팀원 초대는 MVP 이후 기획
+- Next.js App Router, React, TypeScript 기반 프론트엔드
+- Next API Route 기반 JSON API
+- Supabase Auth, PostgreSQL, RLS, RPC 기반 데이터 처리
+- 상품, 옵션 조합, 재고, 주문, 배송 상태 관리
+- 대시보드, 마이페이지, 설정 화면
+- 무료 플랜 기준: 상품 10개, 옵션 조합 100개, 월 신규 주문 300건
+- 유료 풀버전 후보: 월 9,900원, 사용량 한도 해제
 
-## 개발 현황
+## MVP 제외 범위
 
-- 랜딩 페이지와 가격표는 무료/유료 2개 플랜 기준으로 반영했습니다.
-- Supabase 초기 스키마, RLS, 사용량 집계 RPC, 무료 플랜 한도 차단 trigger 기반을 추가했습니다.
-- `/api/usage/summary`에서 현재 스토어의 상품/SKU/월 새 주문 사용량을 조회할 수 있습니다.
-- 대시보드/설정 사용량 UI, 상품 등록 API, 주문 등록/재고 트랜잭션은 다음 구현 단계입니다.
+- 외부 판매 채널 API 자동 연동
+- 결제 자동화
+- 정산, 마진, 손익 계산
+- 팀원 초대와 계정 공유
+- 여러 스토어 전환
+- 실제 택배사 송장 연동
 
-## 작업 순서
+## 개발 환경
 
-1. 기획 변경은 Notion 기획안과 회의록에 먼저 남깁니다.
-2. Task를 생성하거나 상태를 갱신합니다.
-3. 프론트와 백엔드 변경은 가능한 한 분리해서 구현합니다.
-4. `typecheck`, `test`, `lint`, `build`를 통과시킵니다.
-5. 커밋 메시지는 한국어로 작성하고 원격 저장소에 push합니다.
-
-커밋 예시:
-
-```txt
-feat : 사용량 한도 서버 검증 기반 추가
-fix : 랜딩 무료 플랜 정책 반영
-chore : 개발 문서 정리
-```
-
-## 백엔드 작업자 커밋 기준
-
-올려도 되는 코드:
-
-- Supabase migration SQL
-- RLS policy, DB function, trigger
-- 서버 API route
-- 서버 service/helper 코드
-- DB 타입 정의
-- 테스트 코드
-- seed 샘플처럼 실제 비밀값이 없는 로컬 개발용 데이터
-
-올리면 안 되는 코드:
-
-- `.env`, `.env.local`, `.env.example` 등 환경 변수 파일
-- Supabase service role key, DB password, access token, API key
-- 실제 사용자/고객/주문/전화번호/주소 데이터
-- 로컬 캐시, 빌드 산출물, 테스트 리포트
-- 개인 Codex 설정, 로컬 하네스 설정
-
-주의할 점:
-
-- 사용량 제한은 프론트 안내가 아니라 서버 검증을 최종 기준으로 둡니다.
-- `plan_id`처럼 과금/권한과 연결되는 값은 클라이언트가 직접 바꿀 수 없게 막습니다.
-- 주문 상태 변경은 기존 주문 처리 흐름이므로 무료 한도 초과 상태에서도 계속 허용합니다.
-- 월 주문 한도는 KST 기준 월 단위로 계산합니다.
-
-## 주요 명령
-
-루트에서 실행:
+루트는 npm workspace를 사용하며 실제 앱은 `front` workspace에 있습니다.
 
 ```bash
 npm install
-```
-
-프론트 workspace에서 실행:
-
-```bash
 npm run dev
 npm run typecheck
-npm run test
 npm run lint
+npm run test
 npm run build
 ```
 
-## 폴더 구조
+E2E는 실제 Chrome 브라우저 기준으로 실행합니다.
+
+```bash
+npm.cmd --workspace front run test:e2e -- --project=chrome
+```
+
+기본 E2E 주소는 `http://localhost:3001`입니다. 자세한 설정은 `front/playwright.config.ts`를 확인합니다.
+
+## 환경 변수
+
+로컬 실행은 `front/.env.local`을 기준으로 합니다.
+
+필수 값:
+
+```txt
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+테스트 계정 기본값:
+
+```txt
+E2E_SELLER_EMAIL=test@gmail.com
+E2E_SELLER_PASSWORD=Password1!
+```
+
+주의:
+
+- `SUPABASE_SERVICE_ROLE_KEY`는 서버 전용입니다.
+- service role key, DB password, access token은 커밋하지 않습니다.
+- `.env`, `.env.local`, `.env.*`, `.tmp/`, `.codex/`는 gitignore 대상입니다.
+
+## 주요 폴더
 
 ```txt
 front/
-  src/app                 Next.js App Router 페이지와 API route
-  src/features            기능별 폼, schema, UI 유틸
-  src/server              서버 전용 service/helper
-  src/shared              공용 타입, 컴포넌트, 상수
+  src/app        Next.js App Router pages and API routes
+  src/features   feature-level UI, hooks, schemas
+  src/server     server-only domain services
+  src/shared     shared UI, lib, types, constants
+  e2e            Playwright tests
 
 backend/
-  supabase/migrations     Supabase DB migration
-  supabase/seed.sql       로컬 개발용 seed
-  types                   DB 타입 및 백엔드 정책 타입
+  supabase/migrations  Supabase schema, RLS, RPC migrations
+  types                generated or maintained DB types
 
 docs/
-  plans                   작업 계획
-  decisions               결정 기록
+  plans       active/completed implementation plans
+  decisions   architectural decisions
 ```
 
-## 현재 남은 큰 작업
+## 핵심 도메인 규칙
 
-- 대시보드/설정 사용량 UI 연결
-- 상품 등록, 옵션/SKU 조합 저장 흐름
-- 주문 등록, 주문 상태 변경, 재고 차감/복구 트랜잭션
-- Supabase migration 실제 적용 검증
+- 주문 생성 시 상태는 `received`입니다.
+- `received` 상태에서는 실제 재고를 차감하지 않습니다.
+- `received` 주문 수량은 예약 수량으로 계산합니다.
+- 가용 재고는 `현재 재고 - 주문접수 예약 수량`입니다.
+- `received -> ready_to_ship` 전환 시 실제 재고를 차감합니다.
+- `ready_to_ship -> cancelled` 전환 시 재고 복구 여부를 사용자 선택에 따라 처리합니다.
+- 재고 변경은 `stock_movements`에 남깁니다.
+- 주문 상태 변경은 `order_status_logs`에 남깁니다.
+- 주문 수정 이력은 `order_change_logs`에 남깁니다.
+
+## API 응답 규칙
+
+화면에서 직접 호출하는 API는 JSON 응답 규칙을 따릅니다.
+
+```ts
+{
+  code: 200 | 400 | 401 | 403 | 404 | 409 | 429 | 500;
+  message: string;
+  data?: unknown;
+  fieldErrors?: Record<string, string[]>;
+}
+```
+
+프론트는 서버가 내려주는 `message`를 toast 또는 화면 상태 메시지로 표시합니다.
+
+## 작업 규칙
+
+작업 전 Notion 회의록과 Task를 확인합니다. 큰 작업은 `docs/plans/active`에 계획을 만들고, 완료 후 `docs/plans/completed`로 이동합니다.
+
+검증 후 커밋과 push를 진행합니다.
+
+커밋 메시지는 한글로 작성합니다.
+
+```txt
+feat : 주문 상태 변경 RPC 경로 추가
+fix : 랜딩 예시 옵션명 사용자 문구 개선
+chore : 개발 문서 정리
+```
+
+프론트와 백엔드 변경이 섞이면 가능한 한 커밋을 나눕니다.
