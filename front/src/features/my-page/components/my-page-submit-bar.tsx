@@ -28,7 +28,7 @@ export function MyPageSubmitBar({ formStatusLabel, isDirty, pending, stateStatus
         className="inline-flex min-h-10 w-auto items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
         disabled={pending || !isDirty}
       >
-        {pending ? "저장 중" : "변경사항 저장"}
+        {pending ? "저장 중" : "저장"}
       </button>
     </div>
   );

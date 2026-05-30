@@ -1,18 +1,16 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { SettingsStoreSection } from "@/features/settings/components/settings-store-section";
 import { SettingsSubmitBar } from "@/features/settings/components/settings-submit-bar";
 import { useSettingsForm } from "@/features/settings/hooks/use-settings-form";
 
 type SettingsFormProps = {
   businessType: string | null;
-  children: ReactNode;
   memo: string | null;
   storeName: string;
 };
 
-export function SettingsForm({ businessType, children, memo, storeName }: SettingsFormProps) {
+export function SettingsForm({ businessType, memo, storeName }: SettingsFormProps) {
   const { fieldErrors, handleChange, handleSubmit, isDirty, pending, state } = useSettingsForm({
     businessType,
     memo,
@@ -39,7 +37,6 @@ export function SettingsForm({ businessType, children, memo, storeName }: Settin
           {state.message}
         </p>
       ) : null}
-      {children}
       <SettingsSubmitBar isDirty={isDirty} pending={pending} />
     </form>
   );

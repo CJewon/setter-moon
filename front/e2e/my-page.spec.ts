@@ -8,12 +8,13 @@ test.describe("마이페이지", () => {
 
     await expect(page.getByRole("heading", { name: "마이페이지" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "계정 정보" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "무료 한도 사용량" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "플랜 설정" })).toBeVisible();
     await expect(page.getByText("현재 접속 계정")).toHaveCount(0);
     await expect(page.getByText("로그인 이메일")).toHaveCount(0);
     await expect(page.getByRole("heading", { name: "스토어 정보" })).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: "플랜 설정" })).toHaveCount(0);
 
-    const saveButton = page.getByRole("button", { name: "변경사항 저장" });
+    const saveButton = page.locator("#my-page-form").getByRole("button", { name: "저장" });
     await expect(saveButton).toBeDisabled();
     await expect(page.getByText("변경사항 없음")).toHaveCount(0);
 
@@ -51,22 +52,13 @@ test.describe("설정", () => {
 
     await expect(page.getByRole("heading", { name: "설정" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "스토어 정보" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "무료 한도 사용량" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "플랜 설정" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "무료 한도 사용량" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "플랜 설정" })).toHaveCount(0);
     await expect(page.getByText("최근 수정")).toHaveCount(0);
     await expect(page.getByText("변경사항 없음")).toHaveCount(0);
 
     const settingsSections = page.locator("#settings-form > section");
-    await expect(settingsSections).toHaveCount(3);
-    const storeSectionBox = await settingsSections.nth(0).boundingBox();
-    const usageSectionBox = await settingsSections.nth(1).boundingBox();
-
-    expect(storeSectionBox).not.toBeNull();
-    expect(usageSectionBox).not.toBeNull();
-
-    if (storeSectionBox && usageSectionBox) {
-      expect(usageSectionBox.y - (storeSectionBox.y + storeSectionBox.height)).toBeLessThanOrEqual(24);
-    }
+    await expect(settingsSections).toHaveCount(1);
 
     const saveButton = page.locator("#settings-form").getByRole("button", { name: "저장" });
     await expect(saveButton).toBeDisabled();

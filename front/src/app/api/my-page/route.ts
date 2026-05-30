@@ -6,9 +6,10 @@ import {
   getUserDisplayName,
   updateUserDisplayName
 } from "@/server/profiles/service";
-import { getAppAccess } from "@/server/auth/session";
+import { getAppAccess, getAppAccessPlanId } from "@/server/auth/session";
 import { parseJsonBody, requireApiUser } from "@/server/shared/api-route";
 import { errorResponse, successResponse, withApiErrorBoundary } from "@/server/shared/error-response";
+import { getStoreUsageSummary } from "@/server/usage/service";
 import { hasSupabasePublicEnv } from "@/shared/lib/env";
 import { createClient } from "@/shared/lib/supabase/server";
 
@@ -17,16 +18,29 @@ export const GET = withApiErrorBoundary(async () => {
     return errorResponse(500, "마이페이지 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
   }
 
+  const supabase = await createClient();
   const access = await getAppAccess();
 
   if (!access.isSupabaseConfigured || !access.user) {
     return errorResponse(401, "로그인이 필요합니다.");
   }
 
+  if (!access.store) {
+    return errorResponse(404, "스토어를 먼저 생성해 주세요.");
+  }
+
+  const usageSummary = await getStoreUsageSummary(supabase, access.store, getAppAccessPlanId(access));
+
   return successResponse(
     {
       displayName: getUserDisplayName(access.user, access.profile) ?? "",
-      email: access.user.email ?? access.profile?.email ?? ""
+      email: access.user.email ?? access.profile?.email ?? "",
+      plan: {
+        currentPeriodEnd: access.profile?.plan_current_period_end ?? null,
+        id: getAppAccessPlanId(access),
+        status: access.profile?.plan_status ?? null
+      },
+      usageSummary
     },
     {
       message: "마이페이지 정보를 불러왔습니다."
