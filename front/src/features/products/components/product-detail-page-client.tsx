@@ -84,6 +84,7 @@ export function ProductDetailPageClient({ productId }: ProductDetailPageClientPr
                   <th>예약 수량</th>
                   <th>가용 재고</th>
                   <th>안전 재고</th>
+                  <th>사용 여부</th>
                 </tr>
               </thead>
               <tbody>
@@ -97,6 +98,11 @@ export function ProductDetailPageClient({ productId }: ProductDetailPageClientPr
                     <td data-label="예약 수량">{formatNumber(variant.reservedQuantity)}개</td>
                     <td data-label="가용 재고">{formatNumber(variant.availableStock)}개</td>
                     <td data-label="안전 재고">{formatNumber(variant.safety_stock)}개</td>
+                    <td data-label="사용 여부">
+                      <StatusBadge tone={variant.is_active ? "success" : "neutral"}>
+                        {variant.is_active ? "사용 중" : "숨김"}
+                      </StatusBadge>
+                    </td>
                   </tr>
                 ))}
               </tbody>

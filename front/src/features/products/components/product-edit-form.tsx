@@ -10,11 +10,21 @@ import { productStatusLabel } from "@/shared/constants/status-labels";
 import { routes } from "@/shared/constants/routes";
 import { getApiErrorState } from "@/shared/api/http";
 import { useToast } from "@/shared/components/toast-provider";
+import { formatNumber } from "@/shared/lib/format";
 import { cn } from "@/shared/utils/cn";
 
 type ProductEditFormProps = {
-  product: ProductEditValues & {
+  product: Omit<ProductEditValues, "variants"> & {
     id: string;
+    variants: Array<{
+      availableStock: number;
+      current_stock: number;
+      id: string;
+      is_active: boolean;
+      reservedQuantity: number;
+      safety_stock: number;
+      sku_name: string;
+    }>;
   };
 };
 
@@ -44,7 +54,11 @@ export function ProductEditForm({ product }: ProductEditFormProps) {
       basePrice: formData.get("basePrice"),
       memo: formData.get("memo"),
       name: formData.get("name"),
-      status: formData.get("status")
+      status: formData.get("status"),
+      variants: product.variants.map((variant) => ({
+        id: variant.id,
+        isActive: formData.has(`variant-${variant.id}-isActive`)
+      }))
     });
 
     if (!parsed.success) {
@@ -158,6 +172,46 @@ export function ProductEditForm({ product }: ProductEditFormProps) {
           />
           {state.fieldErrors?.memo?.[0] ? <span className="text-xs text-red-700">{state.fieldErrors.memo[0]}</span> : null}
         </label>
+
+        <div className="mt-6 rounded-md border border-slate-200 bg-slate-50 p-4">
+          <div>
+            <h3 className="text-sm font-bold text-slate-950">옵션 조합 사용 여부</h3>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              옵션 조합은 삭제하지 않고 사용 여부만 바꿉니다. 사용하지 않는 옵션 조합은 새 주문 등록과 재고 목록에서 제외되고,
+              과거 주문과 재고 이력은 그대로 남습니다.
+            </p>
+          </div>
+          {state.fieldErrors?.variants?.[0] ? <p className="mt-3 text-xs font-medium text-red-700">{state.fieldErrors.variants[0]}</p> : null}
+          <div className="mt-4 grid gap-3">
+            {product.variants.map((variant) => (
+              <label
+                key={variant.id}
+                className="grid gap-3 rounded-md border border-slate-200 bg-white p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                htmlFor={`variant-${variant.id}-isActive`}
+              >
+                <span className="flex min-w-0 items-start gap-3">
+                  <input
+                    id={`variant-${variant.id}-isActive`}
+                    name={`variant-${variant.id}-isActive`}
+                    className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-200"
+                    defaultChecked={variant.is_active}
+                    type="checkbox"
+                  />
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-semibold text-slate-950">{variant.sku_name}</span>
+                    <span className="mt-1 block text-xs text-slate-500">
+                      현재 재고 {formatNumber(variant.current_stock)}개 · 예약 {formatNumber(variant.reservedQuantity)}개 · 가용{" "}
+                      {formatNumber(variant.availableStock)}개
+                    </span>
+                  </span>
+                </span>
+                <span className="inline-flex w-fit items-center rounded bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">
+                  {variant.is_active ? "현재 사용 중" : "숨김 상태"}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
       </section>
 
       <aside className="grid h-fit gap-4">

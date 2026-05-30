@@ -51,6 +51,8 @@ test.describe.serial("상품 수정", () => {
     await expect(page.getByLabel("상품명")).toHaveValue(fixture.productName);
     await expect(page.getByRole("link", { name: "상품 상세에서 옵션 확인" })).toBeVisible();
     await expect(page.getByRole("link", { name: "새 상품으로 등록" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "옵션 조합 사용 여부" })).toBeVisible();
+    await expect(page.getByText("옵션 조합은 삭제하지 않고 사용 여부만 바꿉니다.")).toBeVisible();
 
     const updatedName = `${fixture.productName} 완료`;
 
@@ -86,5 +88,43 @@ test.describe.serial("상품 수정", () => {
     await page.getByPlaceholder("상품명 검색").fill(updatedName);
     await page.getByRole("button", { name: "검색" }).click();
     await expect(page.getByRole("row").filter({ hasText: updatedName })).toBeVisible();
+  });
+
+  test("옵션 조합을 모두 숨기려면 상품도 숨김 상태여야 한다", async ({ page }) => {
+    const fixture = await createEditableE2EProduct();
+
+    if (!fixture) {
+      test.skip(true, "상품 수정 E2E에 사용할 테스트 상품을 준비하지 못했습니다.");
+      return;
+    }
+
+    await signInAndEnsureStore(page);
+    await page.goto(`/products/${fixture.productId}/edit`);
+
+    const variantToggle = page.locator('input[name$="-isActive"]').first();
+
+    await variantToggle.uncheck();
+    await page.getByRole("button", { name: "상품 정보 저장" }).click();
+    await expect(page.getByText("판매중 또는 품절 상품은 사용할 옵션 조합이 1개 이상 필요합니다.")).toBeVisible();
+
+    await page.locator("#product-status").selectOption("hidden");
+
+    const updateResponsePromise = page.waitForResponse((response) =>
+      response.url().includes("/api/products/") && response.request().method() === "PATCH"
+    );
+
+    await page.getByRole("button", { name: "상품 정보 저장" }).click();
+
+    const updateResponse = await updateResponsePromise;
+    const payload = (await updateResponse.json()) as {
+      code: number;
+      data?: { productId: string };
+      message: string;
+    };
+
+    expect(updateResponse.ok(), JSON.stringify(payload)).toBe(true);
+    expect(payload.code).toBe(200);
+    await expect(page).toHaveURL(new RegExp(`/products/${payload.data?.productId}`));
+    await expect(page.getByRole("row").filter({ hasText: "숨김" })).toBeVisible();
   });
 });

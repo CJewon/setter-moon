@@ -5,6 +5,7 @@ import {
   isProductMutationError,
   isProductNotFoundError,
   isProductSchemaMissingError,
+  isProductValidationError,
   updateProductBasicForStore
 } from "@/server/products/service";
 import { parseJsonBody } from "@/server/shared/api-route";
@@ -97,6 +98,10 @@ export const PATCH = withApiErrorBoundary(async (request: Request, { params }: P
 
     if (isProductNotFoundError(error)) {
       return errorResponse(404, "상품을 찾을 수 없습니다.");
+    }
+
+    if (isProductValidationError(error)) {
+      return errorResponse(400, error.message);
     }
 
     if (isProductSchemaMissingError(error)) {

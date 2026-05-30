@@ -27,4 +27,26 @@ describe("productEditSchema", () => {
 
     expect(parsed.success).toBe(false);
   });
+
+  it("rejects active products without a usable option combination", () => {
+    const parsed = productEditSchema.safeParse({
+      basePrice: "9900",
+      name: "테스트 상품",
+      status: "active",
+      variants: [{ id: "7e604de0-3b82-4174-a1ef-7c5a5ca9a681", isActive: false }]
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("allows hidden products to hide every option combination", () => {
+    const parsed = productEditSchema.safeParse({
+      basePrice: "9900",
+      name: "테스트 상품",
+      status: "hidden",
+      variants: [{ id: "7e604de0-3b82-4174-a1ef-7c5a5ca9a681", isActive: false }]
+    });
+
+    expect(parsed.success).toBe(true);
+  });
 });

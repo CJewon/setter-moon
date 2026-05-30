@@ -1,4 +1,4 @@
-import { ProductMutationError, ProductNotFoundError } from "@/server/products/errors";
+import { ProductMutationError, ProductNotFoundError, ProductValidationError } from "@/server/products/errors";
 import type { ProductEditValues } from "@/features/products/schemas/product-edit-schema";
 import type { ProductDetail, ProductListItem, ProductsSupabaseClient } from "@/server/products/types";
 import { getReservedQuantitiesForStore } from "@/server/orders/service";
@@ -144,6 +144,47 @@ export async function updateProductBasicForStore(
   productId: string,
   values: ProductEditValues
 ) {
+  const { data: existingProduct, error: existingProductError } = await supabase
+    .from("products")
+    .select("id, has_options")
+    .eq("store_id", storeId)
+    .eq("id", productId)
+    .maybeSingle();
+
+  if (existingProductError) {
+    throw new ProductMutationError(existingProductError);
+  }
+
+  if (!existingProduct) {
+    throw new ProductNotFoundError();
+  }
+
+  if (values.variants?.length) {
+    const { data: currentVariants, error: currentVariantError } = await supabase
+      .from("product_variants")
+      .select("id, is_active")
+      .eq("product_id", existingProduct.id);
+
+    if (currentVariantError) {
+      throw new ProductMutationError(currentVariantError);
+    }
+
+    const currentVariantById = new Map((currentVariants ?? []).map((variant) => [variant.id, variant]));
+    const requestedVariantIds = new Set(values.variants.map((variant) => variant.id));
+
+    if (requestedVariantIds.size !== values.variants.length) {
+      throw new ProductValidationError("옵션 조합 정보가 중복되었습니다.");
+    }
+
+    if (values.variants.some((variant) => !currentVariantById.has(variant.id))) {
+      throw new ProductValidationError("수정할 수 없는 옵션 조합이 포함되어 있습니다.");
+    }
+
+    if (values.status !== "hidden" && values.variants.every((variant) => !variant.isActive)) {
+      throw new ProductValidationError("판매중 또는 품절 상품은 사용할 옵션 조합이 1개 이상 필요합니다.");
+    }
+  }
+
   const { data: product, error: productError } = await supabase
     .from("products")
     .update({
@@ -163,6 +204,24 @@ export async function updateProductBasicForStore(
 
   if (!product) {
     throw new ProductNotFoundError();
+  }
+
+  if (values.variants?.length) {
+    const variantUpdates = values.variants.map((variant) =>
+      supabase
+        .from("product_variants")
+        .update({
+          is_active: variant.isActive
+        })
+        .eq("product_id", product.id)
+        .eq("id", variant.id)
+    );
+    const updateResults = await Promise.all(variantUpdates);
+    const variantError = updateResults.find((result) => result.error)?.error;
+
+    if (variantError) {
+      throw new ProductMutationError(variantError);
+    }
   }
 
   if (!product.has_options) {

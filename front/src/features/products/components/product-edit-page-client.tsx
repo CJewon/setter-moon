@@ -37,7 +37,8 @@ export function ProductEditPageClient({ productId }: ProductEditPageClientProps)
           id: product.id,
           memo: product.memo ?? undefined,
           name: product.name,
-          status: product.status
+          status: product.status,
+          variants: product.variants
         }}
       />
     </>
