@@ -1,0 +1,91 @@
+# Deployment Guide
+
+SellerRoom의 초기 배포는 Vercel Hobby/free 배포를 기준으로 준비합니다. 실제 유료 서비스로 운영하기 전에는 사용량, 보안, 과금 기준을 다시 확인합니다.
+
+## Vercel 프로젝트 설정
+
+권장 설정:
+
+```txt
+Framework Preset: Next.js
+Root Directory: front
+Install Command: npm install
+Build Command: npm run build
+Output Directory: 기본값 사용
+Node.js Version: 20.9 이상
+```
+
+## Vercel 환경 변수
+
+```txt
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
+SUPABASE_SERVICE_ROLE_KEY=<server-only-secret-key>
+NEXT_PUBLIC_APP_NAME=SellerRoom
+NEXT_PUBLIC_APP_URL=https://<vercel-production-domain>
+NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET=product-images
+```
+
+주의:
+
+- SUPABASE_SERVICE_ROLE_KEY는 Vercel 환경 변수에만 등록합니다.
+- 브라우저 코드, README, Notion 공개 문서에 secret 값을 쓰지 않습니다.
+- E2E_SELLER_EMAIL, E2E_SELLER_PASSWORD는 배포 환경 필수값이 아닙니다.
+- 배포 후 자동 smoke test를 Vercel URL로 실행할 때만 별도 CI/로컬 환경에 둡니다.
+
+## Supabase Auth 설정
+
+- Supabase Auth의 Site URL은 Vercel production URL로 설정합니다.
+- 이메일 인증, 비밀번호 재설정, OAuth를 실제로 사용할 때는 Supabase Redirect URLs에 production URL, preview URL, localhost URL을 추가합니다.
+- 배포 전 Supabase Security Advisor warning을 blocker, warning, 후순위로 분류합니다.
+
+## 배포 후 smoke test
+
+배포 후 아래 흐름을 확인합니다.
+
+```txt
+/api/health
+랜딩
+로그인
+대시보드
+상품 목록
+재고 목록
+주문 목록
+JSON API 응답 규칙
+```
+
+## GitHub Actions 수동 배포
+
+수동 배포는 .github/workflows/vercel-deploy.yml을 사용합니다.
+
+GitHub repository secrets:
+
+```txt
+VERCEL_TOKEN
+VERCEL_ORG_ID
+VERCEL_PROJECT_ID
+E2E_SELLER_EMAIL
+E2E_SELLER_PASSWORD
+```
+
+실행 방법:
+
+```txt
+GitHub > Actions > Vercel Manual Deploy > Run workflow
+```
+
+입력값:
+
+```txt
+target: preview | production
+run_smoke: 배포 후 deploy smoke E2E 실행 여부
+```
+
+운영 기준:
+
+- 현재는 main 브랜치만 배포합니다.
+- preview는 기능 확인, production은 실제 배포에 사용합니다.
+- 배포 전 GitHub Actions 안에서 typecheck, lint, test, Vercel build를 실행합니다.
+- 배포는 vercel build 후 vercel deploy --prebuilt 방식으로 진행합니다.
+- front/vercel.json에서 Vercel Git 자동 배포를 꺼두었으므로, push만으로는 배포되지 않습니다.
+- 나중에 develop, stage, main 브랜치를 분리하면 workflow 입력값에 배포 브랜치를 다시 추가합니다.

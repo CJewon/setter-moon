@@ -1,0 +1,119 @@
+# Development Guide
+
+이 문서는 SellerRoom 개발자가 확인해야 하는 기술 기준을 정리합니다. 서비스 소개와 사용자 관점 설명은 루트 README.md에서 관리합니다.
+
+## 현재 기술 범위
+
+- Next.js App Router, React, TypeScript 기반 프론트엔드
+- Next API Route 기반 JSON API
+- Supabase Auth, PostgreSQL, RLS, RPC 기반 데이터 처리
+- 상품, 옵션 조합, 재고, 주문, 배송 상태 관리
+- 대시보드, 마이페이지, 설정 화면
+
+## 주요 폴더
+
+```txt
+front/
+  src/app        Next.js App Router pages and API routes
+  src/features   feature-level UI, hooks, schemas
+  src/server     server-only domain services
+  src/shared     shared UI, lib, types, constants
+  e2e            Playwright tests
+
+backend/
+  supabase/migrations  Supabase schema, RLS, RPC migrations
+  types                generated or maintained DB types
+
+docs/
+  plans       active/completed implementation plans
+  decisions   architectural decisions
+```
+
+## 개발 환경
+
+루트는 npm workspace를 사용하며 실제 앱은 front workspace에 있습니다.
+
+```bash
+npm install
+npm run dev
+npm run typecheck
+npm run lint
+npm run test
+npm run build
+```
+
+E2E는 실제 Chrome 브라우저 기준으로 실행합니다.
+
+```bash
+npm.cmd --workspace front run test:e2e -- --project=chrome
+```
+
+기본 E2E 주소는 http://localhost:3001입니다. 자세한 설정은 front/playwright.config.ts를 확인합니다.
+
+## 환경 변수
+
+로컬 실행은 front/.env.local을 기준으로 합니다.
+
+필수 값:
+
+```txt
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+```
+
+테스트 계정 기본값:
+
+```txt
+E2E_SELLER_EMAIL=test@gmail.com
+E2E_SELLER_PASSWORD=Password1!
+```
+
+주의:
+
+- SUPABASE_SERVICE_ROLE_KEY는 서버 전용입니다.
+- service role key, DB password, access token은 커밋하지 않습니다.
+- .env, .env.local, .env.*, .tmp/, .codex/는 gitignore 대상입니다.
+
+## 핵심 도메인 규칙
+
+- 주문 생성 시 상태는 received입니다.
+- received 상태에서는 실제 재고를 차감하지 않습니다.
+- received 주문 수량은 예약 수량으로 계산합니다.
+- 가용 재고는 현재 재고 - 주문접수 예약 수량입니다.
+- received -> ready_to_ship 전환 시 실제 재고를 차감합니다.
+- ready_to_ship -> cancelled 전환 시 재고 복구 여부를 사용자 선택에 따라 처리합니다.
+- 재고 변경은 stock_movements에 남깁니다.
+- 주문 상태 변경은 order_status_logs에 남깁니다.
+- 주문 수정 이력은 order_change_logs에 남깁니다.
+
+## API 응답 규칙
+
+화면에서 직접 호출하는 API는 JSON 응답 규칙을 따릅니다.
+
+```ts
+{
+  code: 200 | 400 | 401 | 403 | 404 | 409 | 429 | 500;
+  message: string;
+  data?: unknown;
+  fieldErrors?: Record<string, string[]>;
+}
+```
+
+프론트는 서버가 내려주는 message를 toast 또는 화면 상태 메시지로 표시합니다.
+
+## 작업 규칙
+
+작업 전 Notion 회의록과 Task를 확인합니다. 큰 작업은 docs/plans/active에 계획을 만들고, 완료 후 docs/plans/completed로 이동합니다.
+
+검증 후 커밋과 push를 진행합니다.
+
+커밋 메시지는 한글로 작성합니다.
+
+```txt
+feat : 주문 상태 변경 RPC 경로 추가
+fix : 랜딩 예시 옵션명 사용자 문구 개선
+chore : 개발 문서 정리
+```
+
+프론트와 백엔드 변경이 섞이면 가능한 한 커밋을 나눕니다.
