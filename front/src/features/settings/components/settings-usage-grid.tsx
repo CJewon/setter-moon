@@ -22,7 +22,7 @@ const statusCopy: Record<UsageMetric["state"], { label: string; tone: "neutral" 
 
 export function SettingsUsageGrid({ metrics }: SettingsUsageGridProps) {
   return (
-    <section className="mb-5 rounded-md border border-slate-200 bg-white p-5">
+    <section className="rounded-md border border-slate-200 bg-white p-5">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-slate-950">무료 한도 사용량</h2>

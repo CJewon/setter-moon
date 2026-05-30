@@ -22,14 +22,13 @@ export function SettingsClient() {
   const isPlanHealthy = plan.status !== "past_due" && plan.status !== "cancelled";
 
   return (
-    <>
-      <SettingsForm businessType={store.business_type} memo={store.memo} storeName={store.name} />
+    <SettingsForm businessType={store.business_type} memo={store.memo} storeName={store.name}>
       <SettingsUsageGrid metrics={usageSummary.metrics} />
       <SettingsPlanPanel
         isPaidPlan={isPaidPlan}
         isPlanHealthy={isPlanHealthy}
         planCurrentPeriodEnd={plan.currentPeriodEnd}
       />
-    </>
+    </SettingsForm>
   );
 }
