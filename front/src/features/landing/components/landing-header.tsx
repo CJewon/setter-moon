@@ -11,16 +11,16 @@ export function LandingHeader() {
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
           <a href="#problem" className="text-slate-600 transition-colors hover:text-slate-950">
-            문제
+            이런 분께
           </a>
           <a href="#flow" className="text-slate-600 transition-colors hover:text-slate-950">
-            작동 방식
+            운영 흐름
           </a>
           <a href="#preview" className="text-slate-600 transition-colors hover:text-slate-950">
-            데모 화면
+            화면 미리보기
           </a>
           <a href="#plan" className="text-slate-600 transition-colors hover:text-slate-950">
-            요금제
+            가격 안내
           </a>
         </nav>
         <div className="flex items-center gap-2">

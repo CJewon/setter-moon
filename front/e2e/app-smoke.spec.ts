@@ -21,6 +21,14 @@ test.describe("현재 구현 화면 E2E", () => {
     await expect(page.getByRole("heading", { name: "주문과 재고를 한 화면에서 덜 헷갈리게" })).toBeVisible();
     await expect(page.locator("header").getByRole("link", { name: "로그인" })).toBeVisible();
     await expect(page.getByRole("link", { name: /무료로 시작/ }).first()).toBeVisible();
+    await expect(page.locator("header").getByRole("link", { name: "이런 분께" })).toHaveAttribute("href", "#problem");
+    await expect(page.locator("header").getByRole("link", { name: "운영 흐름" })).toHaveAttribute("href", "#flow");
+    await expect(page.locator("header").getByRole("link", { name: "화면 미리보기" })).toHaveAttribute("href", "#preview");
+    await expect(page.locator("header").getByRole("link", { name: "가격 안내" })).toHaveAttribute("href", "#plan");
+    await expect(page.getByText("문제")).toHaveCount(0);
+    await expect(page.getByText("작동 방식")).toHaveCount(0);
+    await expect(page.getByText("데모 화면")).toHaveCount(0);
+    await expect(page.getByText("요금제")).toHaveCount(0);
 
     await page.goto("/sign-in");
     await expect(page.getByRole("heading", { name: "로그인" })).toBeVisible();

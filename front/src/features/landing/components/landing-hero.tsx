@@ -9,7 +9,7 @@ export function HeroSection() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <p className="inline-flex min-h-9 items-center justify-center rounded-md border border-blue-100 bg-blue-50 px-3 text-sm font-bold text-blue-700">
-            초기 셀러를 위한 상품·재고·주문 운영 콘솔
+            초기 1인 셀러를 위한 주문·재고 운영 콘솔
           </p>
           <h1 className="mt-6 text-4xl font-bold tracking-normal text-slate-950 sm:text-6xl">
             주문과 재고를{" "}
@@ -38,14 +38,14 @@ export function HeroSection() {
               href={SIGN_UP_ROUTE}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
-              스토어 만들고 시작하기
+              무료로 운영 정리 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <a
               href="#preview"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
             >
-              데모 콘솔 보기
+              실제 화면 미리보기
             </a>
           </div>
         </div>
@@ -65,7 +65,7 @@ function HeroConsolePreview() {
             <span className="h-3 w-3 rounded-full bg-slate-400" />
             <span className="h-3 w-3 rounded-full bg-blue-500" />
           </div>
-          <span className="text-xs font-semibold text-slate-500">예시 운영 화면</span>
+          <span className="text-xs font-semibold text-slate-500">SellerRoom 화면 미리보기</span>
         </div>
         <div className="grid gap-4 p-4 md:grid-cols-[184px_1fr] md:p-5">
           <aside className="hidden rounded-md border border-slate-200 bg-slate-50 p-4 md:block">
@@ -78,16 +78,24 @@ function HeroConsolePreview() {
             </div>
           </aside>
           <div className="min-w-0">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-lg font-bold text-slate-950">대시보드</p>
+                <p className="mt-1 text-xs font-medium text-slate-500">오늘 주문, 판매금액, 재고 부족 흐름을 확인합니다.</p>
+              </div>
+              <span className="w-fit rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">화면 예시</span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <PreviewStat label="오늘 주문" value="12건" tone="neutral" />
-              <PreviewStat label="재고 부족" value="3개" tone="blue" />
+              <PreviewStat label="주문접수" value="7건" tone="blue" />
               <PreviewStat label="배송대기" value="5건" tone="dark" />
+              <PreviewStat label="부족 재고" value="3개" tone="neutral" />
             </div>
             <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_220px]">
               <div className="rounded-md border border-slate-200 bg-white">
                 <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
                   <p className="text-sm font-bold text-slate-900">최근 주문</p>
-                  <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">데모</span>
+                  <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">미리보기</span>
                 </div>
                 <div className="hidden md:block">
                   {demoOrders.map((order) => (
@@ -117,7 +125,7 @@ function HeroConsolePreview() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                 <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-bold text-slate-900">부족 옵션</p>
+                  <p className="text-sm font-bold text-slate-900">오늘 봐야 할 재고</p>
                   <div className="mt-4 space-y-3">
                     {lowStockPreview.map((item) => (
                       <div key={item.optionLabel} className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2">
@@ -128,7 +136,7 @@ function HeroConsolePreview() {
                   </div>
                 </div>
                 <div className="rounded-md border border-blue-100 bg-blue-50 p-4">
-                  <p className="text-sm font-bold text-blue-900">상태 변경 영향</p>
+                  <p className="text-sm font-bold text-blue-900">주문 상태 변경</p>
                   <p className="mt-3 text-xs leading-5 text-blue-700">
                     주문접수에서 배송대기로 바뀌면 예약 수량은 줄고 실제 재고가 차감됩니다.
                   </p>

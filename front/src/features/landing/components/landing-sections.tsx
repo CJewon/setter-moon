@@ -20,9 +20,9 @@ export function TrustPrinciplesSection() {
     <section className="border-b border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-blue-700">무료 플랜의 신뢰 방식</p>
+          <p className="text-sm font-bold text-blue-700">시작 전 확인할 기준</p>
           <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
-            한도와 운영 원칙을 먼저 투명하게 보여줍니다.
+            무료로 시작해도 어떤 일이 가능한지 먼저 보여드립니다.
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
             셀러룸은 무료로 시작해도 스토어와 배송 상태 흐름을 동일하게 제공하고, 사용량 한도를 명확하게 공개합니다.
@@ -47,12 +47,12 @@ export function MetricsSection() {
     <section id="preview" className="border-b border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-blue-700">예시 데이터 기준</p>
+          <p className="text-sm font-bold text-blue-700">화면 미리보기</p>
           <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
             오늘 처리할 주문과 재고를 먼저 봅니다.
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            숫자는 실제 이용자 데이터가 아니라 화면 이해를 돕기 위한 데모 값입니다.
+            숫자는 실제 이용자 데이터가 아니라 화면 이해를 돕기 위한 예시 값입니다.
           </p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -70,9 +70,9 @@ export function BeforeAfterSection() {
     <section className="bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-bold text-blue-700">운영 방식 비교</p>
+          <p className="text-sm font-bold text-blue-700">정리 전과 후</p>
           <h2 className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl">
-            엑셀과 메모장 사이에서 흩어지는 일을 한곳에 모읍니다.
+            엑셀과 메모장 사이의 반복 작업을 하나의 운영 흐름으로 줄입니다.
           </h2>
         </div>
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
@@ -109,9 +109,9 @@ export function ProblemSection() {
     <section className="border-y border-slate-200 bg-slate-50" id="problem">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="혹시 이런 경험 있으시죠?"
-          title="초기 셀러가 매일 겪는 주문·재고 혼선을 줄입니다."
-          description="위노트가 상담자의 반복 업무를 질문으로 꺼내 보여주듯, 셀러룸도 실제 운영자가 자주 부딪히는 장면부터 해결합니다."
+          eyebrow="이런 분께 필요해요"
+          title="주문과 재고를 혼자 챙기는 셀러의 반복 고민을 줄입니다."
+          description="여러 판매 채널에서 들어온 주문을 직접 정리하고, 옵션별 재고까지 함께 봐야 하는 초기 운영자에게 맞춰 설계했습니다."
           centered
         />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -133,9 +133,9 @@ export function FeatureSection() {
     <section className="bg-white" id="features">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="핵심 기능"
-          title="상품 등록부터 배송 상태까지 한 흐름으로 봅니다."
-          description="초기 버전은 상품, 옵션별 재고, 주문 상태, 대시보드에 집중합니다."
+          eyebrow="제공 기능"
+          title="상품 등록부터 배송 상태까지 한 흐름으로 이어집니다."
+          description="처음부터 복잡한 ERP를 만들기보다, 1인 셀러가 매일 확인해야 하는 상품, 재고, 주문 상태에 집중합니다."
           centered
         />
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -154,9 +154,9 @@ export function WorkflowSection() {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
         <div>
           <SectionHeading
-            eyebrow="작동 방식"
-            title="주문과 재고가 만나는 순간을 분리해서 보여줍니다."
-            description="주문접수와 배송대기의 재고 영향을 다르게 잡아, 언제 예약이고 언제 실제 차감인지 더 분명하게 확인합니다."
+            eyebrow="운영 흐름"
+            title="주문이 들어온 순간부터 재고가 줄어드는 순간까지 분리해서 봅니다."
+            description="주문접수는 예약 수량으로 보고, 배송 준비가 시작될 때 실제 재고가 차감되도록 흐름을 나눕니다."
           />
           <ol className="mt-8 space-y-3">
             {workflowSteps.map((step, index) => (
@@ -183,7 +183,7 @@ export function TargetUsersSection() {
     <section className="border-y border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
-          eyebrow="추천 대상"
+          eyebrow="추천 사용자"
           title="아직 큰 ERP보다 매일 쓰는 정리 도구가 필요한 셀러에게 맞습니다."
           description="거대한 백오피스보다 오늘 들어온 주문과 남은 재고를 정확히 보고 싶은 단계에 집중합니다."
           centered
@@ -210,8 +210,8 @@ export function FaqSection() {
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="자주 묻는 질문"
-          title="지금 바로 쓸 수 있는 범위와 이후 확장할 범위를 정리했습니다."
-          description="처음 쓰는 셀러도 헷갈리지 않도록 현재 운영 범위와 나중에 붙일 기능을 나눠 안내합니다."
+          title="지금 바로 쓸 수 있는 범위와 나중에 확장할 범위를 나눠 안내합니다."
+          description="자동 연동이나 결제처럼 무거운 기능보다, 지금 당장 주문과 재고를 정리하는 데 필요한 범위부터 제공합니다."
           centered
         />
         <div className="mt-8 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
@@ -231,7 +231,7 @@ export function FinalCta() {
   return (
     <section className="bg-blue-600" id="start">
       <div className="mx-auto max-w-7xl px-4 py-14 text-white sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold text-blue-100">시작하기</p>
+        <p className="text-sm font-semibold text-blue-100">무료로 시작하기</p>
         <h2 className="mt-3 max-w-3xl text-3xl font-bold tracking-normal sm:text-4xl">
           오늘 들어온 주문부터 SellerRoom으로 정리해보세요.
         </h2>
