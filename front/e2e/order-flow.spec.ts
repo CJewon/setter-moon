@@ -152,7 +152,7 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     });
     await expect(page.getByText(updatePayload.message).first()).toBeVisible();
     await expect(page).toHaveURL(new RegExp(`/orders/${createPayload.data?.orderId}`));
-    await expect(page.getByText(editedCustomerName)).toBeVisible();
+    await expect(page.getByText(editedCustomerName).first()).toBeVisible();
     await expect(page.getByText("2개").first()).toBeVisible();
     await expect(page.getByText("₩42,000").first()).toBeVisible();
     const changeHistory = page.getByLabel("주문 수정 이력");
@@ -164,10 +164,10 @@ test.describe.serial("주문 등록과 상태 변경", () => {
         type: "warning"
       });
     } else {
-      await expect(changeHistory.getByText("수량")).toBeVisible();
-      await expect(changeHistory.getByText("1개")).toBeVisible();
-      await expect(changeHistory.getByText("2개")).toBeVisible();
-      await expect(changeHistory.getByText("고객명")).toBeVisible();
+      await expect(changeHistory.getByText("수량", { exact: true })).toBeVisible();
+      await expect(changeHistory.getByText("1개", { exact: true })).toBeVisible();
+      await expect(changeHistory.getByText("2개", { exact: true })).toBeVisible();
+      await expect(changeHistory.getByText("고객명", { exact: true })).toBeVisible();
       await expect(changeHistory.getByText(editedCustomerName)).toBeVisible();
     }
 
