@@ -82,6 +82,8 @@ VERCEL_PROJECT_ID
 - VERCEL_TOKEN은 Vercel Account Settings > Tokens에서 발급한 값을 GitHub repository secret으로 등록합니다.
 - VERCEL_ORG_ID와 VERCEL_PROJECT_ID는 Vercel 프로젝트 연결 정보에서 확인한 값을 GitHub repository variable로 등록합니다.
 - GitHub 등록 위치는 GitHub repository > Settings > Secrets and variables > Actions 입니다.
+- 로컬에서 `npx.cmd vercel@latest link --cwd front`를 실행하면 현재 Vercel CLI 기준으로 `.vercel/repo.json`이 생성됩니다.
+- `.vercel/repo.json`의 `projects[0].orgId`를 VERCEL_ORG_ID로, `projects[0].id`를 VERCEL_PROJECT_ID로 등록합니다.
 
 실행 방법:
 
