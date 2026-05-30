@@ -11,7 +11,7 @@ type SettingsFormProps = {
 };
 
 export function SettingsForm({ businessType, memo, storeName }: SettingsFormProps) {
-  const { fieldErrors, formStatusLabel, handleChange, handleSubmit, isDirty, pending, state } = useSettingsForm({
+  const { fieldErrors, handleChange, handleSubmit, isDirty, pending, state } = useSettingsForm({
     businessType,
     memo,
     storeName
@@ -20,7 +20,7 @@ export function SettingsForm({ businessType, memo, storeName }: SettingsFormProp
   return (
     <form
       id="settings-form"
-      className="mb-5 grid gap-4"
+      className="mb-5 grid gap-4 pb-24 sm:pb-28"
       onChange={handleChange}
       onInput={handleChange}
       onSubmit={handleSubmit}
@@ -37,7 +37,7 @@ export function SettingsForm({ businessType, memo, storeName }: SettingsFormProp
           {state.message}
         </p>
       ) : null}
-      <SettingsSubmitBar formStatusLabel={formStatusLabel} isDirty={isDirty} pending={pending} stateStatus={state.status} />
+      <SettingsSubmitBar isDirty={isDirty} pending={pending} />
     </form>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { SettingsForm } from "@/features/settings/components/settings-form";
-import { SettingsOverview } from "@/features/settings/components/settings-overview";
 import { SettingsPlanPanel } from "@/features/settings/components/settings-plan-panel";
 import { SettingsUsageGrid } from "@/features/settings/components/settings-usage-grid";
 import { useSettingsQuery } from "@/features/settings/hooks/use-settings-query";
@@ -24,7 +23,6 @@ export function SettingsClient() {
 
   return (
     <>
-      <SettingsOverview businessType={store.business_type} storeName={store.name} updatedAt={store.updated_at} />
       <SettingsForm businessType={store.business_type} memo={store.memo} storeName={store.name} />
       <SettingsUsageGrid metrics={usageSummary.metrics} />
       <SettingsPlanPanel

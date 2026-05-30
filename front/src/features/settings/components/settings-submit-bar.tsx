@@ -1,30 +1,17 @@
-import { cn } from "@/shared/utils/cn";
-
 type SettingsSubmitBarProps = {
-  formStatusLabel: string;
   isDirty: boolean;
   pending: boolean;
-  stateStatus: "idle" | "success" | "error";
 };
 
-export function SettingsSubmitBar({ formStatusLabel, isDirty, pending, stateStatus }: SettingsSubmitBarProps) {
+export function SettingsSubmitBar({ isDirty, pending }: SettingsSubmitBarProps) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-      <p
-        className={cn(
-          "text-sm font-medium",
-          pending ? "text-blue-700" : isDirty ? "text-amber-700" : stateStatus === "success" ? "text-emerald-700" : "text-slate-500"
-        )}
-        aria-live="polite"
-      >
-        {formStatusLabel}
-      </p>
+    <div className="fixed bottom-5 right-4 z-30 sm:bottom-6">
       <button
         type="submit"
-        className="inline-flex min-h-10 w-full items-center justify-center rounded-md bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto"
+        className="inline-flex min-h-11 min-w-24 items-center justify-center rounded-md bg-blue-600 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none"
         disabled={pending || !isDirty}
       >
-        {pending ? "저장 중" : "변경사항 저장"}
+        {pending ? "저장 중" : "저장"}
       </button>
     </div>
   );

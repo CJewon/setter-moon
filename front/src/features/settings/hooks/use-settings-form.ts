@@ -116,7 +116,6 @@ export function useSettingsForm(props: UseSettingsFormProps) {
 
   return {
     fieldErrors: state.fieldErrors,
-    formStatusLabel: mutation.isPending ? "저장 중" : isDirty ? "변경사항 있음" : state.status === "success" ? "저장 완료" : "변경사항 없음",
     handleChange,
     handleSubmit,
     isDirty,
