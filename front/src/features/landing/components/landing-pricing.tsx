@@ -43,17 +43,13 @@ function PricingCard({ plan }: { plan: PricingPlan }) {
   const articleClassName = isPaid
     ? "relative rounded-md border border-blue-500 bg-blue-50 p-6 shadow-[0_18px_40px_rgba(37,99,235,0.12)]"
     : "relative rounded-md border border-blue-100 bg-white p-6";
-  const badgeClassName = isPaid
-    ? "inline-flex rounded-md bg-blue-600 px-2.5 py-1 text-xs font-bold text-white"
-    : "inline-flex rounded-md bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-700";
   const ctaClassName = isPaid
     ? "mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
     : "mt-6 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50";
 
   return (
     <article className={articleClassName}>
-      <span className={badgeClassName}>{plan.badge}</span>
-      <h3 className="mt-5 text-2xl font-bold text-slate-950">{plan.name}</h3>
+      <h3 className="text-2xl font-bold text-slate-950">{plan.name}</h3>
       <p className="mt-2 min-h-12 text-sm leading-6 text-slate-600">{plan.description}</p>
       <div className="mt-5 border-y border-slate-200 py-5">
         <p className="text-4xl font-bold text-slate-950">{plan.price}</p>
