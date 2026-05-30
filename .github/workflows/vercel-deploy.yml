@@ -102,6 +102,14 @@ jobs:
       - name: Build with Vercel
         run: vercel build ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN"
 
+      - name: Validate prebuilt function config
+        shell: bash
+        run: |
+          if ! find .vercel/output/functions -name .vc-config.json -print -quit | grep -q .; then
+            echo "::error title=Missing Vercel Function Config::No .vc-config.json files were found in .vercel/output/functions."
+            exit 1
+          fi
+
       - name: Upload prebuilt output
         uses: actions/upload-artifact@v4
         with:
@@ -110,6 +118,7 @@ jobs:
             .vercel/output
             .vercel/project.json
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 1
 
   deploy:
@@ -162,6 +171,14 @@ jobs:
         with:
           name: vercel-prebuilt-${{ inputs.target }}
           path: .vercel
+
+      - name: Validate downloaded function config
+        shell: bash
+        run: |
+          if ! find .vercel/output/functions -name .vc-config.json -print -quit | grep -q .; then
+            echo "::error title=Missing Vercel Function Config::The downloaded prebuilt artifact does not contain .vc-config.json files."
+            exit 1
+          fi
 
       - name: Deploy prebuilt output
         id: deploy
