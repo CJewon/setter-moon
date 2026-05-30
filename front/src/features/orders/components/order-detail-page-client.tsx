@@ -2,6 +2,7 @@
 
 import { OrderStatusActions } from "@/features/orders/components/order-status-actions";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
+import { OrderChangeHistory } from "@/features/orders/components/order-change-history";
 import { useOrderQuery } from "@/features/orders/hooks/use-order-queries";
 import { PageActionBar } from "@/shared/components/page-action-bar";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
@@ -94,6 +95,8 @@ export function OrderDetailPageClient({ orderId }: OrderDetailPageClientProps) {
               </table>
             </div>
           </div>
+
+          <OrderChangeHistory logs={order.changeLogs} />
 
           <div className="rounded-md border border-slate-200 bg-white p-4 sm:p-5">
             <h2 className="text-base font-semibold text-slate-950">상태 변경 이력</h2>

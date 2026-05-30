@@ -85,7 +85,7 @@ export const PATCH = withApiErrorBoundary(async (request: Request, { params }: O
   }
 
   try {
-    const result = await updateOrderBasicForStore(supabase, access.store.id, orderId, parsed.data);
+    const result = await updateOrderBasicForStore(supabase, access.store.id, orderId, parsed.data, access.user.id);
 
     revalidatePath("/orders");
     revalidatePath(`/orders/${orderId}`);

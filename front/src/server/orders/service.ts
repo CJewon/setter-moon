@@ -16,6 +16,9 @@ import { getAvailableStock, getStockDeductionPlan, getStockRestorePlan } from "@
 import { getPaginationRange, getTotalPages } from "@/server/shared/pagination";
 import type {
   HoldReservationPolicy,
+  OrderChangeEntry,
+  OrderChangeLog,
+  OrderChangeLogRow,
   OrderDetail,
   OrderListItem,
   OrderProductChoice,
@@ -27,6 +30,7 @@ import type {
 import type { Store } from "@/server/stores/service";
 import { getStoreUsageCounts } from "@/server/usage/service";
 import { PLAN_IDS, type PlanId } from "@/server/usage/usage-policy";
+import type { Json } from "@/shared/types/database";
 import type { PaginatedResult, PaginationParams } from "@/shared/types/pagination";
 
 export {
@@ -100,6 +104,146 @@ function getOrderedAt(value?: string) {
   const date = new Date(value);
 
   return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+}
+
+function getNextOrderedAt(value: string | undefined, fallback: string) {
+  return value ? getOrderedAt(value) : fallback;
+}
+
+function getNullableText(value: string | null | undefined) {
+  const trimmed = value?.trim();
+
+  return trimmed ? trimmed : null;
+}
+
+function formatPhoneForLog(value: string | null | undefined) {
+  const text = getNullableText(value);
+
+  if (!text) {
+    return null;
+  }
+
+  const digits = text.replace(/\D/g, "");
+
+  if (digits.length >= 8) {
+    return `${digits.slice(0, 3)}-****-${digits.slice(-4)}`;
+  }
+
+  return text;
+}
+
+function formatDateForLog(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat("ko-KR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Seoul"
+  }).format(date);
+}
+
+function formatWonForLog(value: number | null | undefined) {
+  if (typeof value !== "number") {
+    return null;
+  }
+
+  return new Intl.NumberFormat("ko-KR", {
+    currency: "KRW",
+    maximumFractionDigits: 0,
+    style: "currency"
+  }).format(value);
+}
+
+function formatQuantityForLog(value: number | null | undefined) {
+  if (typeof value !== "number") {
+    return null;
+  }
+
+  return `${value.toLocaleString("ko-KR")}개`;
+}
+
+function addMemoOrderChange(changes: OrderChangeEntry[], before: string | null | undefined, after: string | null | undefined) {
+  if (getNullableText(before) === getNullableText(after)) {
+    return;
+  }
+
+  changes.push({
+    after: getNullableText(after) ? "새 메모 있음" : null,
+    before: getNullableText(before) ? "기존 메모 있음" : null,
+    field: "memo",
+    label: "메모"
+  });
+}
+
+function addOrderChange(
+  changes: OrderChangeEntry[],
+  field: OrderChangeEntry["field"],
+  label: string,
+  before: string | null,
+  after: string | null
+) {
+  if (before !== after) {
+    changes.push({
+      after,
+      before,
+      field,
+      label
+    });
+  }
+}
+
+function isOrderChangeEntry(value: unknown): value is OrderChangeEntry {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const entry = value as Partial<OrderChangeEntry>;
+
+  return typeof entry.field === "string" && typeof entry.label === "string";
+}
+
+function toOrderChangeLog(log: OrderChangeLogRow): OrderChangeLog {
+  return {
+    ...log,
+    changes: Array.isArray(log.changes) ? log.changes.filter(isOrderChangeEntry) : []
+  };
+}
+
+async function insertOrderChangeLog(
+  supabase: OrdersSupabaseClient,
+  orderId: string,
+  actorId: string | null,
+  changes: OrderChangeEntry[]
+) {
+  if (changes.length === 0) {
+    return;
+  }
+
+  const { error } = await supabase.from("order_change_logs").insert({
+    changed_by: actorId,
+    changes: changes as unknown as Json,
+    order_id: orderId,
+    summary: `${changes.map((change) => change.label).join(", ")} 변경`
+  });
+
+  if (!error) {
+    return;
+  }
+
+  if (isSchemaMissingError(error)) {
+    console.warn("order_change_logs table is missing. Skipping order change log insert.");
+    return;
+  }
+
+  throw new OrderMutationError(error);
 }
 
 function getDateBoundary(value: string | undefined, edge: "end" | "start") {
@@ -547,9 +691,14 @@ export async function getOrderDetailForStore(
     throw new OrderNotFoundError();
   }
 
-  const [{ data: items, error: itemsError }, { data: statusLogs, error: logsError }] = await Promise.all([
+  const [
+    { data: items, error: itemsError },
+    { data: statusLogs, error: logsError },
+    { data: changeLogs, error: changeLogsError }
+  ] = await Promise.all([
     supabase.from("order_items").select("*").eq("order_id", order.id).order("created_at", { ascending: true }),
-    supabase.from("order_status_logs").select("*").eq("order_id", order.id).order("created_at", { ascending: true })
+    supabase.from("order_status_logs").select("*").eq("order_id", order.id).order("created_at", { ascending: true }),
+    supabase.from("order_change_logs").select("*").eq("order_id", order.id).order("created_at", { ascending: false })
   ]);
 
   if (itemsError) {
@@ -560,8 +709,13 @@ export async function getOrderDetailForStore(
     throw new OrderMutationError(logsError);
   }
 
+  if (changeLogsError && !isSchemaMissingError(changeLogsError)) {
+    throw new OrderMutationError(changeLogsError);
+  }
+
   return {
     ...order,
+    changeLogs: (changeLogs ?? []).map((log) => toOrderChangeLog(log as OrderChangeLogRow)),
     items: items ?? [],
     statusLogs: statusLogs ?? []
   };
@@ -716,10 +870,16 @@ export async function updateOrderBasicForStore(
   supabase: OrdersSupabaseClient,
   storeId: string,
   orderId: string,
-  values: OrderEditValues
+  values: OrderEditValues,
+  actorId: string | null = null
 ) {
   const order = await getOrderDetailForStore(supabase, storeId, orderId);
   const nextItem = values.items?.[0];
+  const changes: OrderChangeEntry[] = [];
+  const nextCustomerName = values.customerName.trim();
+  const nextCustomerPhone = getNullableText(values.customerPhone);
+  const nextMemo = getNullableText(values.memo);
+  const nextOrderedAt = getNextOrderedAt(values.orderedAt, order.ordered_at);
 
   if (!["received", "hold"].includes(order.status)) {
     throw new InvalidOrderStatusTransitionError("주문접수 또는 보류 상태에서만 주문 정보를 수정할 수 있습니다.");
@@ -751,6 +911,13 @@ export async function updateOrderBasicForStore(
     }
 
     nextTotalAmount = nextItem.quantity * nextItem.unitPrice;
+    const currentItem = order.items[0];
+
+    addOrderChange(changes, "product", "상품", currentItem.product_name_snapshot, product.name);
+    addOrderChange(changes, "variant", "옵션 조합", currentItem.variant_name_snapshot, variant.sku_name);
+    addOrderChange(changes, "quantity", "수량", formatQuantityForLog(currentItem.quantity), formatQuantityForLog(nextItem.quantity));
+    addOrderChange(changes, "unitPrice", "판매가", formatWonForLog(currentItem.unit_price), formatWonForLog(nextItem.unitPrice));
+    addOrderChange(changes, "totalAmount", "주문금액", formatWonForLog(order.total_amount), formatWonForLog(nextTotalAmount));
 
     const { data: updatedItem, error: itemUpdateError } = await supabase
       .from("order_items")
@@ -777,13 +944,18 @@ export async function updateOrderBasicForStore(
     }
   }
 
+  addOrderChange(changes, "customerName", "고객명", order.customer_name, nextCustomerName);
+  addOrderChange(changes, "customerPhone", "연락처", formatPhoneForLog(order.customer_phone), formatPhoneForLog(nextCustomerPhone));
+  addOrderChange(changes, "orderedAt", "주문일", formatDateForLog(order.ordered_at), formatDateForLog(nextOrderedAt));
+  addMemoOrderChange(changes, order.memo, nextMemo);
+
   const { data: updatedOrder, error: updateError } = await supabase
     .from("orders")
     .update({
-      customer_name: values.customerName.trim(),
-      customer_phone: values.customerPhone?.trim() || null,
-      memo: values.memo?.trim() || null,
-      ordered_at: getOrderedAt(values.orderedAt),
+      customer_name: nextCustomerName,
+      customer_phone: nextCustomerPhone,
+      memo: nextMemo,
+      ordered_at: nextOrderedAt,
       total_amount: nextTotalAmount,
       updated_at: new Date().toISOString()
     })
@@ -799,6 +971,8 @@ export async function updateOrderBasicForStore(
   if (!updatedOrder) {
     throw new OrderNotFoundError();
   }
+
+  await insertOrderChangeLog(supabase, order.id, actorId, changes);
 
   return {
     orderId: updatedOrder.id,

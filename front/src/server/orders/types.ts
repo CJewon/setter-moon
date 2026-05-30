@@ -6,10 +6,31 @@ export type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
 export type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
 export type OrderItemRow = Database["public"]["Tables"]["order_items"]["Row"];
 export type OrderStatusLogRow = Database["public"]["Tables"]["order_status_logs"]["Row"];
+export type OrderChangeLogRow = Database["public"]["Tables"]["order_change_logs"]["Row"];
 export type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 export type ProductVariantRow = Database["public"]["Tables"]["product_variants"]["Row"];
 export type OrderStatus = Database["public"]["Enums"]["order_status"];
 export type HoldReservationPolicy = Database["public"]["Enums"]["hold_reservation_policy"];
+
+export type OrderChangeEntry = {
+  after: string | null;
+  before: string | null;
+  field:
+    | "customerName"
+    | "customerPhone"
+    | "memo"
+    | "orderedAt"
+    | "product"
+    | "quantity"
+    | "totalAmount"
+    | "unitPrice"
+    | "variant";
+  label: string;
+};
+
+export type OrderChangeLog = Omit<OrderChangeLogRow, "changes"> & {
+  changes: OrderChangeEntry[];
+};
 
 export type OrderVariantChoice = {
   availableStock: number;
@@ -38,6 +59,7 @@ export type OrderListItem = Pick<
 };
 
 export type OrderDetail = OrderRow & {
+  changeLogs: OrderChangeLog[];
   items: OrderItemRow[];
   statusLogs: OrderStatusLogRow[];
 };

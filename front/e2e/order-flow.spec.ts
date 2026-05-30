@@ -155,6 +155,21 @@ test.describe.serial("주문 등록과 상태 변경", () => {
     await expect(page.getByText(editedCustomerName)).toBeVisible();
     await expect(page.getByText("2개").first()).toBeVisible();
     await expect(page.getByText("₩42,000").first()).toBeVisible();
+    const changeHistory = page.getByLabel("주문 수정 이력");
+
+    await expect(changeHistory).toBeVisible();
+    if (await changeHistory.getByText("아직 주문 수정 이력이 없습니다.").isVisible()) {
+      test.info().annotations.push({
+        description: "원격 Supabase DB에 order_change_logs migration이 적용되면 수정 이력 세부 검증이 활성화됩니다.",
+        type: "warning"
+      });
+    } else {
+      await expect(changeHistory.getByText("수량")).toBeVisible();
+      await expect(changeHistory.getByText("1개")).toBeVisible();
+      await expect(changeHistory.getByText("2개")).toBeVisible();
+      await expect(changeHistory.getByText("고객명")).toBeVisible();
+      await expect(changeHistory.getByText(editedCustomerName)).toBeVisible();
+    }
 
     await page.getByRole("link", { name: "주문 목록으로" }).click();
     await expect(page).toHaveURL(/\/orders$/);
