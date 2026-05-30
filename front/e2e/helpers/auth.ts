@@ -6,7 +6,8 @@ const sharedTestAccount = getSharedTestAccount();
 export async function signInAndEnsureStore(page: Page) {
   await page.goto("/sign-in");
   await page.waitForLoadState("networkidle");
-  await page.getByLabel("이메일").fill(sharedTestAccount.email);
+  await expect(page.getByRole("heading", { name: "로그인" })).toBeVisible();
+  await page.locator('input[name="email"]').fill(sharedTestAccount.email);
   await page.locator('input[name="password"]').fill(sharedTestAccount.password);
   await expect(page.getByRole("button", { name: "로그인" })).toBeEnabled();
 

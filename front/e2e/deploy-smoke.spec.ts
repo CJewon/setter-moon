@@ -17,6 +17,8 @@ test.describe("deploy smoke", () => {
   test("checks landing, auth, core pages, JSON APIs, and sign-out", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("main")).toBeVisible();
+    await expect(page.getByRole("link", { name: "SellerRoom" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /주문과 재고를/ })).toBeVisible();
     await expect(page.locator("body")).not.toContainText("404: This page could not be found.");
 
     await signInAndEnsureStore(page);

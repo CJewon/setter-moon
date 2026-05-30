@@ -73,6 +73,7 @@ GitHub repository secrets:
 VERCEL_TOKEN
 E2E_SELLER_EMAIL
 E2E_SELLER_PASSWORD
+VERCEL_AUTOMATION_BYPASS_SECRET
 ```
 
 GitHub repository variables:
@@ -86,6 +87,7 @@ VERCEL_PROJECT_ID
 
 - Vercel 프로젝트의 Environment Variables와 GitHub repository secrets는 서로 다른 설정입니다.
 - GitHub Actions에서 Vercel CLI를 실행하려면 GitHub repository secrets에 VERCEL_TOKEN이 반드시 있어야 합니다.
+- Vercel Deployment Protection이 켜진 URL에서 smoke test를 실행하려면 VERCEL_AUTOMATION_BYPASS_SECRET도 GitHub repository secret에 등록합니다. 보호 설정이 없으면 선택값입니다.
 - VERCEL_ORG_ID와 VERCEL_PROJECT_ID는 GitHub repository variables에 등록하는 것을 기본으로 합니다. secrets에 등록해도 workflow는 동작합니다.
 - Actions 로그에 `--token=`처럼 토큰 값이 빈 상태로 보이면 VERCEL_TOKEN이 등록되지 않았거나 이름이 다르게 등록된 상태입니다.
 - VERCEL_TOKEN은 Vercel Account Settings > Tokens에서 발급한 값을 GitHub repository secret으로 등록합니다.

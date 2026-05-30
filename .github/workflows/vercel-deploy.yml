@@ -175,4 +175,5 @@ jobs:
           E2E_BASE_URL: ${{ needs.deploy.outputs.deployment_url }}
           E2E_SELLER_EMAIL: ${{ secrets.E2E_SELLER_EMAIL }}
           E2E_SELLER_PASSWORD: ${{ secrets.E2E_SELLER_PASSWORD }}
+          E2E_VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: npm --workspace front run test:e2e -- --project=chrome e2e/deploy-smoke.spec.ts
