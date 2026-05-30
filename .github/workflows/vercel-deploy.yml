@@ -110,6 +110,18 @@ jobs:
             exit 1
           fi
 
+      - name: Validate Next build output
+        shell: bash
+        run: |
+          if [ ! -f front/.next/package.json ]; then
+            echo "::error title=Missing Next Build Output::front/.next/package.json was not created by vercel build."
+            exit 1
+          fi
+
+      - name: Pack Next build output
+        shell: bash
+        run: tar --exclude='.next/cache' -czf next-build-${{ inputs.target }}.tgz -C front .next
+
       - name: Upload prebuilt output
         uses: actions/upload-artifact@v4
         with:
@@ -119,6 +131,14 @@ jobs:
             .vercel/project.json
           if-no-files-found: error
           include-hidden-files: true
+          retention-days: 1
+
+      - name: Upload Next build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-${{ inputs.target }}
+          path: next-build-${{ inputs.target }}.tgz
+          if-no-files-found: error
           retention-days: 1
 
   deploy:
@@ -177,11 +197,29 @@ jobs:
           name: vercel-prebuilt-${{ inputs.target }}
           path: .vercel
 
+      - name: Download Next build output
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build-${{ inputs.target }}
+          path: .artifacts
+
+      - name: Restore Next build output
+        shell: bash
+        run: tar -xzf ".artifacts/next-build-${{ inputs.target }}.tgz" -C front
+
       - name: Validate downloaded function config
         shell: bash
         run: |
           if ! find .vercel/output/functions -name .vc-config.json -print -quit | grep -q .; then
             echo "::error title=Missing Vercel Function Config::The downloaded prebuilt artifact does not contain .vc-config.json files."
+            exit 1
+          fi
+
+      - name: Validate downloaded Next build output
+        shell: bash
+        run: |
+          if [ ! -f front/.next/package.json ]; then
+            echo "::error title=Missing Next Build Output::The downloaded artifact does not contain front/.next/package.json."
             exit 1
           fi
 
