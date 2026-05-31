@@ -4,6 +4,7 @@ import { signInAndEnsureStore } from "./helpers/auth";
 const protectedRoutes = ["/dashboard", "/products", "/inventory", "/orders", "/my-page", "/settings"] as const;
 
 const jsonApiRoutes = [
+  "/api/health",
   "/api/auth/session",
   "/api/dashboard",
   "/api/products?page=1&pageSize=10",
@@ -60,7 +61,7 @@ test.describe("deploy smoke", () => {
 
     await page.goto("/dashboard");
     await page.locator('header button[aria-haspopup="menu"]').last().click();
-    await page.getByRole("menuitem").last().click();
+    await page.getByRole("menuitem", { name: "로그아웃" }).click();
     await page.waitForURL("/");
     await expect(page.locator("main")).toBeVisible();
   });
