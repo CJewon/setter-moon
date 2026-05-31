@@ -58,6 +58,30 @@ JSON API 응답 규칙
 
 수동 배포는 .github/workflows/vercel-deploy.yml을 사용합니다.
 
+## GitHub Actions 수동 배포 운영 기준
+
+운영 배포 기준은 GitHub Actions의 `Vercel Manual Deploy` workflow를 수동으로 실행하는 방식입니다.
+
+```txt
+GitHub > Actions > Vercel Manual Deploy > Run workflow
+target: preview | production
+run_smoke: true | false
+```
+
+Vercel 프로젝트의 Git 자동 배포는 `front/vercel.json`에서 비활성화합니다. 따라서 main 브랜치에 push하더라도 Vercel 대시보드가 자동 배포를 시작하지 않는 것이 정상입니다.
+
+직접 Vercel CLI로 실행하는 `vercel deploy --prebuilt --prod` 배포는 장애 대응, 긴급 복구, 원인 분석 같은 emergency/debug 용도로만 사용합니다. 일반 운영 배포 이력은 GitHub Actions 실행 기록을 기준으로 확인합니다.
+
+workflow는 `vercel pull` 이후 build/deploy 전에 Vercel 환경변수 파일을 검사합니다. 아래 값은 이름만 있고 값이 비어 있어도 실패 처리합니다.
+
+```txt
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+```
+
+이 단계는 secret 값을 로그에 출력하지 않고 키 이름과 누락/빈 값 여부만 표시합니다.
+
 참고한 공식 문서:
 
 ```txt
