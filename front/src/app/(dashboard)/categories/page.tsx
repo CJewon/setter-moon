@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { routes } from "@/shared/constants/routes";
-import { secondaryActionClassName } from "@/shared/components/action-styles";
+import { primaryActionClassName, secondaryActionClassName } from "@/shared/components/action-styles";
 
 export default function CategoriesPage() {
   return (
@@ -14,7 +14,7 @@ export default function CategoriesPage() {
         </p>
       </div>
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <Link href={routes.products} className={secondaryActionClassName}>
+        <Link href={routes.products} className={primaryActionClassName}>
           상품 목록 보기
         </Link>
         <Link href={routes.newProduct} className={secondaryActionClassName}>

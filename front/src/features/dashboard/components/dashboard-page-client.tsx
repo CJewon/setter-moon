@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { DashboardSalesChart } from "@/features/dashboard/components/dashboard-sales-chart";
 import { useDashboardQuery } from "@/features/dashboard/hooks/use-dashboard-query";
+import { primaryActionClassName, secondaryActionClassName } from "@/shared/components/action-styles";
 import { StatusBadge } from "@/shared/components/status-badge";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
 import { routes } from "@/shared/constants/routes";
@@ -55,9 +56,20 @@ export function DashboardPageClient() {
           </div>
           <div className="mt-4 grid gap-2.5 sm:mt-5 sm:gap-3">
             {dashboard.recentOrders.length === 0 ? (
-              <p className="rounded-md bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                아직 등록된 주문이 없습니다.
-              </p>
+              <div className="rounded-md bg-slate-50 px-4 py-8 text-center">
+                <p className="text-sm font-semibold text-slate-950">아직 등록된 주문이 없습니다.</p>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-500">
+                  상품을 먼저 등록하거나, 외부 채널에서 들어온 첫 주문을 직접 입력해 보세요.
+                </p>
+                <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
+                  <Link href={routes.newOrder} className={primaryActionClassName}>
+                    주문 등록하기
+                  </Link>
+                  <Link href={routes.newProduct} className={secondaryActionClassName}>
+                    상품 등록하기
+                  </Link>
+                </div>
+              </div>
             ) : (
               dashboard.recentOrders.map((order) => (
                 <Link

@@ -25,7 +25,7 @@ const topbarPageTitles: Record<string, { description: string; title: string }> =
   },
   "/my-page": {
     title: "마이페이지",
-    description: "계정 정보와 개인정보를 확인하고 수정합니다."
+    description: "계정 이름과 플랜 사용량을 확인합니다."
   },
   "/orders": {
     title: "주문",
@@ -45,7 +45,7 @@ const topbarPageTitles: Record<string, { description: string; title: string }> =
   },
   "/settings": {
     title: "설정",
-    description: "스토어 정보와 기본 운영 설정을 관리합니다."
+    description: "스토어 정보를 관리합니다."
   }
 };
 

@@ -3,7 +3,6 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { SectionHeading } from "@/features/landing/components/landing-shared";
 import {
   FREE_PLAN_SUMMARY,
-  PAID_FULL_SUMMARY,
   PLAN_PRICE_LABEL,
   PRICING_COMPARISON_ROWS,
   PRICING_PLANS,
@@ -17,8 +16,8 @@ export function PlanSection() {
     <section className="scroll-mt-28 bg-white" id="pricing">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <SectionHeading
-          title={`무료로 시작하고, ${PLAN_PRICE_LABEL} 확장 플랜으로 한도를 해제합니다.`}
-          description={`무료 플랜은 ${FREE_PLAN_SUMMARY} ${PAID_FULL_SUMMARY} 스토어 기능과 배송 상태 관리는 두 플랜 모두 동일하게 제공합니다.`}
+          title="무료로 시작하고, 필요할 때 한도를 넓힙니다."
+          description={`${FREE_PLAN_SUMMARY} ${PLAN_PRICE_LABEL} 확장 플랜은 상품과 주문이 늘어날 때 한도를 넓히는 선택지입니다.`}
           centered
         />
 

@@ -12,7 +12,7 @@ export function LandingHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className="bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-500 px-4 py-2 text-center text-xs font-semibold text-white sm:text-sm">
-        상품 10개와 월 신규 주문 300건까지 무료로 시작하세요
+        상품, 재고, 주문 관리를 무료로 시작하세요
       </div>
       <div className="mx-auto grid h-16 w-full max-w-[1760px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-4 sm:px-6 lg:px-10 2xl:px-12">
         <Link href="/" className="justify-self-start text-lg font-bold text-slate-950">
