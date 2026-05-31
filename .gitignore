@@ -6,6 +6,7 @@ node_modules/
 .next/
 out/
 *.tsbuildinfo
+front/next-env.d.ts
 
 # Testing
 coverage/
