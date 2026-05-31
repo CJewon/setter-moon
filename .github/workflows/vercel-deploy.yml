@@ -34,9 +34,6 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID || vars.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID || vars.VERCEL_PROJECT_ID }}
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || vars.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
     steps:
       - name: Checkout
@@ -89,11 +86,12 @@ jobs:
             echo "prod_flag=" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Pull Vercel environment
-        run: vercel pull --yes --environment=${{ steps.target.outputs.environment }} --token="$VERCEL_TOKEN"
-
       - name: Validate GitHub application environment
         shell: bash
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           set -euo pipefail
 
@@ -120,7 +118,39 @@ jobs:
             exit 1
           fi
 
-      - name: Prepare application environment for Vercel build
+          echo "::add-mask::$NEXT_PUBLIC_SUPABASE_URL"
+          echo "::add-mask::$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Sync Vercel application environment
+        shell: bash
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          echo "::add-mask::$NEXT_PUBLIC_SUPABASE_URL"
+          echo "::add-mask::$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
+
+          sync_env() {
+            local key="$1"
+            local value="$2"
+            shift 2
+
+            printf '%s' "$value" | vercel env add "$key" "${{ steps.target.outputs.environment }}" --force --yes "$@" --token="$VERCEL_TOKEN" > /dev/null
+          }
+
+          sync_env NEXT_PUBLIC_SUPABASE_URL "$NEXT_PUBLIC_SUPABASE_URL"
+          sync_env NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+          sync_env SUPABASE_SERVICE_ROLE_KEY "$SUPABASE_SERVICE_ROLE_KEY" --sensitive
+
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=${{ steps.target.outputs.environment }} --token="$VERCEL_TOKEN"
+
+      - name: Remove local application environment cache
         shell: bash
         run: |
           set -euo pipefail
@@ -135,12 +165,6 @@ jobs:
             sed -i "/^${key}=/d" "$env_file"
           done
 
-          {
-            printf 'NEXT_PUBLIC_SUPABASE_URL=%s\n' "$NEXT_PUBLIC_SUPABASE_URL"
-            printf 'NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=%s\n' "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
-            printf 'SUPABASE_SERVICE_ROLE_KEY=%s\n' "$SUPABASE_SERVICE_ROLE_KEY"
-          } >> "$env_file"
-
       - name: Typecheck
         run: npm run typecheck
 
@@ -151,6 +175,10 @@ jobs:
         run: npm run test
 
       - name: Build with Vercel
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: vercel build ${{ steps.target.outputs.prod_flag }} --token="$VERCEL_TOKEN"
 
       - name: Validate prebuilt function config
@@ -173,7 +201,11 @@ jobs:
         id: deploy
         shell: bash
         run: |
-          deployment_url=$(vercel deploy --prebuilt ${{ steps.target.outputs.prod_flag }} --archive=tgz --token="$VERCEL_TOKEN")
+          set -euo pipefail
+
+          deployment_url=$(
+            vercel deploy --prebuilt ${{ steps.target.outputs.prod_flag }} --archive=tgz --token="$VERCEL_TOKEN"
+          )
           echo "deployment_url=$deployment_url" >> "$GITHUB_OUTPUT"
           echo "### Vercel deployment" >> "$GITHUB_STEP_SUMMARY"
           echo "- Branch: main" >> "$GITHUB_STEP_SUMMARY"

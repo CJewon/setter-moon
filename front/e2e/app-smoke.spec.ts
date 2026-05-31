@@ -23,8 +23,7 @@ test.describe("현재 구현 화면 E2E", () => {
     await expect(page.getByRole("link", { name: /무료 시작/ }).first()).toBeVisible();
     await expect(page.locator("header").getByRole("link", { name: "소개" })).toHaveAttribute("href", "#intro");
     await expect(page.locator("header").getByRole("link", { name: "기능" })).toHaveAttribute("href", "#features");
-    await expect(page.locator("header").getByRole("link", { name: "화면" })).toHaveAttribute("href", "#preview");
-    await expect(page.locator("header").getByRole("link", { name: "가격" })).toHaveAttribute("href", "#plan");
+    await expect(page.locator("header").getByRole("link", { name: "요금" })).toHaveAttribute("href", "#pricing");
     await expect(page.getByText("이런 분께")).toHaveCount(0);
     await expect(page.getByText("운영 흐름")).toHaveCount(0);
     await expect(page.getByText("화면 미리보기")).toHaveCount(0);
