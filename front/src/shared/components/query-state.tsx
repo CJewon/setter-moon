@@ -132,8 +132,6 @@ function TableLoadingSkeleton() {
             aria-label="데이터 불러오는 중"
             className="h-9 w-9 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600"
           />
-          <p className="mt-4 text-sm font-semibold text-slate-950">목록을 불러오고 있습니다.</p>
-          <p className="mt-1 text-sm text-slate-500">잠시 후 표에 데이터가 표시됩니다.</p>
         </div>
       </div>
     </div>
@@ -161,6 +159,14 @@ export function QueryLoadingState({
   title,
   variant = "table"
 }: QueryLoadingStateProps) {
+  if (variant === "table") {
+    return (
+      <div aria-busy="true" aria-live="polite" role="status">
+        <TableLoadingSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div
       aria-busy="true"
@@ -178,7 +184,7 @@ export function QueryLoadingState({
           <p className="mt-1 text-sm leading-6 text-slate-500">{description}</p>
         </div>
       </div>
-      <div className={variant === "table" ? "p-4 sm:p-5" : "animate-pulse p-4 sm:p-5"}>
+      <div className="animate-pulse p-4 sm:p-5">
         <LoadingSkeleton variant={variant} />
       </div>
     </div>

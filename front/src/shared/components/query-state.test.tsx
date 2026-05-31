@@ -3,16 +3,16 @@ import { render, screen } from "@testing-library/react";
 import { QueryLoadingState } from "@/shared/components/query-state";
 
 describe("QueryLoadingState", () => {
-  it("renders an accessible loading status with a shared message", () => {
+  it("renders table loading with a centered spinner only", () => {
     render(<QueryLoadingState title="상품 목록을 불러오고 있습니다." />);
 
     const status = screen.getByRole("status");
 
     expect(status.getAttribute("aria-busy")).toBe("true");
-    expect(screen.getByText("상품 목록을 불러오고 있습니다.")).toBeTruthy();
-    expect(screen.getByText("화면에 필요한 정보를 준비하고 있습니다.")).toBeTruthy();
     expect(screen.getByLabelText("데이터 불러오는 중")).toBeTruthy();
-    expect(screen.getByText("목록을 불러오고 있습니다.")).toBeTruthy();
+    expect(screen.queryByText("상품 목록을 불러오고 있습니다.")).toBeNull();
+    expect(screen.queryByText("화면에 필요한 정보를 준비하고 있습니다.")).toBeNull();
+    expect(screen.queryByText("목록을 불러오고 있습니다.")).toBeNull();
   });
 
   it("supports page-specific loading copy", () => {
