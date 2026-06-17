@@ -1,12 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import type { Route } from "next";
-import { useQuery } from "@tanstack/react-query";
 import { BarChart3, Boxes, ClipboardList, Package, Settings } from "lucide-react";
-import type { DashboardPageData, DashboardSummary } from "@/server/dashboard/summary";
+import type { DashboardSummary } from "@/server/dashboard/summary";
 import type { Store } from "@/server/stores/service";
-import { requestJson } from "@/shared/api/http";
 import { formatNumber } from "@/shared/lib/format";
 import { SignOutButton } from "@/shared/components/sign-out-button";
 import { UserMenu } from "@/shared/components/user-menu";
@@ -18,13 +14,15 @@ type NavItem = {
   icon: typeof BarChart3;
 };
 
-type SessionData = {
-  isAuthenticated: boolean;
+type AppShellProps = {
+  children: React.ReactNode;
+  dashboardSummary: DashboardSummary | null;
   user: {
     email: string | null;
     id: string;
     name: string | null;
-  } | null;
+  };
+  store: Store;
 };
 
 const navItems: NavItem[] = [
@@ -51,35 +49,11 @@ const emptySummary: DashboardSummary = {
   todaySalesAmount: 0
 };
 
-function useSessionQuery() {
-  return useQuery({
-    queryKey: ["session"],
-    queryFn: async () => (await requestJson<SessionData>("/api/auth/session")).data
-  });
-}
-
-function useCurrentStoreQuery() {
-  return useQuery({
-    queryKey: ["current-store"],
-    queryFn: async () => (await requestJson<Store | null>("/api/stores/current")).data
-  });
-}
-
-function useDashboardShellQuery() {
-  return useQuery({
-    queryKey: ["dashboard"],
-    queryFn: async () => (await requestJson<DashboardPageData>("/api/dashboard")).data
-  });
-}
-
-export function AppShell({ children }: { children: React.ReactNode }) {
-  const sessionQuery = useSessionQuery();
-  const storeQuery = useCurrentStoreQuery();
-  const dashboardQuery = useDashboardShellQuery();
-  const summary = dashboardQuery.data?.summary ?? emptySummary;
-  const displayName = sessionQuery.data?.user?.name || "사용자";
-  const email = sessionQuery.data?.user?.email ?? null;
-  const storeName = storeQuery.data?.name ?? null;
+export function AppShell({ children, dashboardSummary, store, user }: AppShellProps) {
+  const summary = dashboardSummary ?? emptySummary;
+  const displayName = user.name || "사용자";
+  const email = user.email;
+  const storeName = store.name;
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">

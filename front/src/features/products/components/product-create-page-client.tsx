@@ -7,10 +7,11 @@ import { PageActionBar } from "@/shared/components/page-action-bar";
 import { QueryErrorState, QueryLoadingState } from "@/shared/components/query-state";
 import { routes } from "@/shared/constants/routes";
 import { requestJson } from "@/shared/api/http";
+import { queryKeys } from "@/shared/api/query-keys";
 
 function useUsageSummaryQuery() {
   return useQuery({
-    queryKey: ["usage-summary"],
+    queryKey: queryKeys.usageSummary,
     queryFn: async () => (await requestJson<UsageSummary>("/api/usage/summary")).data
   });
 }

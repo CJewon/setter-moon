@@ -6,6 +6,7 @@ import type { OrderSort } from "@/server/orders/service";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import { buildQueryString } from "@/shared/api/build-query-string";
 import { requestJson } from "@/shared/api/http";
+import { queryKeys } from "@/shared/api/query-keys";
 
 export type OrderListQuery = {
   customerKeyword?: string;
@@ -30,7 +31,7 @@ export function useOrdersQuery(query: OrderListQuery) {
 
 export function useOrderQuery(orderId: string) {
   return useQuery({
-    queryKey: ["order", orderId],
+    queryKey: queryKeys.order(orderId),
     queryFn: async () => (await requestJson<OrderDetail>(`/api/orders/${orderId}`)).data,
     enabled: Boolean(orderId)
   });
@@ -38,7 +39,7 @@ export function useOrderQuery(orderId: string) {
 
 export function useOrderProductChoicesQuery() {
   return useQuery({
-    queryKey: ["order-product-choices"],
+    queryKey: queryKeys.orderProductChoices,
     queryFn: async () => (await requestJson<OrderProductChoice[]>("/api/orders/product-choices")).data
   });
 }

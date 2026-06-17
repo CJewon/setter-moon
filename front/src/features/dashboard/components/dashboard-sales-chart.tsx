@@ -1,10 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import {
   CartesianGrid,
   Line,
   LineChart,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis
@@ -23,6 +23,11 @@ type ChartTooltipProps = {
     payload: DashboardTrendItem;
     value: number;
   }>;
+};
+
+type ChartSize = {
+  height: number;
+  width: number;
 };
 
 function formatAxisWon(value: number) {
@@ -55,12 +60,44 @@ function SalesChartTooltip({ active, label, payload }: ChartTooltipProps) {
 
 export function DashboardSalesChart({ data }: DashboardSalesChartProps) {
   const hasSales = data.some((item) => item.salesAmount > 0);
+  const chartFrameRef = useRef<HTMLDivElement>(null);
+  const [chartSize, setChartSize] = useState<ChartSize>({ height: 0, width: 0 });
+  const canRenderChart = chartSize.width > 0 && chartSize.height > 0;
+
+  useEffect(() => {
+    const element = chartFrameRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const chartFrame = element;
+
+    function updateChartSize() {
+      const rect = chartFrame.getBoundingClientRect();
+
+      setChartSize({
+        height: Math.max(0, Math.floor(rect.height)),
+        width: Math.max(0, Math.floor(rect.width))
+      });
+    }
+
+    updateChartSize();
+
+    const resizeObserver = new ResizeObserver(updateChartSize);
+
+    resizeObserver.observe(chartFrame);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   return (
     <div className="mt-4 rounded-md bg-slate-50 px-2 py-4 sm:mt-5 sm:px-3 sm:py-5">
-      <div className="h-[280px] w-full sm:h-[320px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ bottom: 22, left: 2, right: 14, top: 12 }}>
+      <div ref={chartFrameRef} className="h-[280px] min-w-0 w-full sm:h-[320px]">
+        {canRenderChart ? (
+          <LineChart data={data} height={chartSize.height} margin={{ bottom: 22, left: 2, right: 14, top: 12 }} width={chartSize.width}>
             <CartesianGrid stroke="#e2e8f0" strokeDasharray="4 4" vertical={false} />
             <XAxis
               axisLine={false}
@@ -105,7 +142,9 @@ export function DashboardSalesChart({ data }: DashboardSalesChartProps) {
               type="monotone"
             />
           </LineChart>
-        </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full" aria-hidden="true" />
+        )}
       </div>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-2 text-xs text-slate-500">
         <span>가로축: 날짜</span>

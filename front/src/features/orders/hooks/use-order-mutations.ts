@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type {
   OrderBulkStatusUpdateValues,
@@ -8,6 +9,7 @@ import type {
   OrderStatusUpdateValues
 } from "@/features/orders/schemas/order-form-schema";
 import { requestJson } from "@/shared/api/http";
+import { queryKeys } from "@/shared/api/query-keys";
 
 type CreateOrderData = {
   orderId: string;
@@ -36,6 +38,7 @@ type BulkUpdateOrderStatusData = {
 };
 
 export function useCreateOrderMutation() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -46,17 +49,19 @@ export function useCreateOrderMutation() {
       }),
     onSuccess: async ({ data }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["orders"] }),
-        queryClient.invalidateQueries({ queryKey: ["order", data.orderId] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
-        queryClient.invalidateQueries({ queryKey: ["usage-summary"] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.order(data.orderId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventory }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.usageSummary }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       ]);
+      router.refresh();
     }
   });
 }
 
 export function useUpdateOrderStatusMutation(orderId: string) {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -67,18 +72,20 @@ export function useUpdateOrderStatusMutation(orderId: string) {
       }),
     onSuccess: async ({ data }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["orders"] }),
-        queryClient.invalidateQueries({ queryKey: ["order", data.orderId] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-movements"] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.order(data.orderId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventory }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryLowStock }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryMovements }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       ]);
+      router.refresh();
     }
   });
 }
 
 export function useUpdateOrderMutation(orderId: string) {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -89,18 +96,20 @@ export function useUpdateOrderMutation(orderId: string) {
       }),
     onSuccess: async ({ data }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["orders"] }),
-        queryClient.invalidateQueries({ queryKey: ["order", data.orderId] }),
-        queryClient.invalidateQueries({ queryKey: ["order-product-choices"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.order(data.orderId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.orderProductChoices }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventory }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryLowStock }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       ]);
+      router.refresh();
     }
   });
 }
 
 export function useBulkUpdateOrderStatusMutation() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -111,13 +120,14 @@ export function useBulkUpdateOrderStatusMutation() {
       }),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["orders"] }),
-        queryClient.invalidateQueries({ queryKey: ["order"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-movements"] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.orderBase }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventory }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryLowStock }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryMovements }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       ]);
+      router.refresh();
     }
   });
 }

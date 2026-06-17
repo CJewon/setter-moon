@@ -6,6 +6,7 @@ import type { ProductStatus } from "@/shared/types/domain";
 import type { PaginatedResult } from "@/shared/types/pagination";
 import { buildQueryString } from "@/shared/api/build-query-string";
 import { requestJson } from "@/shared/api/http";
+import { queryKeys } from "@/shared/api/query-keys";
 
 export type ProductListQuery = {
   keyword?: string;
@@ -25,7 +26,7 @@ export function useProductsQuery(query: ProductListQuery) {
 
 export function useProductQuery(productId: string) {
   return useQuery({
-    queryKey: ["product", productId],
+    queryKey: queryKeys.product(productId),
     queryFn: async () => (await requestJson<ProductDetail>(`/api/products/${productId}`)).data,
     enabled: Boolean(productId)
   });

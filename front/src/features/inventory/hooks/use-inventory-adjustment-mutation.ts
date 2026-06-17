@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InventoryAdjustmentValues } from "@/features/inventory/schemas/inventory-adjustment-schema";
 import { requestJson } from "@/shared/api/http";
+import { queryKeys } from "@/shared/api/query-keys";
 
 type InventoryAdjustmentData = {
   afterStock: number;
@@ -12,6 +14,7 @@ type InventoryAdjustmentData = {
 };
 
 export function useInventoryAdjustmentMutation() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -22,12 +25,13 @@ export function useInventoryAdjustmentMutation() {
       }),
     onSuccess: async ({ data }) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["inventory"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-low-stock"] }),
-        queryClient.invalidateQueries({ queryKey: ["inventory-movements"] }),
-        queryClient.invalidateQueries({ queryKey: ["product", data.productId] }),
-        queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventory }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryLowStock }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.inventoryMovements }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.product(data.productId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboard })
       ]);
+      router.refresh();
     }
   });
 }
