@@ -3,9 +3,9 @@ import { ArrowRight } from "lucide-react";
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from "@/features/landing/landing-content";
 
 const navItems = [
-  { href: "#intro", label: "소개" },
-  { href: "#features", label: "기능" },
-  { href: "#pricing", label: "요금" }
+  { href: "/#intro", label: "소개" },
+  { href: "/#features", label: "기능" },
+  { href: "/#pricing", label: "요금" }
 ] as const;
 
 export function LandingHeader() {
@@ -20,9 +20,9 @@ export function LandingHeader() {
         </Link>
         <nav className="hidden items-center gap-6 justify-self-center text-sm font-semibold md:flex">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="text-slate-600 transition-colors hover:text-slate-950">
+            <Link key={item.href} href={item.href} className="text-slate-600 transition-colors hover:text-slate-950">
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="flex items-center gap-2 justify-self-end">

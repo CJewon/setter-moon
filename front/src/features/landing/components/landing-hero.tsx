@@ -42,12 +42,12 @@ export function HeroSection() {
               무료 시작
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <a
-              href="#features"
+            <Link
+              href="/#features"
               className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
             >
               둘러보기
-            </a>
+            </Link>
           </div>
         </div>
         <HeroConsolePreview />
