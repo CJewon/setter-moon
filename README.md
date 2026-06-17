@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://setter-moon-front.vercel.app">서비스 화면 보기</a>
+  <a href="https://setter-moon-front.vercel.app" target="_blank" rel="noopener noreferrer">서비스 화면 보기</a>
 </p>
 
 ![SellerRoom 랜딩 화면](docs/assets/readme/landing.png)
